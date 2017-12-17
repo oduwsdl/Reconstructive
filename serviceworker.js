@@ -2,7 +2,7 @@ console.log('ServiceWorker downloaded');
 
 importScripts('reconstructive.js');
 
-reconstructive.init({mementoPath: '/archived/<datetime>/<urir>'});
+reconstructive.updateConfig({mementoPath: '/archived/<datetime>/<urir>'});
 
 self.addEventListener("install", function(event) {
   console.log('ServiceWorker installed');

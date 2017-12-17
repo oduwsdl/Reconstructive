@@ -2,22 +2,46 @@ console.log('Reconstructive downloaded');
 
 var reconstructive = (function() {
 
-  let mementoPath = '/memento/<datetime>/<urir>',
-      showBanner = false,
-      tryOriginalMemento = false;
+  let config = {
+    mementoPath: '/memento/<datetime>/<urir>',
+    showBanner: false,
+    tryOriginalMemento: false
+  };
 
-  function init(conf) {
-    if(conf instanceof Object) {
-      ({
-        mementoPath = mementoPath,
-        showBanner = showBanner,
-        tryOriginalMemento = tryOriginalMemento
-      } = conf);
+  let exclusions = {
+    notGet: function(event, config) {
+      return event.request.method != 'GET';
+    },
+    localResource: function(event, config) {
+      return !(event.request.url.startsWith(config.mementoPathPrefix) || event.request.referrer.startsWith(config.mementoPathPrefix));
     }
-    console.log('Reconstructive initialized');
+  };
+
+  function shouldExclude(event, config) {
+    return Object.keys(exclusions).some((key) => {
+      if (exclusions[key](event, config)) {
+        console.log('Exclusion matched:', key)
+        return true;
+      }
+      return false;
+    });
+  }
+
+  function derivedConfig() {
+    config.mementoPathPrefix = config.mementoPath.substr(0, config.mementoPath.indexOf('<'));
+  }
+  derivedConfig();
+
+  function updateConfig(opts) {
+    if(opts instanceof Object) {
+      Object.assign(config, opts);
+    }
+    derivedConfig();
+    console.log('Reconstructive configs updated');
   }
 
   function reroute(event) {
+    if (shouldExclude(event, config)) return;
     // TODO: Implement rerouting logic
     request = new Request(event.request.url);
     event.respondWith(
@@ -54,7 +78,8 @@ var reconstructive = (function() {
   }
 
   return {
-    init: init,
+    exclusions: exclusions,
+    updateConfig: updateConfig,
     reroute: reroute,
     rewrite: rewrite,
     createBanner: createBanner
