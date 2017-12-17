@@ -13,7 +13,7 @@ var reconstructive = (function() {
       return event.request.method != 'GET';
     },
     localResource: function(event, config) {
-      return !(event.request.url.startsWith(config.mementoPathPrefix) || event.request.referrer.startsWith(config.mementoPathPrefix));
+      return !(event.request.url.startsWith(config.mementoEndpoint) || event.request.referrer.startsWith(config.mementoEndpoint));
     }
   };
 
@@ -28,7 +28,9 @@ var reconstructive = (function() {
   }
 
   function derivedConfig() {
+    config.origin = self.location.origin;
     config.mementoPathPrefix = config.mementoPath.substr(0, config.mementoPath.indexOf('<'));
+    config.mementoEndpoint = config.origin + config.mementoPathPrefix;
   }
   derivedConfig();
 
