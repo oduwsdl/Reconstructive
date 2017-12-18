@@ -2,7 +2,7 @@ console.log('ServiceWorker downloaded');
 
 importScripts('reconstructive.js');
 
-reconstructive.updateConfig({urimPattern: self.location.origin + '/archived/<datetime>/<urir>'});
+reconstructive.init({urimPattern: self.location.origin + '/archived/<datetime>/<urir>'});
 
 self.addEventListener("install", function(event) {
   console.log('ServiceWorker installed');

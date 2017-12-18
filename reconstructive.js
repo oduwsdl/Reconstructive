@@ -33,12 +33,14 @@ var reconstructive = (function() {
   }
   derivedConfig();
 
-  function updateConfig(opts) {
+  function init(opts) {
     if(opts instanceof Object) {
       Object.assign(config, opts);
+      derivedConfig();
+      console.log('Reconstructive configs updated');
+    } else {
+      console.warn('Expected an object not a', typeof opts);
     }
-    derivedConfig();
-    console.log('Reconstructive configs updated');
   }
 
   function reroute(event) {
@@ -104,12 +106,28 @@ var reconstructive = (function() {
     return '';
   }
 
+  function updateRewriter(fn) {
+    if (fn instanceof Function) {
+      rewrite = fn;
+    } else {
+      console.warn('Expected a function not a', typeof fn);
+    }
+  }
+
+  function bannerCreator(fn) {
+    if (fn instanceof Function) {
+      createBanner = fn;
+    } else {
+      console.warn('Expected a function not a', typeof fn);
+    }
+  }
+
   return {
+    init: init,
     exclusions: exclusions,
-    updateConfig: updateConfig,
     reroute: reroute,
-    rewrite: rewrite,
-    createBanner: createBanner
+    updateRewriter: updateRewriter,
+    bannerCreator: bannerCreator
   };
 
 })();
