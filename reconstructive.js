@@ -21,7 +21,7 @@ var reconstructive = (function() {
   function shouldExclude(event, config) {
     return Object.keys(exclusions).some((key) => {
       if (exclusions[key](event, config)) {
-        console.log('Exclusion matched:', key, event);
+        console.log('Exclusion found:', key, event);
         return true;
       }
       return false;
@@ -65,7 +65,10 @@ var reconstructive = (function() {
       }
       urim = config.urimPattern.replace('<datetime>', match[1]).replace('<urir>', urim);
     }
-    let headers = event.request.headers;
+    let headers = new Headers();
+    for (let hdr of event.request.headers.entries()) {
+      headers.append(hdr[0], hdr[1]);
+    }
     headers.set('X-ServiceWorker', config.version);
     return new Request(urim, {headers: headers, redirect: 'manual'});
   }
