@@ -20,7 +20,7 @@ var reconstructive = (function() {
   function shouldExclude(event, config) {
     return Object.keys(exclusions).some((key) => {
       if (exclusions[key](event, config)) {
-        console.log('Exclusion matched:', key)
+        console.log('Exclusion matched:', key, event);
         return true;
       }
       return false;
@@ -31,6 +31,8 @@ var reconstructive = (function() {
     config.origin = self.location.origin;
     config.mementoPathPrefix = config.mementoPath.substr(0, config.mementoPath.indexOf('<'));
     config.mementoEndpoint = config.origin + config.mementoPathPrefix;
+    config.urimPattern = config.origin + config.mementoPath;
+    config.datetimePattern = new RegExp('^' + config.mementoEndpoint + '(\\d{14})');
   }
   derivedConfig();
 
@@ -44,13 +46,25 @@ var reconstructive = (function() {
 
   function reroute(event) {
     if (shouldExclude(event, config)) return;
-    // TODO: Implement rerouting logic
-    request = new Request(event.request.url);
+    request = createUrimRequest(event);
     event.respondWith(
       fetch(request)
         .then(serverFetch, serverFailure)
         .catch(serverFailure)
     );
+  }
+
+  function createUrimRequest(event) {
+    let urim = event.request.url;
+    if (!urim.startsWith(config.mementoEndpoint)) {
+      let match = event.request.referrer.match(config.datetimePattern);
+      if (!match) {
+        match = ['Current datetime', (new Date()).toISOString().replace(/\D/g, '').substring(0, 14)];
+        console.log('No datetime found, fallback to now:', event);
+      }
+      urim = config.urimPattern.replace('<datetime>', match[1]).replace('<urir>', urim);
+    }
+    return new Request(urim, {redirect: 'manual'});
   }
 
   function serverFetch(response) {
