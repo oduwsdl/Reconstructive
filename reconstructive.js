@@ -3,6 +3,7 @@ console.log('Reconstructive downloaded');
 var reconstructive = (function() {
 
   let config = {
+    version: 'reconstructive.js:v1',
     mementoPath: '/memento/<datetime>/<urir>',
     showBanner: false,
     tryOriginalMemento: false
@@ -64,7 +65,9 @@ var reconstructive = (function() {
       }
       urim = config.urimPattern.replace('<datetime>', match[1]).replace('<urir>', urim);
     }
-    return new Request(urim, {redirect: 'manual'});
+    let headers = event.request.headers;
+    headers.set('X-ServiceWorker', config.version);
+    return new Request(urim, {headers: headers, redirect: 'manual'});
   }
 
   function serverFetch(response) {
