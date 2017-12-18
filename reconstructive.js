@@ -13,7 +13,7 @@ var reconstructive = (function() {
       return event.request.method != 'GET';
     },
     localResource: function(event, config) {
-      return !(event.request.url.startsWith(config.mementoEndpoint) || event.request.referrer.startsWith(config.mementoEndpoint));
+      return !(config.urimRegex.test(event.request.url) || config.urimRegex.test(event.request.referrer));
     }
   };
 
@@ -28,8 +28,7 @@ var reconstructive = (function() {
   }
 
   function derivedConfig() {
-    config.mementoEndpoint = config.urimPattern.substr(0, config.urimPattern.indexOf('<'));
-    config.datetimePattern = new RegExp('^' + config.mementoEndpoint + '(\\d{14})');
+    config.urimRegex = new RegExp('^' + config.urimPattern.replace('<datetime>', '(\\d{14})').replace('<urir>', '(.*)') + '$');
   }
   derivedConfig();
 
@@ -57,13 +56,12 @@ var reconstructive = (function() {
 
   function createUrimRequest(event) {
     let urim = event.request.url;
-    if (!urim.startsWith(config.mementoEndpoint)) {
-      let match = event.request.referrer.match(config.datetimePattern);
-      if (!match) {
-        match = ['Current datetime', (new Date()).toISOString().replace(/\D/g, '').substring(0, 14)];
-        console.log('No datetime found, fallback to now:', event);
+    if (!config.urimRegex.test(urim)) {
+      let [, datetime, urir] = event.request.referrer.match(config.urimRegex);
+      if (isNaN(datetime)) {
+        [datetime, urir] = [urir, datetime];
       }
-      urim = config.urimPattern.replace('<datetime>', match[1]).replace('<urir>', urim);
+      urim = config.urimPattern.replace('<datetime>', datetime).replace('<urir>', urir);
     }
     let headers = new Headers();
     for (let hdr of event.request.headers.entries()) {
