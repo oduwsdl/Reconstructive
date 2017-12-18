@@ -4,9 +4,8 @@ var reconstructive = (function() {
 
   let config = {
     version: 'reconstructive.js:v1',
-    mementoPath: '/memento/<datetime>/<urir>',
-    showBanner: false,
-    tryOriginalMemento: false
+    urimPattern: self.location.origin + '/memento/<datetime>/<urir>',
+    showBanner: false
   };
 
   let exclusions = {
@@ -29,10 +28,7 @@ var reconstructive = (function() {
   }
 
   function derivedConfig() {
-    config.origin = self.location.origin;
-    config.mementoPathPrefix = config.mementoPath.substr(0, config.mementoPath.indexOf('<'));
-    config.mementoEndpoint = config.origin + config.mementoPathPrefix;
-    config.urimPattern = config.origin + config.mementoPath;
+    config.mementoEndpoint = config.urimPattern.substr(0, config.urimPattern.indexOf('<'));
     config.datetimePattern = new RegExp('^' + config.mementoEndpoint + '(\\d{14})');
   }
   derivedConfig();
