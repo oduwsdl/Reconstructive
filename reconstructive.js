@@ -19,7 +19,7 @@ var reconstructive = (function() {
   };
 
   function shouldExclude(event, config) {
-    return Object.keys(exclusions).some((key) => {
+    return Object.keys(exclusions).some(key => {
       if (exclusions[key](event, config)) {
         console.log('Exclusion found:', key, event);
         return true;
@@ -50,8 +50,10 @@ var reconstructive = (function() {
     request = createUrimRequest(event);
     event.respondWith(
       fetch(request)
-        .then(serverFetch, serverFailure)
-        .catch(serverFailure)
+        .then(response => {
+          return fetchSuccess(event, response, config);
+        })
+        .catch(fetchFailure)
     );
   }
 
@@ -73,13 +75,16 @@ var reconstructive = (function() {
     return new Request(urim, {headers: headers, redirect: 'manual'});
   }
 
-  function serverFetch(response) {
+  function fetchSuccess(event, response, config) {
     console.log('Fetched from server:', response);
+    if (response.ok) {
+      return rewrite(event, response, config);
+    }
     return response;
   }
 
-  function serverFailure() {
-    console.log('Fetching from server failed');
+  function fetchFailure(error) {
+    console.log(error);
     return new Response('<h1>Service Unavailable</h1>', {
       status: 503,
       statusText: 'Service Unavailable',
@@ -89,14 +94,18 @@ var reconstructive = (function() {
     });
   }
 
-  function rewrite(request, response) {
-    // TODO: Make any necessary changes in the response
+  function rewrite(event, response, config) {
+    // TODO: Make necessary changes in the response
+    if (config.showBanner && response.headers.get('Content-Type') == 'text/xml') {
+      let banner = createBanner(event, rewritten, config);
+      // TODO: Add the banner markup in the appropriate place
+    }
     return response;
   }
 
-  function createBanner(request, response) {
-    // TODO: Add a banner to the response
-    return response;
+  function createBanner(event, response, config) {
+    // TODO: Add a genric banner markup
+    return '';
   }
 
   return {
