@@ -57,9 +57,16 @@ var reconstructive = (function() {
   function createUrimRequest(event) {
     let urim = event.request.url;
     if (!config.urimRegex.test(urim)) {
-      let [, datetime, urir] = event.request.referrer.match(config.urimRegex);
+      let [, datetime, refUrir] = event.request.referrer.match(config.urimRegex);
       if (isNaN(datetime)) {
-        [datetime, urir] = [urir, datetime];
+        [datetime, refUrir] = [refUrir, datetime];
+      }
+      let urir = new URL(urim);
+      if (urir.origin == self.location.origin) {
+        refOrigin = refUrir.match(/^(https?:\/\/)?[^\/]+/)[0];
+        urir = refOrigin + urir.pathname + urir.search;
+      } else {
+        urir = urir.href;
       }
       urim = config.urimPattern.replace('<datetime>', datetime).replace('<urir>', urir);
     }
