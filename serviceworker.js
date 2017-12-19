@@ -21,9 +21,9 @@ reconstructive.init({
 //< }
 
 // Pass a custom function to generate banner markup
-// reconstructive.bannerCreator(f (event, rewritten, config));
+// reconstructive.bannerCreator(f (event, response, config));
 // Or update the rewriting logic
-// reconstructive.updateRewriter(f (event, rewritten, config));
+// reconstructive.updateRewriter(f (event, response, config));
 
 // This is not necessary, but can be useful for debugging or in future
 self.addEventListener("install", function(event) {

@@ -103,7 +103,7 @@ var reconstructive = (function() {
   function rewrite(event, response, config) {
     // TODO: Make necessary changes in the response
     if (config.showBanner && response.headers.get('Content-Type') == 'text/xml') {
-      let banner = createBanner(event, rewritten, config);
+      let banner = createBanner(event, response, config);
       // TODO: Add the banner markup in the appropriate place
     }
     return response;
