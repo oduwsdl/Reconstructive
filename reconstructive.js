@@ -2,8 +2,11 @@ console.log('Reconstructive downloaded');
 
 var reconstructive = (function() {
 
+  const NAME = 'Reconstructive',
+        VERSION = '0.1';
+
   let config = {
-    version: 'reconstructive.js:v1',
+    id: NAME + ':' + VERSION,
     urimPattern: self.location.origin + '/memento/<datetime>/<urir>',
     showBanner: false
   };
@@ -74,7 +77,7 @@ var reconstructive = (function() {
     for (let hdr of event.request.headers.entries()) {
       headers.append(hdr[0], hdr[1]);
     }
-    headers.set('X-ServiceWorker', config.version);
+    headers.set('X-ServiceWorker', config.id);
     return new Request(urim, {headers: headers, redirect: 'manual'});
   }
 

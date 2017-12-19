@@ -5,7 +5,7 @@ importScripts('reconstructive.js');
 
 // Customize configs
 // reconstructive.init({
-//   version: 'reconstructive.js:v1',
+//   id: NAME + ':' + VERSION,
 //   urimPattern: self.location.origin + '/memento/<datetime>/<urir>',
 //   showBanner: false
 // });
