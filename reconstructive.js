@@ -48,9 +48,9 @@ var reconstructive = (function() {
     if (shouldExclude(event, config)) return;
     if (!config.urimRegex.test(event.request.url)) {
       let urim = createUrim(event);
-      event.respondWith(async urim => {
+      event.respondWith(async function(urim) {
         return localRedirect(urim);
-      });
+      }(urim));
     } else {
       request = createRequest(event);
       event.respondWith(
