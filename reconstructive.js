@@ -47,38 +47,46 @@ var reconstructive = (function() {
 
   function reroute(event) {
     if (shouldExclude(event, config)) return;
-    request = createUrimRequest(event);
-    event.respondWith(
-      fetch(request)
+    if (!config.urimRegex.test(event.request.url)) {
+      let urim = createUrim(event);
+      console.log('Locally redirecting to:', urim, event);
+      event.respondWith(async urim => {
+        return localRedirect(urim);
+      });
+    } else {
+      request = createRequest(event);
+      event.respondWith(
+        fetch(request)
         .then(response => {
           return fetchSuccess(event, response, config);
         })
         .catch(fetchFailure)
-    );
+      );
+    }
   }
 
-  function createUrimRequest(event) {
-    let urim = event.request.url;
-    if (!config.urimRegex.test(urim)) {
-      let [, datetime, refUrir] = event.request.referrer.match(config.urimRegex);
-      if (isNaN(datetime)) {
-        [datetime, refUrir] = [refUrir, datetime];
-      }
-      let urir = new URL(urim);
-      if (urir.origin == self.location.origin) {
-        refOrigin = refUrir.match(/^(https?:\/\/)?[^\/]+/)[0];
-        urir = refOrigin + urir.pathname + urir.search;
-      } else {
-        urir = urir.href;
-      }
-      urim = config.urimPattern.replace('<datetime>', datetime).replace('<urir>', urir);
+  function createUrim(event) {
+    let [, datetime, refUrir] = event.request.referrer.match(config.urimRegex);
+    if (isNaN(datetime)) {
+      [datetime, refUrir] = [refUrir, datetime];
     }
+    let urir = new URL(event.request.url);
+    if (urir.origin == self.location.origin) {
+      refOrigin = refUrir.match(/^(https?:\/\/)?[^\/]+/)[0];
+      urir = refOrigin + urir.pathname + urir.search;
+    } else {
+      urir = urir.href;
+    }
+    return config.urimPattern.replace('<datetime>', datetime).replace('<urir>', urir);
+  }
+
+  function createRequest(event) {
     let headers = new Headers();
     for (let hdr of event.request.headers.entries()) {
       headers.append(hdr[0], hdr[1]);
     }
     headers.set('X-ServiceWorker', config.id);
-    return new Request(urim, {headers: headers, redirect: 'manual'});
+    return new Request(event.request.url, {headers: headers, redirect: 'manual'});
   }
 
   function fetchSuccess(event, response, config) {
@@ -95,6 +103,17 @@ var reconstructive = (function() {
       status: 503,
       statusText: 'Service Unavailable',
       headers: new Headers({
+        'Content-Type': 'text/html'
+      })
+    });
+  }
+
+  function localRedirect(urim) {
+    return new Response('<h1>Locally Redirecting</h1><p>' + urim + '</p>', {
+      status: 302,
+      statusText: 'Found',
+      headers: new Headers({
+        'Location': urim,
         'Content-Type': 'text/html'
       })
     });
