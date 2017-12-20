@@ -81,12 +81,17 @@ var reconstructive = (function() {
   }
 
   function createRequest(event) {
-    let headers = new Headers();
-    for (let hdr of event.request.headers.entries()) {
-      headers.append(hdr[0], hdr[1]);
-    }
+    let headers = cloneHeaders(event.request.headers);
     headers.set('X-ServiceWorker', config.id);
     return new Request(event.request.url, {headers: headers, redirect: 'manual'});
+  }
+
+  function cloneHeaders(original) {
+    let headers = new Headers();
+    for (let hdr of original.entries()) {
+      headers.append(hdr[0], hdr[1]);
+    }
+    return headers;
   }
 
   function fetchSuccess(event, response, config) {
