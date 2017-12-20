@@ -1,6 +1,6 @@
 var reconstructive = (function() {
   const NAME = 'Reconstructive',
-        VERSION = '0.1';
+        VERSION = '0.2';
 
   let config = {
     id: `${NAME}:${VERSION}`,
