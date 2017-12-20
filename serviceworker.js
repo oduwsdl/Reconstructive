@@ -5,11 +5,13 @@ importScripts('reconstructive.js');
 
 // Customize configs
 // reconstructive.init({
-//   id: NAME + ':' + VERSION,
+//   id: `${NAME}:${VERSION}`,
+//   debug: false,
 //   urimPattern: self.location.origin + '/memento/<datetime>/<urir>',
 //   showBanner: false
 // });
 reconstructive.init({
+  debug: true,
   urimPattern: self.location.href.substring(0, self.location.href.lastIndexOf('/')) + '/archived/<datetime>/<urir>'
 });
 
@@ -36,7 +38,6 @@ self.addEventListener("activate", function(event) {
 });
 
 self.addEventListener("fetch", function(event) {
-  console.log('A fetch event triggered:', event);
   // Add any custom logic here to conditionally call the reroute function
   reconstructive.reroute(event);
 });
