@@ -7,7 +7,7 @@ importScripts('reconstructive.js');
 // reconstructive.init({
 //   id: `${NAME}:${VERSION}`,
 //   debug: false,
-//   urimPattern: self.location.origin + '/memento/<datetime>/<urir>',
+//   urimPattern: `${self.location.origin}/memento/<datetime>/<urir>`,
 //   showBanner: false
 // });
 reconstructive.init({

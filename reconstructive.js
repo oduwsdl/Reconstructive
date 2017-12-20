@@ -5,7 +5,7 @@ var reconstructive = (function() {
   let config = {
     id: `${NAME}:${VERSION}`,
     debug: false,
-    urimPattern: self.location.origin + '/memento/<datetime>/<urir>',
+    urimPattern: `${self.location.origin}/memento/<datetime>/<urir>`,
     showBanner: false
   };
 
@@ -113,7 +113,7 @@ var reconstructive = (function() {
 
   function localRedirect(urim) {
     config.debug && console.log('Locally redirecting to:', urim);
-    return new Response('<h1>Locally Redirecting</h1><p>' + urim + '</p>', {
+    return new Response(`<h1>Locally Redirecting</h1><p>${urim}</p>`, {
       status: 302,
       statusText: 'Found',
       headers: new Headers({
