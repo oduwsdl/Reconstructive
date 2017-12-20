@@ -1,12 +1,9 @@
-console.log('Reconstructive downloaded');
-
 var reconstructive = (function() {
-
   const NAME = 'Reconstructive',
         VERSION = '0.1';
 
   let config = {
-    id: NAME + ':' + VERSION,
+    id: `${NAME}:${VERSION}`,
     urimPattern: self.location.origin + '/memento/<datetime>/<urir>',
     showBanner: false
   };
@@ -39,7 +36,7 @@ var reconstructive = (function() {
     if(opts instanceof Object) {
       Object.assign(config, opts);
       derivedConfig();
-      console.log('Reconstructive configs updated');
+      console.log(`${NAME}:${VERSION} initialized with supplied configs`);
     } else {
       console.warn('Expected an object not a', typeof opts);
     }
