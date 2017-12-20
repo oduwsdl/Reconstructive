@@ -21,7 +21,7 @@ var reconstructive = (function() {
   function shouldExclude(event, config) {
     return Object.keys(exclusions).some(key => {
       if (exclusions[key](event, config)) {
-        config.debug && console.log('Exclusion found:', key, event);
+        config.debug && console.log('Exclusion found:', key, event.request.url);
         return true;
       }
       return false;
@@ -44,10 +44,10 @@ var reconstructive = (function() {
   }
 
   function reroute(event) {
+    config.debug && console.log('Rerouting requested', event);
     if (shouldExclude(event, config)) return;
     if (!config.urimRegex.test(event.request.url)) {
       let urim = createUrim(event);
-      config.debug && console.log('Locally redirecting to:', urim, event);
       event.respondWith(async urim => {
         return localRedirect(urim);
       });
@@ -112,6 +112,7 @@ var reconstructive = (function() {
   }
 
   function localRedirect(urim) {
+    config.debug && console.log('Locally redirecting to:', urim);
     return new Response('<h1>Locally Redirecting</h1><p>' + urim + '</p>', {
       status: 302,
       statusText: 'Found',
