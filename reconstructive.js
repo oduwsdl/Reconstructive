@@ -4,6 +4,7 @@ var reconstructive = (function() {
 
   let config = {
     id: `${NAME}:${VERSION}`,
+    debug: false,
     urimPattern: self.location.origin + '/memento/<datetime>/<urir>',
     showBanner: false
   };
@@ -20,7 +21,7 @@ var reconstructive = (function() {
   function shouldExclude(event, config) {
     return Object.keys(exclusions).some(key => {
       if (exclusions[key](event, config)) {
-        console.log('Exclusion found:', key, event);
+        config.debug && console.log('Exclusion found:', key, event);
         return true;
       }
       return false;
@@ -36,7 +37,7 @@ var reconstructive = (function() {
     if(opts instanceof Object) {
       Object.assign(config, opts);
       derivedConfig();
-      console.log(`${NAME}:${VERSION} initialized with supplied configs`);
+      config.debug && console.log(`${NAME}:${VERSION} initialized with supplied configs`);
     } else {
       console.warn('Expected an object not a', typeof opts);
     }
@@ -46,7 +47,7 @@ var reconstructive = (function() {
     if (shouldExclude(event, config)) return;
     if (!config.urimRegex.test(event.request.url)) {
       let urim = createUrim(event);
-      console.log('Locally redirecting to:', urim, event);
+      config.debug && console.log('Locally redirecting to:', urim, event);
       event.respondWith(async urim => {
         return localRedirect(urim);
       });
@@ -92,7 +93,7 @@ var reconstructive = (function() {
   }
 
   function fetchSuccess(event, response, config) {
-    console.log('Fetched from server:', response);
+    config.debug && console.log('Fetched from server:', response);
     if (response.ok) {
       return rewrite(event, response, config);
     }
@@ -100,7 +101,7 @@ var reconstructive = (function() {
   }
 
   function fetchFailure(error) {
-    console.log(error);
+    config.debug && console.log(error);
     return new Response('<h1>Service Unavailable</h1>', {
       status: 503,
       statusText: 'Service Unavailable',
