@@ -50,7 +50,7 @@ var reconstructive = (function() {
       let urim = createUrim(event);
       event.respondWith((urim => localRedirect(urim))(urim));
     } else {
-      request = createRequest(event);
+      let request = createRequest(event);
       event.respondWith(
         fetch(request)
           .then(response => fetchSuccess(event, response, config))
@@ -66,7 +66,7 @@ var reconstructive = (function() {
     }
     let urir = new URL(event.request.url);
     if (urir.origin == self.location.origin) {
-      refOrigin = refUrir.match(/^(https?:\/\/)?[^\/]+/)[0];
+      let refOrigin = refUrir.match(/^(https?:\/\/)?[^\/]+/)[0];
       urir = refOrigin + urir.pathname + urir.search;
     } else {
       urir = urir.href;
