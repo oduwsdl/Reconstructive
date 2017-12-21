@@ -257,8 +257,8 @@ var Reconstructive = (function() {
    * reroute - The callback fucntion on the fetch event.
    *           Logs the fetch event for debugging.
    *           Checks for any rerouting exclusions.
-   *           If the request URL is not a URI-M, responds with a redirect to the potential URI-M.
-   *           Creates a new request with certain modifications in the original then fetches it from the server.
+   *           If the request URL is a URI-M then creates a new request with certain modifications in the original request and fetches it from the server.
+   *           Otherwise, responds with a redirect to the potential URI-M.
    *           Both success and failure responses are dealt with approprietely.
    *
    * @public
@@ -269,16 +269,16 @@ var Reconstructive = (function() {
     // Let the browser deal with the requests if it matches a rerouting exclusion.
     if (shouldExclude(event, config)) return;
     // This condition will match if the request URL is not a URI-M.
-    if (!config.urimRegex.test(event.request.url)) {
-      let urim = createUrim(event);
-      event.respondWith((urim => localRedirect(urim))(urim));
-    } else {
+    if (config.urimRegex.test(event.request.url)) {
       let request = createRequest(event);
       event.respondWith(
         fetch(request)
           .then(response => fetchSuccess(event, response, config))
           .catch(fetchFailure)
       );
+    } else {
+      let urim = createUrim(event);
+      event.respondWith((urim => localRedirect(urim))(urim));
     }
   }
 
