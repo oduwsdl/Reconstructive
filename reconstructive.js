@@ -48,16 +48,12 @@ var reconstructive = (function() {
     if (shouldExclude(event, config)) return;
     if (!config.urimRegex.test(event.request.url)) {
       let urim = createUrim(event);
-      event.respondWith(async function(urim) {
-        return localRedirect(urim);
-      }(urim));
+      event.respondWith((urim => localRedirect(urim))(urim));
     } else {
       request = createRequest(event);
       event.respondWith(
         fetch(request)
-        .then(response => {
-          return fetchSuccess(event, response, config);
-        })
+        .then(response => fetchSuccess(event, response, config))
         .catch(fetchFailure)
       );
     }
@@ -111,7 +107,7 @@ var reconstructive = (function() {
     });
   }
 
-  function localRedirect(urim) {
+  async function localRedirect(urim) {
     config.debug && console.log('Locally redirecting to:', urim);
     return new Response(`<h1>Locally Redirecting</h1><p>${urim}</p>`, {
       status: 302,
