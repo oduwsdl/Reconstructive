@@ -6,14 +6,12 @@ This can be used in archival replay systems such as [IPWB](https://github.com/od
 
 ## Getting started
 
-Assuming that your ServiceWorker script (e.g., `serviceworker.js`) is already registered, add following lines in that script.
+Assuming that your ServiceWorker script (e.g., `serviceworker.js`) is already registered, add the following lines in that script.
 
 ```js
 importScripts('https://oduwsdl.github.io/reconstructive/reconstructive.js');
 
-self.addEventListener("fetch", function(event) {
-  reconstructive.reroute(event);
-});
+self.addEventListener('fetch', Reconstructive.reroute);
 ```
 
 This will start monitoring every request originated from its scope and reroute them to their appropriate mementos at `/memento/<datetime>/<urir>` as necessary.

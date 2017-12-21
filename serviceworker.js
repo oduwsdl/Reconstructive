@@ -10,7 +10,7 @@ importScripts('reconstructive.js');
 //   urimPattern: `${self.location.origin}/memento/<datetime>/<urir>`,
 //   showBanner: false
 // });
-reconstructive.init({
+Reconstructive.init({
   debug: true,
   urimPattern: self.location.href.substring(0, self.location.href.lastIndexOf('/')) + '/archived/<datetime>/<urir>'
 });
@@ -28,16 +28,16 @@ reconstructive.init({
 // reconstructive.updateRewriter(f (event, response, config) => Response);
 
 // This is not necessary, but can be useful for debugging or in future
-self.addEventListener("install", function(event) {
+self.addEventListener('install', function(event) {
   console.log('ServiceWorker installed');
 });
 
 // This is not necessary, but can be useful for debugging or in future
-self.addEventListener("activate", function(event) {
+self.addEventListener('activate', function(event) {
   console.log('ServiceWorker Activated');
 });
 
-self.addEventListener("fetch", function(event) {
+self.addEventListener('fetch', function(event) {
   // Add any custom logic here to conditionally call the reroute function
-  reconstructive.reroute(event);
+  Reconstructive.reroute(event);
 });
