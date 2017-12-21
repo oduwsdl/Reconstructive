@@ -10,12 +10,8 @@ var reconstructive = (function() {
   };
 
   let exclusions = {
-    notGet: function(event, config) {
-      return event.request.method != 'GET';
-    },
-    localResource: function(event, config) {
-      return !(config.urimRegex.test(event.request.url) || config.urimRegex.test(event.request.referrer));
-    }
+    notGet: (event, config) => event.request.method != 'GET',
+    localResource: (event, config) => !(config.urimRegex.test(event.request.url) || config.urimRegex.test(event.request.referrer))
   };
 
   function shouldExclude(event, config) {

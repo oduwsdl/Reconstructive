@@ -18,14 +18,14 @@ reconstructive.init({
 // Add any custom exclusions or modify or delete default ones
 //> reconstructive.exclusions;
 //< {
-//<   notGet: f (event, config),
-//<   localResource: f (event, config)
+//<   notGet: f (event, config) => boolean,
+//<   localResource: f (event, config) => boolean
 //< }
 
 // Pass a custom function to generate banner markup
-// reconstructive.bannerCreator(f (event, response, config));
+// reconstructive.bannerCreator(f (event, response, config) => HTMLString);
 // Or update the rewriting logic
-// reconstructive.updateRewriter(f (event, response, config));
+// reconstructive.updateRewriter(f (event, response, config) => Response);
 
 // This is not necessary, but can be useful for debugging or in future
 self.addEventListener("install", function(event) {
