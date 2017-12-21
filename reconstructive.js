@@ -9,21 +9,6 @@ var reconstructive = (function() {
     showBanner: false
   };
 
-  let exclusions = {
-    notGet: (event, config) => event.request.method != 'GET',
-    localResource: (event, config) => !(config.urimRegex.test(event.request.url) || config.urimRegex.test(event.request.referrer))
-  };
-
-  function shouldExclude(event, config) {
-    return Object.keys(exclusions).some(key => {
-      if (exclusions[key](event, config)) {
-        config.debug && console.log('Exclusion found:', key, event.request.url);
-        return true;
-      }
-      return false;
-    });
-  }
-
   function derivedConfig() {
     config.urimRegex = new RegExp('^' + config.urimPattern.replace('<datetime>', '(\\d{14})').replace('<urir>', '(.*)') + '$');
   }
@@ -39,20 +24,19 @@ var reconstructive = (function() {
     }
   }
 
-  function reroute(event) {
-    config.debug && console.log('Rerouting requested', event);
-    if (shouldExclude(event, config)) return;
-    if (!config.urimRegex.test(event.request.url)) {
-      let urim = createUrim(event);
-      event.respondWith((urim => localRedirect(urim))(urim));
-    } else {
-      let request = createRequest(event);
-      event.respondWith(
-        fetch(request)
-          .then(response => fetchSuccess(event, response, config))
-          .catch(fetchFailure)
-      );
-    }
+  let exclusions = {
+    notGet: (event, config) => event.request.method != 'GET',
+    localResource: (event, config) => !(config.urimRegex.test(event.request.url) || config.urimRegex.test(event.request.referrer))
+  };
+
+  function shouldExclude(event, config) {
+    return Object.keys(exclusions).some(key => {
+      if (exclusions[key](event, config)) {
+        config.debug && console.log('Exclusion found:', key, event.request.url);
+        return true;
+      }
+      return false;
+    });
   }
 
   function createUrim(event) {
@@ -84,12 +68,16 @@ var reconstructive = (function() {
     return headers;
   }
 
-  function fetchSuccess(event, response, config) {
-    config.debug && console.log('Fetched from server:', response);
-    if (response.ok) {
-      return rewrite(event, response, config);
-    }
-    return response;
+  async function localRedirect(urim) {
+    config.debug && console.log('Locally redirecting to:', urim);
+    return new Response(`<h1>Locally Redirecting</h1><p>${urim}</p>`, {
+      status: 302,
+      statusText: 'Found',
+      headers: new Headers({
+        'Location': urim,
+        'Content-Type': 'text/html'
+      })
+    });
   }
 
   function fetchFailure(error) {
@@ -103,16 +91,28 @@ var reconstructive = (function() {
     });
   }
 
-  async function localRedirect(urim) {
-    config.debug && console.log('Locally redirecting to:', urim);
-    return new Response(`<h1>Locally Redirecting</h1><p>${urim}</p>`, {
-      status: 302,
-      statusText: 'Found',
-      headers: new Headers({
-        'Location': urim,
-        'Content-Type': 'text/html'
-      })
-    });
+  function fetchSuccess(event, response, config) {
+    config.debug && console.log('Fetched from server:', response);
+    if (response.ok) {
+      return rewrite(event, response, config);
+    }
+    return response;
+  }
+
+  function reroute(event) {
+    config.debug && console.log('Rerouting requested', event);
+    if (shouldExclude(event, config)) return;
+    if (!config.urimRegex.test(event.request.url)) {
+      let urim = createUrim(event);
+      event.respondWith((urim => localRedirect(urim))(urim));
+    } else {
+      let request = createRequest(event);
+      event.respondWith(
+        fetch(request)
+          .then(response => fetchSuccess(event, response, config))
+          .catch(fetchFailure)
+      );
+    }
   }
 
   function rewrite(event, response, config) {
