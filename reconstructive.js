@@ -203,16 +203,16 @@ var Reconstructive = (function() {
    *                Returns a potentially modified response. a potentially modified response.
    *
    * @private
-   * @param   {FetchEvent} event    - The fetch event.
    * @param   {Response}   response - Original response object.
+   * @param   {FetchEvent} event    - The fetch event.
    * @param   {object}     config   - The config object.
    * @return  {Response}            - Potentially modified response.
    */
-  function fetchSuccess(event, response, config) {
+  function fetchSuccess(response, event, config) {
     config.debug && console.log('Fetched from server:', resp
     // Inject a banner only on navigational HTML pages when onse);
     if (response.ok) {
-      return rewrite(event, response, config);
+      return rewrite(response, event, config);
     }
     return response;
   }
@@ -224,16 +224,16 @@ var Reconstructive = (function() {
    *           Returns a potentially modified response.
    *
    * @private
-   * @param   {FetchEvent} event    - The fetch event.
    * @param   {Response}   response - Original response object.
+   * @param   {FetchEvent} event    - The fetch event.
    * @param   {object}     config   - The config object.
    * @return  {Response}            - Potentially modified response.
    */
-  function rewrite(event, response, config) {
+  function rewrite(response, event, config) {
     // TODO: Make necessary changes in the response
     // Inject a banner only on navigational HTML pages when showBanner config is set to true.
     if (config.showBanner && event.request.mode == 'navigate' && /text\/html/i.test(response.headers.get('Content-Type'))) {
-      let banner = createBanner(event, response, config);
+      let banner = createBanner(response, event, config);
       // TODO: Add the banner markup in the appropriate place
     }
     return response;
@@ -243,12 +243,12 @@ var Reconstructive = (function() {
    * createBanner - Creates a string reperesenting an HTML element to be injected in the response's HTML body.
    *
    * @private
-   * @param   {FetchEvent} event    - The fetch event.
    * @param   {Response}   response - Original response object.
+   * @param   {FetchEvent} event    - The fetch event.
    * @param   {object}     config   - The config object.
    * @return  {string}              - Potentially modified response.
    */
-  function createBanner(event, response, config) {
+  function createBanner(response, event, config) {
     // TODO: Add a genric banner markup
     return '';
   }
@@ -273,7 +273,7 @@ var Reconstructive = (function() {
       let request = createRequest(event);
       event.respondWith(
         fetch(request)
-          .then(response => fetchSuccess(event, response, config))
+          .then(response => fetchSuccess(response, event, config))
           .catch(fetchFailure)
       );
     } else {
@@ -289,7 +289,7 @@ var Reconstructive = (function() {
    *                  Logs a warning if the supplied argument is not a function.
    *
    * @public
-   * @param  {function} fn - A function with the signature: (event, response, config) => Response.
+   * @param  {function} fn - A function with the signature: (response, event, config) => Response.
    */
   function updateRewriter(fn) {
     if (fn instanceof Function) {
@@ -306,7 +306,7 @@ var Reconstructive = (function() {
    *                 Logs a warning if the supplied argument is not a function.
    *
    * @public
-   * @param  {function} fn - A function with the signature: (event, response, config) => string.
+   * @param  {function} fn - A function with the signature: (response, event, config) => string.
    */
   function bannerCreator(fn) {
     if (fn instanceof Function) {
