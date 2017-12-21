@@ -53,8 +53,8 @@ var reconstructive = (function() {
       request = createRequest(event);
       event.respondWith(
         fetch(request)
-        .then(response => fetchSuccess(event, response, config))
-        .catch(fetchFailure)
+          .then(response => fetchSuccess(event, response, config))
+          .catch(fetchFailure)
       );
     }
   }
@@ -156,5 +156,4 @@ var reconstructive = (function() {
     updateRewriter: updateRewriter,
     bannerCreator: bannerCreator
   };
-
 })();
