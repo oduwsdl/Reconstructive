@@ -218,35 +218,6 @@ var Reconstructive = (function() {
   }
 
   /**
-   * reroute - The callback fucntion on the fetch event.
-   *           Logs the fetch event for debugging.
-   *           Checks for any rerouting exclusions.
-   *           If the request URL is not a URI-M, responds with a redirect to the potential URI-M.
-   *           Creates a new request with certain modifications in the original then fetches it from the server.
-   *           Both success and failure responses are dealt with approprietely.
-   *
-   * @public
-   * @param  {FetchEvent} event - The fetch event.
-   */
-  function reroute(event) {
-    config.debug && console.log('Rerouting requested', event);
-    // Let the browser deal with the requests if it matches a rerouting exclusion.
-    if (shouldExclude(event, config)) return;
-    // This condition will match if the request URL is not a URI-M.
-    if (!config.urimRegex.test(event.request.url)) {
-      let urim = createUrim(event);
-      event.respondWith((urim => localRedirect(urim))(urim));
-    } else {
-      let request = createRequest(event);
-      event.respondWith(
-        fetch(request)
-          .then(response => fetchSuccess(event, response, config))
-          .catch(fetchFailure)
-      );
-    }
-  }
-
-  /**
    * rewrite - Rewrites the fetched response when necessary.
    *           Potential uses are to fix certain replay issues, adding an archival banner, or modifying hyperlinks.
    *           When the showBanner config is set to true, it tries to add a banner in navigational HTML pages.
@@ -280,6 +251,35 @@ var Reconstructive = (function() {
   function createBanner(event, response, config) {
     // TODO: Add a genric banner markup
     return '';
+  }
+
+  /**
+   * reroute - The callback fucntion on the fetch event.
+   *           Logs the fetch event for debugging.
+   *           Checks for any rerouting exclusions.
+   *           If the request URL is not a URI-M, responds with a redirect to the potential URI-M.
+   *           Creates a new request with certain modifications in the original then fetches it from the server.
+   *           Both success and failure responses are dealt with approprietely.
+   *
+   * @public
+   * @param  {FetchEvent} event - The fetch event.
+   */
+  function reroute(event) {
+    config.debug && console.log('Rerouting requested', event);
+    // Let the browser deal with the requests if it matches a rerouting exclusion.
+    if (shouldExclude(event, config)) return;
+    // This condition will match if the request URL is not a URI-M.
+    if (!config.urimRegex.test(event.request.url)) {
+      let urim = createUrim(event);
+      event.respondWith((urim => localRedirect(urim))(urim));
+    } else {
+      let request = createRequest(event);
+      event.respondWith(
+        fetch(request)
+          .then(response => fetchSuccess(event, response, config))
+          .catch(fetchFailure)
+      );
+    }
   }
 
   /**
