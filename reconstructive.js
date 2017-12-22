@@ -242,7 +242,7 @@ var Reconstructive = (function() {
       };
       return response.text().then(body => {
         // TODO: Abstract some logic in smallar functions for clarity.
-        let [, datetime, resUrir] = response.match(config.urimRegex);
+        let [, datetime, resUrir] = response.url.match(config.urimRegex);
         if (isNaN(datetime)) {
           [datetime, resUrir] = [resUrir, datetime];
         }
