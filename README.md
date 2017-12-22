@@ -74,7 +74,7 @@ Add more members to the object to add more exclusions or modify/delete existing 
 Reconstructive.exclusions.bannerLogo = (event, config) => event.request.url.endsWith('replay-banner-logo.png');
 ```
 
-We have added a new exclusion named `bannerLogo` which will return true if the requested URL ends with `replay-banner-logo.png`.
+We have added a new exclusion named `bannerLogo` which will return `true` if the requested URL ends with `replay-banner-logo.png`.
 This exclusion will ensure that the request will not be routed to an archived version of the logo.
 In a practical application such exclusion rules should be kept very tight to avoid any false positives.
 
