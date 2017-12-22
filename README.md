@@ -66,7 +66,7 @@ There is also a derived option `config.urimRegex` available that is the RegExp f
 Add more members to the object to add more exclusions or modify/delete existing ones.
 
 ```js
-// Following is the default config object.
+// Following is the default exclusions object.
 // exclusions = {
 //   notGet: (event, config) => event.request.method != 'GET',
 //   localResource: (event, config) => !(config.urimRegex.test(event.request.url) || config.urimRegex.test(event.request.referrer))
