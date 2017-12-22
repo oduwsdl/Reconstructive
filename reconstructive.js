@@ -37,6 +37,7 @@ var Reconstructive = (function() {
    */
   function derivedConfig() {
     config.urimRegex = new RegExp('^' + config.urimPattern.replace('<datetime>', '(\\d{14})').replace('<urir>', '(.*)') + '$');
+    config.iframePattern = new RegExp('(<iframe.*?\s+src\\s*=\\s*["\']?)(https?:\/\/[^\'"\\s]+)(.*?>)', 'ig');
   }
   // Invovke immediately to ensure derived configs are populated even if init() is not called by the user.
   derivedConfig();
@@ -232,10 +233,31 @@ var Reconstructive = (function() {
    */
   function rewrite(response, event, config) {
     // TODO: Make necessary changes in the response
-    // Inject a banner only on navigational HTML pages when showBanner config is set to true.
-    if (config.showBanner && event.request.mode == 'navigate' && /text\/html/i.test(response.headers.get('Content-Type'))) {
-      let banner = createBanner(response, event, config);
-      // TODO: Add the banner markup in the appropriate place
+    if (/text\/html/i.test(response.headers.get('Content-Type'))) {
+      let headers = cloneHeaders(response.headers);
+      let init = {
+        status: response.status,
+        statusText: response.statusText,
+        headers: headers
+      };
+      return response.text().then(body => {
+        // TODO: Abstract some logic in smallar functions for clarity.
+        let [, datetime, resUrir] = response.match(config.urimRegex);
+        if (isNaN(datetime)) {
+          [datetime, resUrir] = [resUrir, datetime];
+        }
+        body = body.replace(config.iframePattern, `$1${config.urimPattern.replace('<datetime>', datetime).replace('<urir>', '$2')}$3`);
+        // Inject a banner only on navigational HTML pages when showBanner config is set to true.
+        if (config.showBanner && event.request.mode == 'navigate') {
+          let banner = createBanner(response, event, config);
+          if (/<\/(body|html)>/i.test(body)) {
+            body = body.replace(/<\/(body|html)>/i, banner+'</$1>');
+          } else {
+            body += banner;
+          }
+        }
+        return new Response(body, init);
+      });
     }
     return response;
   }
