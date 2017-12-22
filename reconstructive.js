@@ -171,6 +171,7 @@ var Reconstructive = (function() {
       statusText: 'Found',
       headers: new Headers({
         'Location': urim,
+        'Access-Control-Allow-Origin': '*',
         'Content-Type': 'text/html'
       })
     });
