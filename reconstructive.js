@@ -209,8 +209,8 @@ var Reconstructive = (function() {
    * @return  {Response}            - Potentially modified response.
    */
   function fetchSuccess(response, event, config) {
-    config.debug && console.log('Fetched from server:', resp
-    // Inject a banner only on navigational HTML pages when onse);
+    config.debug && console.log('Fetched from server:', response);
+    // Perform a potential rewrite only if the response code is 2xx.
     if (response.ok) {
       return rewrite(response, event, config);
     }
