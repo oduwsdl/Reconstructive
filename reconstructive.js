@@ -63,10 +63,10 @@ var Reconstructive = (function() {
 
  /**
   * exclusions - An object of functions to check whether the request should be excluded from being rerouted.
-  *              Add more memebers to the object to add more exclusions or modify/delete existing ones.
+  *              Add more members to the object to add more exclusions or modify/delete existing ones.
   *              The property name can be anything descriptive of the particular exclusion, which will be shown in debug logs.
   *              Each member function is called with the fetch event and config object as parameters.
-  *              If any memeber returns true, the fetch event is excluded from being rerouted.
+  *              If any member returns true, the fetch event is excluded from being rerouted.
   *
   * @public
   */
