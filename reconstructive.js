@@ -37,7 +37,7 @@ var Reconstructive = (function() {
    */
   function derivedConfig() {
     config.urimRegex = new RegExp('^' + config.urimPattern.replace('<datetime>', '(\\d{14})').replace('<urir>', '(.*)') + '$');
-    config.iframePattern = new RegExp('(<iframe.*?\\s+src\\s*=\\s*["\']?)(https?:\/\/[^\'"\\s]+)(.*?>)', 'ig');
+    config.absoluteRefrencePattern = new RegExp('(<(iframe|a).*?\\s+(src|href)\\s*=\\s*["\']?)(https?:\/\/[^\'"\\s]+)(.*?>)', 'ig');
   }
   // Invovke immediately to ensure derived configs are populated even if init() is not called by the user.
   derivedConfig();
@@ -104,12 +104,7 @@ var Reconstructive = (function() {
    */
   function createUrim(event) {
     // Extract datetime and the URI-R of the referrer.
-    let [, datetime, refUrir] = event.request.referrer.match(config.urimRegex);
-    // Swap the two extracted values if the datetime pattern appeared after the URI-R.
-    // This is not a common practice, but possible if an archive uses query parameters instead of paths.
-    if (isNaN(datetime)) {
-      [datetime, refUrir] = [refUrir, datetime];
-    }
+    let [datetime  refUrir] = extractDatetimeUrir(event.request.referrer);
     let urir = new URL(event.request.url);
     // This condition will match when the request was initiated from an absolute path and fail if it was an absolute URL.
     if (urir.origin == self.location.origin) {
@@ -122,6 +117,23 @@ var Reconstructive = (function() {
       urir = urir.href;
     }
     return config.urimPattern.replace('<datetime>', datetime).replace('<urir>', urir);
+  }
+
+  /**
+   * extractDatetimeUrir - Extracts datetime and URI-R from a URI-M.
+   *
+   * @private
+   * @param   {string} urim - A URI-M.
+   * @return  {array}       - An array of datetime and URI-let R.
+   */
+  function extractDatetimeUrir(urim) {
+    let [, datetime, urir] = urim.match(config.urimRegex);
+    // Swap the two extracted values if the datetime pattern appeared after the URI-R.
+    // This is not a common practice, but possible if an archive uses query parameters instead of paths.
+    if (isNaN(datetime)) {
+      [datetime, urir] = [urir, datetime];
+    }
+    return [datetime, urir];
   }
 
   /**
@@ -241,15 +253,14 @@ var Reconstructive = (function() {
         headers: headers
       };
       return response.text().then(body => {
-        // TODO: Abstract some logic in smallar functions for clarity.
-        let [, datetime, resUrir] = response.url.match(config.urimRegex);
-        if (isNaN(datetime)) {
-          [datetime, resUrir] = [resUrir, datetime];
-        }
-        body = body.replace(config.iframePattern, `$1${config.urimPattern.replace('<datetime>', datetime).replace('<urir>', '$2')}$3`);
+        let [datetime] = extractDatetimeUrir(response.url);
+        // Replace all absolute URLs in src and href attributes of <iframe> and <a> elements with corresponding URI-Ms to avoid replay and navigation issues.
+        body = body.replace(config.absoluteRefrencePattern, `$1${config.urimPattern.replace('<datetime>', datetime).replace('<urir>', '$4')}$5`);
         // Inject a banner only on navigational HTML pages when showBanner config is set to true.
         if (config.showBanner && event.request.mode == 'navigate') {
           let banner = createBanner(response, event, config);
+          // Try to inject the banner markup before closing </body> tag, fallback to </html>.
+          // If none of the two closing tags are found, append it to the body.
           if (/<\/(body|html)>/i.test(body)) {
             body = body.replace(/<\/(body|html)>/i, banner+'</$1>');
           } else {
