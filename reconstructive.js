@@ -104,7 +104,7 @@ var Reconstructive = (function() {
    */
   function createUrim(event) {
     // Extract datetime and the URI-R of the referrer.
-    let [datetime  refUrir] = extractDatetimeUrir(event.request.referrer);
+    let [datetime, refUrir] = extractDatetimeUrir(event.request.referrer);
     let urir = new URL(event.request.url);
     // This condition will match when the request was initiated from an absolute path and fail if it was an absolute URL.
     if (urir.origin == self.location.origin) {
