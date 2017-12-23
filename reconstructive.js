@@ -37,7 +37,7 @@ var Reconstructive = (function() {
    */
   function derivedConfig() {
     config.urimRegex = new RegExp('^' + config.urimPattern.replace('<datetime>', '(\\d{14})').replace('<urir>', '(.*)') + '$');
-    config.iframePattern = new RegExp('(<iframe.*?\s+src\\s*=\\s*["\']?)(https?:\/\/[^\'"\\s]+)(.*?>)', 'ig');
+    config.iframePattern = new RegExp('(<iframe.*?\\s+src\\s*=\\s*["\']?)(https?:\/\/[^\'"\\s]+)(.*?>)', 'ig');
   }
   // Invovke immediately to ensure derived configs are populated even if init() is not called by the user.
   derivedConfig();
