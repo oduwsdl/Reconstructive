@@ -110,8 +110,6 @@ let customRewriter = (response, event, config) => {
 Reconstructive.updateRewriter(customRewriter);
 ```
 
-*NOTE: Currently, no rewriting is implemented in the default `rewrite()` function, but overriding with a custom implementation is still possible.*
-
 ### Custom Banner
 
 Reconstructive has a built-in private `createBanner()` function that creates a banner markup using [Web Components](https://www.webcomponents.org/).
@@ -125,5 +123,3 @@ let customBannerCreator = (response, event, config) => {
 }
 Reconstructive.bannerCreator(customRewriter);
 ```
-
-*NOTE: Currently, banner inclusion functionality is not implemented. You can archive it using a `customRewriter()` function meanwhile.*
