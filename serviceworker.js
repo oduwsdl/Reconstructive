@@ -10,10 +10,12 @@ importScripts('reconstructive.js');
 //   urimPattern: `${self.location.origin}/memento/<datetime>/<urir>`,
 //   showBanner: false
 // });
+let currentPath = self.location.href.substring(0, self.location.href.lastIndexOf('/'));
 Reconstructive.init({
   debug: true,
   showBanner: true,
-  urimPattern: self.location.href.substring(0, self.location.href.lastIndexOf('/')) + '/archived/<datetime>/<urir>'
+  bannerElementLocation: `${currentPath}/reconstructive-banner.js`,
+  urimPattern: `${currentPath}/archived/<datetime>/<urir>`
 });
 
 // Add any custom exclusions or modify or delete default ones
