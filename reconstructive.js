@@ -17,10 +17,11 @@ var Reconstructive = (function() {
    * config - Primary config object that can be customized using init() fucntion.
    *
    * @private
-   * @property {string}  id          - Identifier of the module, sent to the server as X-ServiceWorker header. Defaults to the name and version of the module.
-   * @property {string}  urimPattern - The format of URI-Ms (e.g., http://example.com/archive/<datetime>/<urir>).
-   * @property {boolean} showBanner  - Whether or not to show an archival banner. Defaults to false.
-   * @property {boolean} debug       - Whether or not to show debug messages in the console. Defaults to false.
+   * @property {string}  id                    - Identifier of the module, sent to the server as X-ServiceWorker header. Defaults to the name and version of the module.
+   * @property {string}  urimPattern           - The format of URI-Ms (e.g., http://example.com/archive/<datetime>/<urir>).
+   * @property {string}  bannerElementLocation - The URL or absolute path of the JS file that defines custom banner element. Only necessary if showBanner is set to true.
+   * @property {boolean} showBanner            - Whether or not to show an archival banner. Defaults to false.
+   * @property {boolean} debug                 - Whether or not to show debug messages in the console. Defaults to false.
    */
   let config = {
     id: `${NAME}:${VERSION}`,

@@ -46,11 +46,13 @@ Let's change some options:
 // config = {
 //   id: `${NAME}:${VERSION}`,
 //   urimPattern: `${self.location.origin}/memento/<datetime>/<urir>`,
+//   bannerElementLocation: `${self.location.origin}/reconstructive-banner.js`,
 //   showBanner: false,
 //   debug: false
 // }
 Reconstructive.init({
   urimPattern: `${self.location.origin}/archived/<datetime>/<urir>`,
+  bannerElementLocation: `${self.location.origin}/javascript/reconstructive-banner.js`,
   showBanner: true,
   debug: true,
   customColor: '#0C383B'
@@ -69,6 +71,7 @@ Add more members to the object to add more exclusions or modify/delete existing 
 // Following is the default exclusions object.
 // exclusions = {
 //   notGet: (event, config) => event.request.method != 'GET',
+//   bannerElement: (event, config) => config.showBanner && event.request.url.endsWith(config.bannerElementLocation),
 //   localResource: (event, config) => !(config.urimRegex.test(event.request.url) || config.urimRegex.test(event.request.referrer))
 // }
 Reconstructive.exclusions.bannerLogo = (event, config) => event.request.url.endsWith('replay-banner-logo.png');
