@@ -25,6 +25,7 @@ var Reconstructive = (function() {
   let config = {
     id: `${NAME}:${VERSION}`,
     urimPattern: `${self.location.origin}/memento/<datetime>/<urir>`,
+    bannerElementLocation: `${self.location.origin}/reconstructive-banner.js`,
     showBanner: false,
     debug: false
   };
@@ -73,6 +74,7 @@ var Reconstructive = (function() {
   */
   let exclusions = {
     notGet: (event, config) => event.request.method != 'GET',
+    bannerElement: (event, config) => config.showBanner && event.request.url.endsWith(config.bannerElementLocation),
     localResource: (event, config) => !(config.urimRegex.test(event.request.url) || config.urimRegex.test(event.request.referrer))
   };
 
@@ -283,8 +285,9 @@ var Reconstructive = (function() {
    * @return  {string}              - Potentially modified response.
    */
   function createBanner(response, event, config) {
-    // TODO: Add a genric banner markup
-    return '';
+    let [datetime, urir] = extractDatetimeUrir(response.url);
+    return `<script src="${config.bannerElementLocation}"></script>
+            <reconstructive-banner urir="${urir}" datetime="${datetime}"></reconstructive-banner>`;
   }
 
   /**

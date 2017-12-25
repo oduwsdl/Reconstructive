@@ -12,6 +12,7 @@ importScripts('reconstructive.js');
 // });
 Reconstructive.init({
   debug: true,
+  showBanner: true,
   urimPattern: self.location.href.substring(0, self.location.href.lastIndexOf('/')) + '/archived/<datetime>/<urir>'
 });
 
