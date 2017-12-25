@@ -14,9 +14,11 @@ class ReconstructiveBanner extends HTMLElement {
           width: 100%;
           position: fixed;
           bottom: 0;
+          transition: opacity 0.5s ease-in;
         }
         div.hidden {
-          display: none;
+          opacity: 0;
+          transition: opacity 0.5s ease-in;
         }
         div#reconstructive-banner-container {
           max-width: 500px;
@@ -59,12 +61,16 @@ class ReconstructiveBanner extends HTMLElement {
     `;
     this.shadow.innerHTML = template;
 
+    let container = this.shadow.getElementById('reconstructive-banner-container');
+    this.focused = false;
+    container.onmouseover = () => this.focused = true;
+    container.onmouseout = () => this.focused = false;
     let aligner = this.shadow.getElementById('reconstructive-banner-aligner');
     let t;
     let resetTimer = () => {
       aligner.classList.remove('hidden');
       clearTimeout(t);
-      t = setTimeout(() => aligner.classList.add('hidden'), 3000);
+      t = setTimeout(() => !this.focused && aligner.classList.add('hidden'), 2000);
     }
     window.onload = resetTimer;
     window.onmousemove = resetTimer;
