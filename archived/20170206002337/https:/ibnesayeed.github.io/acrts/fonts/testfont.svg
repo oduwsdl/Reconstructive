@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<svg width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg">
+	<metadata>
+
+		Project: WebFontSuccess
+		Font exported on 2017-2-4 at 14:30:31
+
+		Created with Glyphr Studio - the free, web-based font editor
+		Version 1.07
+		1.07.09
+
+		Find out more at www.glyphrstudio.com
+
+	</metadata>
+	<defs>
+		<font id="WebFontSuccess" horiz-adv-x="1000">
+			<font-face
+				units-per-em="1000"
+				cap-height="675"
+				x-height="400"
+				ascent="700"
+				descent="-300"
+				bbox="0, 0, 700, 700"
+				unicode-range="U+20-126"
+				font-family="WebFontSuccess"
+				font-style="normal"
+				panose-1="2 0 0 0 0 0 0 0 0 0"
+				designer=""
+				designerURL=""
+				manufacturer=""
+				manufacturerURL=""
+				license=""
+				licenseURL=""
+				version=""
+				description=""
+				copyright=""
+				trademark=""
+				font-variant="normal"
+				font-weight="400"
+				font-stretch="normal"
+				stemv="0"
+				stemh="0"
+				slope="0"
+				underline-position="-50"
+				underline-thickness="10"
+				strikethrough-position="300"
+				strikethrough-thickness="10"
+				overline-position="750"
+				overline-thickness="10">
+				<font-face-src>
+					<font-face-name name="WebFontSuccess" />
+				</font-face-src>
+			</font-face>
+
+         	<missing-glyph horiz-adv-x="433" d="M0,0 v700 h433 v-700 h-433z M7,7 v686 h419 v-686 h-419z" />
+
+			<!-- Ligatures -->
+
+			<!-- Glyphs -->
+			<glyph glyph-name="Space" unicode="&#x0020;" horiz-adv-x="0" d="M0,0Z" />
+			<glyph glyph-name="Latin_Capital_Letter_S" unicode="&#x0053;" horiz-adv-x="700" d="M20,700 C20,700,720,700,720,700 C720,700,720,0,720,0 C720,0,20,0,20,0 C20,0,20,700,20,700Z" />
+			<glyph glyph-name="Latin_Small_Letter_S" unicode="&#x0073;" horiz-adv-x="700" d="M20,700 C20,700,720,700,720,700 C720,700,720,0,720,0 C720,0,20,0,20,0 C20,0,20,700,20,700Z" />
+
+			<!-- Kern Pairs -->
+
+		</font>
+	</defs>
+
+	<text x="100" y="150" style="font-size:48px;" font-family="WebFontSuccess">WebFontSuccess</text>
+	<text x="100" y="220" style="font-size:48px;" font-family="WebFontSuccess">ABCDEFGHIJKLMNOPQRSTUVWXYZ</text>
+	<text x="100" y="290" style="font-size:48px;" font-family="WebFontSuccess">abcdefghijklmnopqrstuvwxyz</text>
+	<text x="100" y="360" style="font-size:48px;" font-family="WebFontSuccess">1234567890</text>
+	<text x="100" y="430" style="font-size:48px;" font-family="WebFontSuccess">!"#$%&amp;'()*+,-./:;&lt;=&gt;?@[\]^_`{|}~</text>
+</svg>

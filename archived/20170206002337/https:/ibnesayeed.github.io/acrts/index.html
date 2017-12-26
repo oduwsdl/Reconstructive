@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>ARCHIVED | Archive Capture Replay Test Suite</title>
+    <link rel="stylesheet" href="https://ibnesayeed.github.io/acrts/css/style.css">
+    <style media="screen">
+    body {
+      font-family: sans-serif;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    #test-cases {
+      box-sizing: border-box;
+      justify-content: center;
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .test {
+      width: 500px;
+      border: 1px solid gray;
+      box-shadow: 1px 1px 3px #888;
+      min-height: 50px;
+      padding: 10px;
+      margin: 10px;
+    }
+
+    div.result {
+      width: 30px;
+      height: 30px;
+      border: 1px solid #999;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    div.result img {
+      width: 30px;
+      height: 30px;
+    }
+
+    h2.case {
+      font-weight: bold;
+      margin-left: 40px;
+      margin-top: -30px;
+    }
+
+    p.description {
+      margin: 10px;
+      line-height: 1.4em;
+      font-size: 1.2em;
+    }
+
+    /* Test-case related */
+
+    #self-page .result {
+      background: #0f0;
+    }
+
+    #by-css .result {
+      background-image: url('https://ibnesayeed.github.io/acrts/img/by-css.png');
+    }
+
+    @font-face {
+      font-family: 'testfont';
+      src: url('https://ibnesayeed.github.io/acrts/fonts/testfont.eot');
+      src: url('https://ibnesayeed.github.io/acrts/fonts/testfont.eot?#iefix') format('embedded-opentype'),
+           url('https://ibnesayeed.github.io/acrts/fonts/testfont.woff2') format('woff2'),
+           url('https://ibnesayeed.github.io/acrts/fonts/testfont.woff') format('woff'),
+           url('https://ibnesayeed.github.io/acrts/fonts/testfont.ttf') format('truetype'),
+           url('https://ibnesayeed.github.io/acrts/fonts/testfont.svg#WebFontSuccess') format('svg');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    #font-face-container {
+      line-height: 50px;
+      font-size: 50px;
+      white-space: nowrap;
+      font-family: 'testfont';
+    }
+
+    #font-face-container .empty {
+      color: #fff;
+      background-color: #fff;
+    }
+
+    #font-face-container .failure {
+      color: #f00;
+      background-color: #f00;
+    }
+
+    #font-face-container .success {
+      color: #0f0;
+      background-color: #0f0;
+    }
+    </style>
+  </head>
+  <body>
+    <h1>Archive Capture Replay Test Suite (ARCHIVED)</h1>
+    <div id="test-cases">
+
+      <div class="test" id="self-page">
+        <div class="result">
+        </div>
+        <h2 class="case">Self Page</h2>
+        <p>TODO: Write the description of the test...</p>
+      </div>
+
+      <div class="test" id="relative-path">
+        <div class="result">
+          <img src="img/relative-path.png" alt="" />
+        </div>
+        <h2 class="case">Relative Path</h2>
+        <p>TODO: Write the description of the test...</p>
+      </div>
+
+      <div class="test" id="absolute-path">
+        <div class="result">
+          <img src="/acrts/img/absolute-path.png" alt="" />
+        </div>
+        <h2 class="case">Absolute Path</h2>
+        <p>TODO: Write the description of the test...</p>
+      </div>
+
+      <div class="test" id="absolute-url">
+        <div class="result">
+          <img src="https://ibnesayeed.github.io/acrts/img/absolute-url.png" alt="" />
+        </div>
+        <h2 class="case">Absolute URL</h2>
+        <p>TODO: Write the description of the test...</p>
+      </div>
+
+      <div class="test" id="image-srcset">
+        <div class="result">
+          <img src="https://ibnesayeed.github.io/acrts/img/default.png" srcset="https://ibnesayeed.github.io/acrts/img/image-srcset-1.png 1x, https://ibnesayeed.github.io/acrts/img/image-srcset-2.png 2x, https://ibnesayeed.github.io/acrts/img/image-srcset-3.png 3x" alt="" />
+        </div>
+        <h2 class="case">Image srcset</h2>
+        <p>TODO: Write the description of the test...</p>
+      </div>
+
+      <div class="test" id="external-url">
+        <div class="result">
+          <img src="https://oduwsdl.github.io/acrts-supplement/img/external-url.png" alt="" />
+        </div>
+        <h2 class="case">External URL</h2>
+        <p>TODO: Write the description of the test...</p>
+      </div>
+
+      <div class="test" id="external-iframe">
+        <div class="result">
+          <iframe src="https://oduwsdl.github.io/acrts-supplement/external-iframe.html" seamless="seamless" allowtransparency="true" scrolling="no" style="border:none;"></iframe>
+        </div>
+        <h2 class="case">External Iframe</h2>
+        <p>TODO: Write the description of the test...</p>
+      </div>
+
+      <div class="test" id="by-external-iframe">
+        <div class="result">
+          <iframe src="https://oduwsdl.github.io/acrts-supplement/by-external-iframe.html" seamless="seamless" allowtransparency="true" scrolling="no" style="border:none;"></iframe>
+        </div>
+        <h2 class="case">By External Iframe</h2>
+        <p>TODO: Write the description of the test...</p>
+      </div>
+
+      <div class="test" id="by-css">
+        <div class="result">
+        </div>
+        <h2 class="case">By CSS</h2>
+        <p>TODO: Write the description of the test...</p>
+      </div>
+
+      <div class="test" id="css-file">
+        <div class="result">
+        </div>
+        <h2 class="case">CSS File</h2>
+        <p>TODO: Write the description of the test...</p>
+      </div>
+
+      <div class="test" id="by-css-file">
+        <div class="result">
+        </div>
+        <h2 class="case">By CSS File</h2>
+        <p>TODO: Write the description of the test...</p>
+      </div>
+
+      <div class="test" id="css-font-face">
+        <div class="result">
+          <div id="font-face-container">
+            <span class="empty">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span class="failure">F</span>
+            <span class="success">S</span>
+          </div>
+        </div>
+        <h2 class="case">CSS @font-face</h2>
+        <p>TODO: Write the description of the test...</p>
+      </div>
+
+      <div class="test" id="by-js-on-page-load">
+        <div class="result">
+        </div>
+        <h2 class="case">By JS On Page Load</h2>
+        <p>TODO: Write the description of the test...</p>
+      </div>
+
+      <div class="test" id="by-js-on-page-scroll">
+        <div class="result">
+        </div>
+        <h2 class="case">By JS On Page Scroll</h2>
+        <p>TODO: Write the description of the test...</p>
+      </div>
+
+      <div class="test" id="by-js-on-click">
+        <div class="result">
+        </div>
+        <h2 class="case">By JS On Click</h2>
+        <p>TODO: Write the description of the test...</p>
+      </div>
+
+      <div class="test" id="js-file">
+        <div class="result">
+        </div>
+        <h2 class="case">JS File</h2>
+        <p>TODO: Write the description of the test...</p>
+      </div>
+
+      <div class="test" id="by-js-file">
+        <div class="result">
+        </div>
+        <h2 class="case">By JS File</h2>
+        <p>TODO: Write the description of the test...</p>
+      </div>
+
+      <div class="test" id="by-ajax">
+        <div class="result">
+        </div>
+        <h2 class="case">By Ajax</h2>
+        <p>TODO: Write the description of the test...</p>
+      </div>
+
+    </div>
+
+    <script type="text/javascript">
+      function getImagePath(name) {
+        return 'https://ibnesayeed.github.io/acrts/img/' + name + '.png'
+      }
+
+      function setBackgroundImage(name) {
+        var el = document.querySelector("#" + name + " .result");
+        el.style.backgroundImage = "url('" + getImagePath(name) + "')";
+      }
+
+      setBackgroundImage('by-js-on-page-load');
+
+      window.onscroll = function() {
+        setBackgroundImage('by-js-on-page-scroll');
+      };
+
+      document.getElementById('by-js-on-click').onclick = function() {
+        setBackgroundImage('by-js-on-click');
+      };
+
+      document.querySelectorAll('.result img').forEach(function(img){
+        img.onerror = function() {
+          this.style.display='none';
+        };
+      });
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', 'https://ibnesayeed.github.io/acrts/data/by-ajax.txt');
+      xhr.send(null);
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            document.querySelector('#by-ajax .result').style.backgroundColor = xhr.responseText;
+          }
+        }
+      };
+    </script>
+    <script src="https://ibnesayeed.github.io/acrts/js/script.js"></script>
+  </body>
+</html>
