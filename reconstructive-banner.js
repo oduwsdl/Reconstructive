@@ -72,12 +72,12 @@ class ReconstructiveBanner extends HTMLElement {
       clearTimeout(t);
       t = setTimeout(() => !this.focused && aligner.classList.add('hidden'), 2000);
     }
-    window.onload = resetTimer;
-    window.onmousemove = resetTimer;
-    window.onmousedown = resetTimer;
-    window.onclick = resetTimer;
-    window.onscroll = resetTimer;
-    window.onkeypress = resetTimer;
+    window.addEventListener('load', resetTimer);
+    window.addEventListener('mousemove', resetTimer);
+    window.addEventListener('mousedown', resetTimer);
+    window.addEventListener('click', resetTimer);
+    window.addEventListener('scroll', resetTimer);
+    window.addEventListener('keypress', resetTimer);
   }
 }
 
