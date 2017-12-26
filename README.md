@@ -52,7 +52,7 @@ Let's change some options:
 // }
 Reconstructive.init({
   urimPattern: `${self.location.origin}/archived/<datetime>/<urir>`,
-  bannerElementLocation: `${self.location.origin}/javascript/reconstructive-banner.js`,
+  bannerElementLocation: 'https://oduwsdl.github.io/reconstructive/reconstructive-banner.js',
   showBanner: true,
   debug: true,
   customColor: '#0C383B'
