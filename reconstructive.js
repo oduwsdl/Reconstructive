@@ -5,13 +5,13 @@
  *
  * @overview  Reconstructive is a module to be used in a ServiceWorker of an archival replay.
  * @author    Sawood Alam <ibnesayeed@gmail.com>
- * @version   0.3
+ * @version   0.4
  * @license   MIT
  * @copyright ODU Web Science / Digital Libraries Research Group 2017
  */
 var Reconstructive = (function() {
   const NAME = 'Reconstructive',
-        VERSION = '0.3';
+        VERSION = '0.4';
 
   /**
    * config - Primary config object that can be customized using init() fucntion.
