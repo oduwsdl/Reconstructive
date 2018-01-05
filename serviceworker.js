@@ -6,9 +6,10 @@ importScripts('reconstructive.js');
 // Customize configs
 // reconstructive.init({
 //   id: `${NAME}:${VERSION}`,
-//   debug: false,
 //   urimPattern: `${self.location.origin}/memento/<datetime>/<urir>`,
-//   showBanner: false
+//   bannerElementLocation: `${self.location.origin}/reconstructive-banner.js`,
+//   showBanner: false,
+//   debug: false
 // });
 let currentPath = self.location.href.substring(0, self.location.href.lastIndexOf('/'));
 Reconstructive.init({
@@ -22,6 +23,7 @@ Reconstructive.init({
 //> reconstructive.exclusions;
 //< {
 //<   notGet: f (event, config) => boolean,
+//<   bannerElement: f (event, config) => boolean,
 //<   localResource: f (event, config) => boolean
 //< }
 
