@@ -14,7 +14,7 @@ var Reconstructive = (function() {
         VERSION = '0.4';
 
   /**
-   * config - Primary config object that can be customized using init() fucntion.
+   * config - Primary config object that can be customized using init() function.
    *
    * @private
    * @property {string}  id                    - Identifier of the module, sent to the server as X-ServiceWorker header. Defaults to the name and version of the module.
@@ -159,7 +159,7 @@ var Reconstructive = (function() {
    * cloneHeaders - Clones provided request or response headers.
    *
    * @private
-   * @param   {Headers} original - Origina request or response headers.
+   * @param   {Headers} original - Original request or response headers.
    * @return  {Headers}          - A clone of the supplied headers.
    */
   function cloneHeaders(original) {
@@ -292,7 +292,7 @@ var Reconstructive = (function() {
   }
 
   /**
-   * reroute - The callback fucntion on the fetch event.
+   * reroute - The callback function on the fetch event.
    *           Logs the fetch event for debugging.
    *           Checks for any rerouting exclusions.
    *           If the request URL is a URI-M then creates a new request with certain modifications in the original request and fetches it from the server.
@@ -359,7 +359,7 @@ var Reconstructive = (function() {
    *
    * @public
    * @namespace Reconstructive
-   * @property  {function}     init           - Initialization fucntion to update configs.
+   * @property  {function}     init           - Initialization function to update configs.
    * @property  {object}       exclusions     - Object of rerouting exclusion functions.
    * @property  {function}     reroute        - Callback function to be bound on fetch event.
    * @property  {function}     updateRewriter - Setter function to override rewrite() function.
