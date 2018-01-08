@@ -10,6 +10,10 @@ Reconstructive is a [ServiceWorker](https://developer.mozilla.org/en-US/docs/Web
 This is an implementation of a [published research paper](http://www.cs.odu.edu/~mln/pubs/jcdl-2017/jcdl-2017-alam-service-worker.pdf).
 This can be used in archival replay systems such as [IPWB](https://github.com/oduwsdl/ipwb) or in the UI of memento aggregators such as [MemGator](https://github.com/oduwsdl/memgator).
 
+The following figure illustrates an example where an external image reference in an archived web page would have leaked to the live-web, but due to the presence of Reconstructive, it was successfully rerouted to the corresponding archived copy instead.
+
+![Reconstructive Example](resources/reconstructive-example.png)
+
 ## Getting Started
 
 Assuming that your ServiceWorker script (e.g., `serviceworker.js`) is already registered, add the following lines in that script.
@@ -126,3 +130,13 @@ let customBannerCreator = (response, event, config) => {
 }
 Reconstructive.bannerCreator(customRewriter);
 ```
+
+## How it Works?
+
+In order to reroute requests to the URI of a potential archived copy (also known as Memento URI or URI-M) Reconstructive needs the request URL and the referrer URL, of which the latter must be a URI-M.
+It extracts the datetime and the original URI (or URI-R) of the referrer then combines them with the request URL as necessary to construct a potential URI-M for the request to be rerouted to.
+If the request URL is already a URI-M, it simply adds a custom request header `X-ServiceWorker` and fetches the response from the server.
+When necessary, the response is rewritten on the client-side to fix some quirks to make sure that the replay works as expected or to optionally add an archival banner.
+The following flowchart diagram shows what happens in every request/response cycle of a fetch event in Reconstructive.
+
+![Reconstructive Flowchart](resources/reconstructive-flowchart.png)
