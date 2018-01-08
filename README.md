@@ -14,6 +14,8 @@ The following figure illustrates an example where an external image reference in
 
 ![Reconstructive Example](resources/reconstructive-example.png)
 
+Read our introductory blog post [Introducing Reconstructive - An Archival Replay ServiceWorker Module](http://ws-dl.blogspot.com/2018/01/2018-01-08-introducing-reconstructive.html) for more details.
+
 ## Getting Started
 
 Assuming that your ServiceWorker script (e.g., `serviceworker.js`) is already registered, add the following lines in that script.
