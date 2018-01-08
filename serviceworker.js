@@ -16,7 +16,7 @@ Reconstructive.init({
   debug: true,
   showBanner: true,
   bannerElementLocation: `${currentPath}/reconstructive-banner.js`,
-  urimPattern: `${currentPath}/archived/<datetime>/<urir>`
+  urimPattern: `${currentPath}/tests/<datetime>/<urir>`
 });
 
 // Add any custom exclusions or modify or delete default ones
