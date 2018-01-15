@@ -52,7 +52,7 @@ var Reconstructive = (function() {
    *        Logs a warning if the supplied argument is not an object.
    *
    * @public
-   * @param  {objec} opts - An options object to customize the config object.
+   * @param  {object} opts - An options object to customize the config object.
    */
   function init(opts) {
     if(opts instanceof Object) {
