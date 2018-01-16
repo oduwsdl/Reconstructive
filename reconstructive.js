@@ -64,28 +64,27 @@ var Reconstructive = (function() {
     }
   }
 
- /**
-  * exclusions - An object of functions to check whether the request should be excluded from being rerouted.
-  *              Add more members to the object to add more exclusions or modify/delete existing ones.
-  *              The property name can be anything descriptive of the particular exclusion, which will be shown in debug logs.
-  *              Each member function is called with the fetch event and config object as parameters.
-  *              If any member returns true, the fetch event is excluded from being rerouted.
-  *
-  * @public
-  */
+  /**
+   * An object of functions to check whether the request should be excluded from being rerouted.
+   * Add more members to the object to add more exclusions or modify/delete existing ones.
+   * The property name can be anything descriptive of the particular exclusion, which will be shown in debug logs.
+   * Each member function is called with the fetch event and config object as parameters.
+   * If any member returns true, the fetch event is excluded from being rerouted.
+   *
+   * @type {{notGet: function(*): boolean, bannerElement: function(*): boolean, localResource: function(*): boolean}}
+   */
   let exclusions = {
     notGet: (event, config) => event.request.method != 'GET',
     bannerElement: (event, config) => config.showBanner && event.request.url.endsWith(config.bannerElementLocation),
     localResource: (event, config) => !(config.urimRegex.test(event.request.url) || config.urimRegex.test(event.request.referrer))
   };
 
+
   /**
-   * shouldExclude - Iterates over all the members of the exclusions object and returns true if any of the members return true, otherwise returns false.
-   *                 Logs the first matching exclusion for debugging, if any.
+   * Iterates over all the members of the exclusions object and returns true if any of the members return true, otherwise returns false.
+   * Logs the first matching exclusion for debugging, if any.
    *
-   * @private
    * @param   {FetchEvent} event  - The fetch event.
-   * @param   {object}     config - The config object.
    * @return  {boolean}           - Should the request be rerouted?
    */
   function shouldExclude(event, config) {
@@ -99,9 +98,8 @@ var Reconstructive = (function() {
   }
 
   /**
-   * createUrim - Creates a potential URI-M based on the requested URL and the referrer URL for request rerouting.
+   * Creates a potential URI-M based on the requested URL and the referrer URL for request rerouting.
    *
-   * @private
    * @param   {FetchEvent} event  - The fetch event.
    * @return  {string}            - A potential URI-M.
    */
@@ -123,11 +121,10 @@ var Reconstructive = (function() {
   }
 
   /**
-   * extractDatetimeUrir - Extracts datetime and URI-R from a URI-M.
+   * Extracts datetime and URI-R from a URI-M.
    *
-   * @private
    * @param   {string} urim - A URI-M.
-   * @return  {array}       - An array of datetime and URI-let R.
+   * @return  {string[]}       - An array of datetime and URI-let R.
    */
   function extractDatetimeUrir(urim) {
     let [, datetime, urir] = urim.match(config.urimRegex);
@@ -140,12 +137,11 @@ var Reconstructive = (function() {
   }
 
   /**
-   * createRequest - Creates a new request based on the original.
-   *                 Coppies all the headers from the original request.
-   *                 Adds X-ServiceWorker header with the id of the module.
-   *                 Sets the redirect mode to manual to ensure proper origin boundaries.
+   * Creates a new request based on the original.
+   * Copies all the headers from the original request.
+   * Adds X-ServiceWorker header with the id of the module.
+   * Sets the redirect mode to manual to ensure proper origin boundaries.
    *
-   * @private
    * @param   {FetchEvent} event  - The fetch event.
    * @return  {Request}           - A new request object.
    */
@@ -156,9 +152,8 @@ var Reconstructive = (function() {
   }
 
   /**
-   * cloneHeaders - Clones provided request or response headers.
+   * Clones provided request or response headers.
    *
-   * @private
    * @param   {Headers} original - Original request or response headers.
    * @return  {Headers}          - A clone of the supplied headers.
    */
@@ -171,14 +166,12 @@ var Reconstructive = (function() {
   }
 
   /**
-   * localRedirect - Redirects a non-URI-M request to its poytential URI-M locally.
-   *                 The potential URI-M is generated using createUrim().
-   *                 This function only returns a synthetic redirection response.
+   * Redirects a non-URI-M request to its poytential URI-M locally.
+   * The potential URI-M is generated using createUrim().
+   * This function only returns a synthetic redirection response.
    *
-   * @private
-   * @async
    * @param  {string}   urim - A potential URI-M.
-   * @return {Response}      - A 302 redirection response to the potential URI-M.
+   * @return {Promise<Response>}      - A 302 redirection response to the potential URI-M.
    */
   async function localRedirect(urim) {
     config.debug && console.log('Locally redirecting to:', urim);
@@ -194,11 +187,10 @@ var Reconstructive = (function() {
   }
 
   /**
-   * fetchFailure - The callback function on network failure of the server fetch.
-   *                Logs the failure reason for debugging.
-   *                Returns a synthetic 503 Service Unavailable response.
+   * The callback function on network failure of the server fetch.
+   * Logs the failure reason for debugging.
+   * Returns a synthetic 503 Service Unavailable response.
    *
-   * @private
    * @param   {Error}    error - The exception rasied on fetching from the server.
    * @return  {Response}       - A 503 Service Unavailable response.
    */
@@ -214,16 +206,14 @@ var Reconstructive = (function() {
   }
 
   /**
-   * fetchSuccess - The callback function on a successful fetch from the server.
-   *                Calls the rewrite() function if the response code is 2xx.
-   *                Logs the response for debugging.
-   *                Returns a potentially modified response. a potentially modified response.
+   * The callback function on a successful fetch from the server.
+   * Calls the rewrite() function if the response code is 2xx.
+   * Logs the response for debugging.
+   * Returns a potentially modified response. a potentially modified response.
    *
-   * @private
    * @param   {Response}   response - Original response object.
    * @param   {FetchEvent} event    - The fetch event.
-   * @param   {object}     config   - The config object.
-   * @return  {Response}            - Potentially modified response.
+   * @return  {Response | Promise<Response>}            - Potentially modified response.
    */
   function fetchSuccess(response, event, config) {
     config.debug && console.log('Fetched from server:', response);
@@ -234,17 +224,16 @@ var Reconstructive = (function() {
     return response;
   }
 
+
   /**
-   * rewrite - Rewrites the fetched response when necessary.
-   *           Potential uses are to fix certain replay issues, adding an archival banner, or modifying hyperlinks.
-   *           When the showBanner config is set to true, it tries to add a banner in navigational HTML pages.
-   *           Returns a potentially modified response.
+   * Rewrites the fetched response when necessary.
+   * Potential uses are to fix certain replay issues, adding an archival banner, or modifying hyperlinks.
+   * When the showBanner config is set to true, it tries to add a banner in navigational HTML pages.
+   * Returns a potentially modified response.
    *
-   * @private
    * @param   {Response}   response - Original response object.
    * @param   {FetchEvent} event    - The fetch event.
-   * @param   {object}     config   - The config object.
-   * @return  {Response}            - Potentially modified response.
+   * @return  {Promise<Response>|Response}            - Potentially modified response.
    */
   function rewrite(response, event, config) {
     // TODO: Make necessary changes in the response
@@ -277,13 +266,11 @@ var Reconstructive = (function() {
   }
 
   /**
-   * createBanner - Creates a string reperesenting an HTML element to be injected in the response's HTML body.
-   *
+   * Creates a string reperesenting an HTML element to be injected in the response's HTML body.
+   * @param {string} datetime
+   * @param {string} urir
+   * @return {string} The banner to inject
    * @private
-   * @param   {Response}   response - Original response object.
-   * @param   {FetchEvent} event    - The fetch event.
-   * @param   {object}     config   - The config object.
-   * @return  {string}              - Potentially modified response.
    */
   function createBanner(response, event, config) {
     let [datetime, urir] = extractDatetimeUrir(response.url);
@@ -291,15 +278,15 @@ var Reconstructive = (function() {
             <reconstructive-banner urir="${urir}" datetime="${datetime}"></reconstructive-banner>`;
   }
 
+
   /**
-   * reroute - The callback function on the fetch event.
-   *           Logs the fetch event for debugging.
-   *           Checks for any rerouting exclusions.
-   *           If the request URL is a URI-M then creates a new request with certain modifications in the original request and fetches it from the server.
-   *           Otherwise, responds with a redirect to the potential URI-M.
-   *           Both success and failure responses are dealt with approprietely.
+   * The callback function on the fetch event.
+   * Logs the fetch event for debugging.
+   * Checks for any rerouting exclusions.
+   * If the request URL is a URI-M then creates a new request with certain modifications in the original request and fetches it from the server.
+   * Otherwise, responds with a redirect to the potential URI-M.
+   * Both success and failure responses are dealt with appropriately.
    *
-   * @public
    * @param  {FetchEvent} event - The fetch event.
    */
   function reroute(event) {
