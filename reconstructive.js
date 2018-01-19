@@ -1,84 +1,96 @@
 /**
- * [Reconstructive]{@link https://github.com/oduwsdl/reconstructive} is a ServiceWorker module for client-side reconstruction of composite mementos.
+ * Reconstructive {@link https://github.com/oduwsdl/reconstructive} is a ServiceWorker module for client-side reconstruction of composite mementos.
  * It reroutes embedded resource requests to their approprieate arcival version without any URL rewriting.
  * It also provides functionality to add custom archival banners or rewrite hyperlinks on the client-side.
  *
  * @overview  Reconstructive is a module to be used in a ServiceWorker of an archival replay.
  * @author    Sawood Alam <ibnesayeed@gmail.com>
- * @version   0.4
+ * @version   0.5.0
  * @license   MIT
  * @copyright ODU Web Science / Digital Libraries Research Group 2017
  */
-var Reconstructive = (function() {
-  const NAME = 'Reconstructive',
-        VERSION = '0.4';
-
+class Reconstructive {
   /**
-   * config - Primary config object that can be customized using init() function.
-   *
-   * @private
-   * @property {string}  id                    - Identifier of the module, sent to the server as X-ServiceWorker header. Defaults to the name and version of the module.
-   * @property {string}  urimPattern           - The format of URI-Ms (e.g., http://example.com/archive/<datetime>/<urir>).
-   * @property {string}  bannerElementLocation - The URL or absolute path of the JS file that defines custom banner element. Only necessary if showBanner is set to true.
-   * @property {boolean} showBanner            - Whether or not to show an archival banner. Defaults to false.
-   * @property {boolean} debug                 - Whether or not to show debug messages in the console. Defaults to false.
+   * @param {{debug: boolean, showBanner: boolean, bannerElementLocation: string, urimPattern: string}} [opts] Configuration options
    */
-  let config = {
-    id: `${NAME}:${VERSION}`,
-    urimPattern: `${self.location.origin}/memento/<datetime>/<urir>`,
-    bannerElementLocation: `${self.location.origin}/reconstructive-banner.js`,
-    showBanner: false,
-    debug: false
-  };
+  constructor(opts) {
+    /**
+     * @type {string}
+     */
+    this.NAME = 'Reconstructive';
 
-  /**
-   * derivedConfig - Derives some config properties from the existing.
-   *                 Executed on module load and init() call.
-   *
-   * @private
-   */
-  function derivedConfig() {
-    config.urimRegex = new RegExp('^' + config.urimPattern.replace('<datetime>', '(\\d{14})').replace('<urir>', '(.*)') + '$');
-    config.absoluteRefrencePattern = new RegExp('(<(iframe|a).*?\\s+(src|href)\\s*=\\s*["\']?)(https?:\/\/[^\'"\\s]+)(.*?>)', 'ig');
-  }
-  // Invovke immediately to ensure derived configs are populated even if init() is not called by the user.
-  derivedConfig();
 
-  /**
-   * init - Customize configs by supplying an object.
-   *        The supplied object is merged into the existing config.
-   *        Overwrites exisiting properties and adds any exta ones.
-   *        Logs the id of the module for debugging.
-   *        Logs a warning if the supplied argument is not an object.
-   *
-   * @public
-   * @param  {object} opts - An options object to customize the config object.
-   */
-  function init(opts) {
-    if(opts instanceof Object) {
-      Object.assign(config, opts);
-      derivedConfig();
-      config.debug && console.log(`${NAME}:${VERSION} initialized with supplied configs`);
-    } else {
-      console.warn('Expected an object not a', typeof opts);
+    /**
+     * @type {string}
+     */
+    this.VERSION = '0.5.0';
+
+    /**
+     * Identifier of the module, sent to the server as X-ServiceWorker header. Defaults to the name and version of the module.
+     * @type {string}
+     */
+    this.id = `${this.NAME}:${this.VERSION}`;
+
+    /**
+     * The format of URI-Ms (e.g., http://example.com/archive/<datetime>/<urir>).
+     * @type {string}
+     */
+    this.urimPattern = `${self.location.origin}/memento/<datetime>/<urir>`;
+
+    /**
+     * The URL or absolute path of the JS file that defines custom banner element. Only necessary if showBanner is set to true.
+     * @type {string}
+     */
+    this.bannerElementLocation = `${self.location.origin}/reconstructive-banner.js`;
+
+    /**
+     * Whether or not to show an archival banner. Defaults to false.
+     * @type {boolean}
+     */
+    this.showBanner = false;
+
+    /**
+     * Whether or not to show debug messages in the console. Defaults to false.
+     * @type {boolean}
+     */
+    this.debug = true;
+
+    /**
+     * An object of functions to check whether the request should be excluded from being rerouted.
+     * Add more members to the object to add more exclusions or modify/delete existing ones.
+     * The property name can be anything descriptive of the particular exclusion, which will be shown in debug logs.
+     * Each member function is called with the fetch event and config object as parameters.
+     * If any member returns true, the fetch event is excluded from being rerouted.
+     *
+     * @type {{notGet: function(event: FetchEvent): boolean, bannerElement: function(event: FetchEvent): boolean, localResource: function(event: FetchEvent): boolean}}
+     */
+    this.exclusions = {
+      notGet: event => event.request.method !== 'GET',
+      bannerElement: event => this.showBanner && event.request.url.endsWith(this.bannerElementLocation),
+      localResource: event => !(this._urimRegex.test(event.request.url) || this._urimRegex.test(event.request.referrer))
     }
+
+    if (opts instanceof Object) {
+      for (const [k, v] of Object.entries(opts)) {
+        /** @ignore **/
+        this[k] = v;
+      }
+    }
+
+    /**
+     * @type {RegExp}
+     * @private
+     */
+    this._absoluteRefrencePattern = new RegExp('(<(iframe|a).*?\\s+(src|href)\\s*=\\s*["\']?)(https?:\/\/[^\'"\\s]+)(.*?>)', 'ig');
+
+    /**
+     * @type {RegExp}
+     * @private
+     */
+    this._urimRegex = new RegExp(`^${this.urimPattern.replace('<datetime>', '(\\d{14})').replace('<urir>', '(.*)')}$`);
+
+    this.fetchFailure = this.fetchFailure.bind(this)
   }
-
-  /**
-   * An object of functions to check whether the request should be excluded from being rerouted.
-   * Add more members to the object to add more exclusions or modify/delete existing ones.
-   * The property name can be anything descriptive of the particular exclusion, which will be shown in debug logs.
-   * Each member function is called with the fetch event and config object as parameters.
-   * If any member returns true, the fetch event is excluded from being rerouted.
-   *
-   * @type {{notGet: function(*): boolean, bannerElement: function(*): boolean, localResource: function(*): boolean}}
-   */
-  let exclusions = {
-    notGet: (event, config) => event.request.method != 'GET',
-    bannerElement: (event, config) => config.showBanner && event.request.url.endsWith(config.bannerElementLocation),
-    localResource: (event, config) => !(config.urimRegex.test(event.request.url) || config.urimRegex.test(event.request.referrer))
-  };
-
 
   /**
    * Iterates over all the members of the exclusions object and returns true if any of the members return true, otherwise returns false.
@@ -87,14 +99,14 @@ var Reconstructive = (function() {
    * @param   {FetchEvent} event  - The fetch event.
    * @return  {boolean}           - Should the request be rerouted?
    */
-  function shouldExclude(event, config) {
-    return Object.keys(exclusions).some(key => {
-      if (exclusions[key](event, config)) {
-        config.debug && console.log('Exclusion found:', key, event.request.url);
-        return true;
+  shouldExclude(event) {
+    return Object.entries(this.exclusions).some(([exclusionName, exclusionFun]) => {
+      if (exclusionFun(event)) {
+        this.debug && console.log('Exclusion found:', exclusionName, event.request.url);
+        return true
       }
-      return false;
-    });
+      return false
+    })
   }
 
   /**
@@ -103,12 +115,12 @@ var Reconstructive = (function() {
    * @param   {FetchEvent} event  - The fetch event.
    * @return  {string}            - A potential URI-M.
    */
-  function createUrim(event) {
+  createUrim(event) {
     // Extract datetime and the URI-R of the referrer.
-    let [datetime, refUrir] = extractDatetimeUrir(event.request.referrer);
+    let [datetime, refUrir] = this.extractDatetimeUrir(event.request.referrer);
     let urir = new URL(event.request.url);
     // This condition will match when the request was initiated from an absolute path and fail if it was an absolute URL.
-    if (urir.origin == self.location.origin) {
+    if (urir.origin === self.location.origin) {
       // If it was an absolute path then referrer's origin was used.
       // We need to replace it with the origin of the referrer's URI-R instead.
       // The RegExp used will capture the origin with the protocol, if any (http, https, or BLANK).
@@ -117,7 +129,7 @@ var Reconstructive = (function() {
     } else {
       urir = urir.href;
     }
-    return config.urimPattern.replace('<datetime>', datetime).replace('<urir>', urir);
+    return this.urimPattern.replace('<datetime>', datetime).replace('<urir>', urir);
   }
 
   /**
@@ -126,12 +138,12 @@ var Reconstructive = (function() {
    * @param   {string} urim - A URI-M.
    * @return  {string[]}       - An array of datetime and URI-let R.
    */
-  function extractDatetimeUrir(urim) {
-    let [, datetime, urir] = urim.match(config.urimRegex);
+  extractDatetimeUrir(urim) {
+    let [, datetime, urir] = urim.match(this._urimRegex);
     // Swap the two extracted values if the datetime pattern appeared after the URI-R.
     // This is not a common practice, but possible if an archive uses query parameters instead of paths.
     if (isNaN(datetime)) {
-      [datetime, urir] = [urir, datetime];
+      return [urir, datetime];
     }
     return [datetime, urir];
   }
@@ -145,22 +157,23 @@ var Reconstructive = (function() {
    * @param   {FetchEvent} event  - The fetch event.
    * @return  {Request}           - A new request object.
    */
-  function createRequest(event) {
-    let headers = cloneHeaders(event.request.headers);
-    headers.set('X-ServiceWorker', config.id);
+  createRequest(event) {
+    let headers = this.cloneHeaders(event.request.headers);
+    headers.set('X-ServiceWorker', this.id);
     return new Request(event.request.url, {headers: headers, redirect: 'manual'});
   }
 
   /**
    * Clones provided request or response headers.
    *
+   * @public
    * @param   {Headers} original - Original request or response headers.
    * @return  {Headers}          - A clone of the supplied headers.
    */
-  function cloneHeaders(original) {
+  cloneHeaders(original) {
     let headers = new Headers();
-    for (let hdr of original.entries()) {
-      headers.append(hdr[0], hdr[1]);
+    for (let [k, v] of original.entries()) {
+      headers.append(k, v);
     }
     return headers;
   }
@@ -173,9 +186,9 @@ var Reconstructive = (function() {
    * @param  {string}   urim - A potential URI-M.
    * @return {Promise<Response>}      - A 302 redirection response to the potential URI-M.
    */
-  async function localRedirect(urim) {
-    config.debug && console.log('Locally redirecting to:', urim);
-    return new Response(`<h1>Locally Redirecting</h1><p>${urim}</p>`, {
+  localRedirect(urim) {
+    this.debug && console.log('Locally redirecting to:', urim);
+    return Promise.resolve(new Response(`<h1>Locally Redirecting</h1><p>${urim}</p>`, {
       status: 302,
       statusText: 'Found',
       headers: new Headers({
@@ -183,26 +196,7 @@ var Reconstructive = (function() {
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'text/html'
       })
-    });
-  }
-
-  /**
-   * The callback function on network failure of the server fetch.
-   * Logs the failure reason for debugging.
-   * Returns a synthetic 503 Service Unavailable response.
-   *
-   * @param   {Error}    error - The exception rasied on fetching from the server.
-   * @return  {Response}       - A 503 Service Unavailable response.
-   */
-  function fetchFailure(error) {
-    config.debug && console.log(error);
-    return new Response('<h1>Service Unavailable</h1>', {
-      status: 503,
-      statusText: 'Service Unavailable',
-      headers: new Headers({
-        'Content-Type': 'text/html'
-      })
-    });
+    }));
   }
 
   /**
@@ -213,17 +207,35 @@ var Reconstructive = (function() {
    *
    * @param   {Response}   response - Original response object.
    * @param   {FetchEvent} event    - The fetch event.
-   * @return  {Response | Promise<Response>}            - Potentially modified response.
+   * @return  {Promise<Response>}            - Potentially modified response.
    */
-  function fetchSuccess(response, event, config) {
-    config.debug && console.log('Fetched from server:', response);
+  fetchSuccess(response, event) {
+    this.debug && console.log('Fetched from server:', response);
     // Perform a potential rewrite only if the response code is 2xx.
     if (response.ok) {
-      return rewrite(response, event, config);
+      return this.rewrite(response, event);
     }
-    return response;
+    return Promise.resolve(response);
   }
 
+  /**
+   * The callback function on network failure of the server fetch.
+   * Logs the failure reason for debugging.
+   * Returns a synthetic 503 Service Unavailable response.
+   *
+   * @param   {Error}    error - The exception rasied on fetching from the server.
+   * @return  {Response}       - A 503 Service Unavailable response.
+   */
+  fetchFailure(error) {
+    this.debug && console.log(error);
+    return new Response('<h1>Service Unavailable</h1>', {
+      status: 503,
+      statusText: 'Service Unavailable',
+      headers: new Headers({
+        'Content-Type': 'text/html'
+      })
+    });
+  }
 
   /**
    * Rewrites the fetched response when necessary.
@@ -233,24 +245,24 @@ var Reconstructive = (function() {
    *
    * @param   {Response}   response - Original response object.
    * @param   {FetchEvent} event    - The fetch event.
-   * @return  {Promise<Response>|Response}            - Potentially modified response.
+   * @return  {Promise<Response>}  - Potentially modified response.
    */
-  function rewrite(response, event, config) {
+  rewrite(response, event) {
     // TODO: Make necessary changes in the response
     if (/text\/html/i.test(response.headers.get('Content-Type'))) {
-      let headers = cloneHeaders(response.headers);
+      let headers = this.cloneHeaders(response.headers);
       let init = {
         status: response.status,
         statusText: response.statusText,
         headers: headers
       };
       return response.text().then(body => {
-        let [datetime] = extractDatetimeUrir(response.url);
+        let [datetime, urir] = this.extractDatetimeUrir(response.url);
         // Replace all absolute URLs in src and href attributes of <iframe> and <a> elements with corresponding URI-Ms to avoid replay and navigation issues.
-        body = body.replace(config.absoluteRefrencePattern, `$1${config.urimPattern.replace('<datetime>', datetime).replace('<urir>', '$4')}$5`);
+        body = body.replace(this._absoluteRefrencePattern, `$1${this.urimPattern.replace('<datetime>', datetime).replace('<urir>', '$4')}$5`);
         // Inject a banner only on navigational HTML pages when showBanner config is set to true.
-        if (config.showBanner && event.request.mode == 'navigate') {
-          let banner = createBanner(response, event, config);
+        if (this.showBanner && event.request.mode === 'navigate') {
+          let banner = this.createBanner(datetime, urir);
           // Try to inject the banner markup before closing </body> tag, fallback to </html>.
           // If none of the two closing tags are found, append it to the body.
           if (/<\/(body|html)>/i.test(body)) {
@@ -262,22 +274,19 @@ var Reconstructive = (function() {
         return new Response(body, init);
       });
     }
-    return response;
+    return Promise.resolve(response);
   }
 
   /**
-   * Creates a string reperesenting an HTML element to be injected in the response's HTML body.
+   * Creates a string representing an HTML element to be injected in the response's HTML body.
    * @param {string} datetime
    * @param {string} urir
    * @return {string} The banner to inject
-   * @private
    */
-  function createBanner(response, event, config) {
-    let [datetime, urir] = extractDatetimeUrir(response.url);
-    return `<script src="${config.bannerElementLocation}"></script>
+  createBanner(datetime, urir) {
+    return `<script src="${this.bannerElementLocation}"></script>
             <reconstructive-banner urir="${urir}" datetime="${datetime}"></reconstructive-banner>`;
   }
-
 
   /**
    * The callback function on the fetch event.
@@ -289,74 +298,22 @@ var Reconstructive = (function() {
    *
    * @param  {FetchEvent} event - The fetch event.
    */
-  function reroute(event) {
-    config.debug && console.log('Rerouting requested', event);
+  reroute(event) {
+    this.debug && console.log('Rerouting requested', event);
     // Let the browser deal with the requests if it matches a rerouting exclusion.
-    if (shouldExclude(event, config)) return;
+    if (this.shouldExclude(event)) return;
     // This condition will match if the request URL is not a URI-M.
-    if (config.urimRegex.test(event.request.url)) {
-      let request = createRequest(event);
+    if (this._urimRegex.test(event.request.url)) {
+      let request = this.createRequest(event);
       event.respondWith(
         fetch(request)
-          .then(response => fetchSuccess(response, event, config))
-          .catch(fetchFailure)
+          .then(response => this.fetchSuccess(response, event))
+          .catch(this.fetchFailure)
       );
     } else {
-      let urim = createUrim(event);
-      event.respondWith((urim => localRedirect(urim))(urim));
+      let urim = this.createUrim(event);
+      event.respondWith(this.localRedirect(urim));
     }
   }
 
-  /**
-   * updateRewriter - A setter like function to override private rewrite() function.
-   *                  It enables users to plug their custom rewriting logic.
-   *                  The only parameter needs to have the same signature as the rewrite() function.
-   *                  Logs a warning if the supplied argument is not a function.
-   *
-   * @public
-   * @param  {function} fn - A function with the signature: (response, event, config) => Response.
-   */
-  function updateRewriter(fn) {
-    if (fn instanceof Function) {
-      rewrite = fn;
-    } else {
-      console.warn('Expected a function not a', typeof fn);
-    }
-  }
-
-  /**
-   * bannerCreator - A setter like function to override private createBanner() function.
-   *                 It enables users to plug their custom banner creation logic.
-   *                 The only parameter needs to have the same signature as the createBanner() function.
-   *                 Logs a warning if the supplied argument is not a function.
-   *
-   * @public
-   * @param  {function} fn - A function with the signature: (response, event, config) => string.
-   */
-  function bannerCreator(fn) {
-    if (fn instanceof Function) {
-      createBanner = fn;
-    } else {
-      console.warn('Expected a function not a', typeof fn);
-    }
-  }
-
-  /**
-   * Reconstructive - The object that the module returns with all the public members.
-   *
-   * @public
-   * @namespace Reconstructive
-   * @property  {function}     init           - Initialization function to update configs.
-   * @property  {object}       exclusions     - Object of rerouting exclusion functions.
-   * @property  {function}     reroute        - Callback function to be bound on fetch event.
-   * @property  {function}     updateRewriter - Setter function to override rewrite() function.
-   * @property  {function}     bannerCreator  - Setter function to override createBanner() function.
-   */
-  return {
-    init: init,
-    exclusions: exclusions,
-    reroute: reroute,
-    updateRewriter: updateRewriter,
-    bannerCreator: bannerCreator
-  };
-})();
+}
