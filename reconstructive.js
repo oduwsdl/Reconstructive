@@ -1,5 +1,5 @@
 /**
- * Reconstructive {@link https://github.com/oduwsdl/reconstructive} is a ServiceWorker module for client-side reconstruction of composite mementos.
+ * @desc [Reconstructive](https://github.com/oduwsdl/reconstructive) is a ServiceWorker module for client-side reconstruction of composite mementos.
  * It reroutes embedded resource requests to their approprieate arcival version without any URL rewriting.
  * It also provides functionality to add custom archival banners or rewrite hyperlinks on the client-side.
  *
