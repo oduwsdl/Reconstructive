@@ -27,30 +27,35 @@ class Reconstructive {
 
     /**
      * Identifier of the module, sent to the server as X-ServiceWorker header. Defaults to the name and version of the module.
+     *
      * @type {string}
      */
     this.id = `${this.NAME}:${this.VERSION}`;
 
     /**
      * The format of URI-Ms (e.g., http://example.com/archive/<datetime>/<urir>).
+     *
      * @type {string}
      */
     this.urimPattern = `${self.location.origin}/memento/<datetime>/<urir>`;
 
     /**
      * The URL or absolute path of the JS file that defines custom banner element. Only necessary if showBanner is set to true.
+     *
      * @type {string}
      */
     this.bannerElementLocation = `${self.location.origin}/reconstructive-banner.js`;
 
     /**
      * Whether or not to show an archival banner. Defaults to false.
+     *
      * @type {boolean}
      */
     this.showBanner = false;
 
     /**
      * Whether or not to show debug messages in the console. Defaults to false.
+     *
      * @type {boolean}
      */
     this.debug = true;
@@ -98,8 +103,8 @@ class Reconstructive {
    * Iterates over all the members of the exclusions object and returns true if any of the members return true, otherwise returns false.
    * Logs the first matching exclusion for debugging, if any.
    *
-   * @param   {FetchEvent} event  - The fetch event.
-   * @return  {boolean}           - Should the request be rerouted?
+   * @param  {FetchEvent} event  - The fetch event.
+   * @return {boolean}           - Should the request be rerouted?
    */
   shouldExclude(event) {
     return Object.entries(this.exclusions).some(([exclusionName, exclusionFun]) => {
@@ -114,8 +119,8 @@ class Reconstructive {
   /**
    * Creates a potential URI-M based on the requested URL and the referrer URL for request rerouting.
    *
-   * @param   {FetchEvent} event  - The fetch event.
-   * @return  {string}            - A potential URI-M.
+   * @param  {FetchEvent} event  - The fetch event.
+   * @return {string}            - A potential URI-M.
    */
   createUrim(event) {
     // Extract datetime and the URI-R of the referrer.
@@ -137,8 +142,8 @@ class Reconstructive {
   /**
    * Extracts datetime and URI-R from a URI-M.
    *
-   * @param   {string} urim - A URI-M.
-   * @return  {string[]}       - An array of datetime and URI-let R.
+   * @param  {string} urim - A URI-M.
+   * @return {string[]}    - An array of datetime and URI-let R.
    */
   extractDatetimeUrir(urim) {
     let [, datetime, urir] = urim.match(this._urimRegex);
@@ -156,8 +161,8 @@ class Reconstructive {
    * Adds X-ServiceWorker header with the id of the module.
    * Sets the redirect mode to manual to ensure proper origin boundaries.
    *
-   * @param   {FetchEvent} event  - The fetch event.
-   * @return  {Request}           - A new request object.
+   * @param  {FetchEvent} event  - The fetch event.
+   * @return {Request}           - A new request object.
    */
   createRequest(event) {
     let headers = this.cloneHeaders(event.request.headers);
@@ -168,9 +173,8 @@ class Reconstructive {
   /**
    * Clones provided request or response headers.
    *
-   * @public
-   * @param   {Headers} original - Original request or response headers.
-   * @return  {Headers}          - A clone of the supplied headers.
+   * @param  {Headers} original - Original request or response headers.
+   * @return {Headers}          - A clone of the supplied headers.
    */
   cloneHeaders(original) {
     let headers = new Headers();
@@ -185,7 +189,7 @@ class Reconstructive {
    * The potential URI-M is generated using createUrim().
    * This function only returns a synthetic redirection response.
    *
-   * @param  {string}   urim - A potential URI-M.
+   * @param  {string}   urim          - A potential URI-M.
    * @return {Promise<Response>}      - A 302 redirection response to the potential URI-M.
    */
   localRedirect(urim) {
@@ -207,9 +211,9 @@ class Reconstructive {
    * Logs the response for debugging.
    * Returns a potentially modified response. a potentially modified response.
    *
-   * @param   {Response}   response - Original response object.
-   * @param   {FetchEvent} event    - The fetch event.
-   * @return  {Promise<Response>}            - Potentially modified response.
+   * @param  {Response}   response - Original response object.
+   * @param  {FetchEvent} event    - The fetch event.
+   * @return {Promise<Response>}   - Potentially modified response.
    */
   fetchSuccess(response, event) {
     this.debug && console.log('Fetched from server:', response);
@@ -225,8 +229,8 @@ class Reconstructive {
    * Logs the failure reason for debugging.
    * Returns a synthetic 503 Service Unavailable response.
    *
-   * @param   {Error}    error - The exception rasied on fetching from the server.
-   * @return  {Response}       - A 503 Service Unavailable response.
+   * @param  {Error} error - The exception rasied on fetching from the server.
+   * @return {Response}    - A 503 Service Unavailable response.
    */
   fetchFailure(error) {
     this.debug && console.log(error);
@@ -245,9 +249,9 @@ class Reconstructive {
    * When the showBanner config is set to true, it tries to add a banner in navigational HTML pages.
    * Returns a potentially modified response.
    *
-   * @param   {Response}   response - Original response object.
-   * @param   {FetchEvent} event    - The fetch event.
-   * @return  {Promise<Response>}  - Potentially modified response.
+   * @param  {Response}   response - Original response object.
+   * @param  {FetchEvent} event    - The fetch event.
+   * @return {Promise<Response>}   - Potentially modified response.
    */
   rewrite(response, event) {
     // TODO: Make necessary changes in the response
@@ -281,8 +285,9 @@ class Reconstructive {
 
   /**
    * Creates a string representing an HTML element to be injected in the response's HTML body.
-   * @param {string} datetime
-   * @param {string} urir
+   *
+   * @param  {string} datetime
+   * @param  {string} urir
    * @return {string} The banner to inject
    */
   createBanner(datetime, urir) {
@@ -298,7 +303,7 @@ class Reconstructive {
    * Otherwise, responds with a redirect to the potential URI-M.
    * Both success and failure responses are dealt with appropriately.
    *
-   * @param  {FetchEvent} event - The fetch event.
+   * @param {FetchEvent} event - The fetch event.
    */
   reroute(event) {
     this.debug && console.log('Rerouting requested', event);
