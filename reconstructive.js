@@ -286,9 +286,9 @@ class Reconstructive {
   /**
    * Creates a string representing an HTML element to be injected in the response's HTML body.
    *
-   * @param  {string} datetime
-   * @param  {string} urir
-   * @return {string} The banner to inject
+   * @param  {string} datetime - The datetime of the capture
+   * @param  {string} urir - The original urir
+   * @return {string} - The banner setup
    */
   createBanner(datetime, urir) {
     return `<script src="${this.bannerElementLocation}"></script>
