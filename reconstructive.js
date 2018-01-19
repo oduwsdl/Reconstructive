@@ -89,6 +89,8 @@ class Reconstructive {
      */
     this._urimRegex = new RegExp(`^${this.urimPattern.replace('<datetime>', '(\\d{14})').replace('<urir>', '(.*)')}$`);
 
+    this.debug && console.log(`${this.NAME}:${this.VERSION} initialized with supplied configs`);
+
     this.fetchFailure = this.fetchFailure.bind(this)
   }
 
