@@ -1,10 +1,10 @@
 console.log('ServiceWorker downloaded');
 
-// This makes a module available named "reconstructive"
+// This makes a class module available named "Reconstructive"
 importScripts('reconstructive.js');
 
-// Customize configs
-// reconstructive.init({
+// Create a Reconstructive instance with optionally customized configurations
+// const rc = new Reconstructive({
 //   id: `${NAME}:${VERSION}`,
 //   urimPattern: `${self.location.origin}/memento/<datetime>/<urir>`,
 //   bannerElementLocation: `${self.location.origin}/reconstructive-banner.js`,
@@ -20,13 +20,12 @@ const rc = new Reconstructive({
 });
 
 // Add any custom exclusions or modify or delete default ones
-// > reconstructive.exclusions;
+// > rc.exclusions;
 // < {
 // <   notGet: f (event) => boolean,
 // <   bannerElement: f (event) => boolean,
 // <   localResource: f (event) => boolean
 // < }
-
 
 // This is not necessary, but can be useful for debugging or in future
 self.addEventListener('install', (event) => {
@@ -39,6 +38,6 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Add any custom logic here to conditionally call the reroute function
+  // Add any custom logic here to conditionally call the reroute method
   rc.reroute(event);
 });
