@@ -64,7 +64,7 @@ class Reconstructive {
      * An object of functions to check whether the request should be excluded from being rerouted.
      * Add more members to the object to add more exclusions or modify/delete existing ones.
      * The property name can be anything descriptive of the particular exclusion, which will be shown in debug logs.
-     * Each member function is called with the fetch event and config object as parameters.
+     * Each member function is called with the fetch event as parameters.
      * If any member returns true, the fetch event is excluded from being rerouted.
      *
      * @type {{notGet: function(event: FetchEvent): boolean, bannerElement: function(event: FetchEvent): boolean, localResource: function(event: FetchEvent): boolean}}
@@ -94,7 +94,7 @@ class Reconstructive {
      */
     this._urimRegex = new RegExp(`^${this.urimPattern.replace('<datetime>', '(\\d{14})').replace('<urir>', '(.*)')}$`);
 
-    this.debug && console.log(`${this.NAME}:${this.VERSION} initialized with supplied configs`);
+    this.debug && console.log(`${this.NAME}:${this.VERSION} initialized with supplied options`);
 
     this.fetchFailure = this.fetchFailure.bind(this)
   }
@@ -178,19 +178,19 @@ class Reconstructive {
    */
   cloneHeaders(original) {
     let headers = new Headers();
-    for (let [k, v] of original.entries()) {
+    for (const [k, v] of original.entries()) {
       headers.append(k, v);
     }
     return headers;
   }
 
   /**
-   * Redirects a non-URI-M request to its poytential URI-M locally.
+   * Redirects a non-URI-M request to its potentially URI-M locally.
    * The potential URI-M is generated using createUrim().
    * This function only returns a synthetic redirection response.
    *
-   * @param  {string}   urim          - A potential URI-M.
-   * @return {Promise<Response>}      - A 302 redirection response to the potential URI-M.
+   * @param  {string} urim          - A potential URI-M.
+   * @return {Promise<Response>}    - A 302 redirection response to the potential URI-M.
    */
   localRedirect(urim) {
     this.debug && console.log('Locally redirecting to:', urim);
@@ -209,7 +209,7 @@ class Reconstructive {
    * The callback function on a successful fetch from the server.
    * Calls the rewrite() function if the response code is 2xx.
    * Logs the response for debugging.
-   * Returns a potentially modified response. a potentially modified response.
+   * Resolves to a potentially modified response.
    *
    * @param  {Response}   response - Original response object.
    * @param  {FetchEvent} event    - The fetch event.
@@ -229,7 +229,7 @@ class Reconstructive {
    * Logs the failure reason for debugging.
    * Returns a synthetic 503 Service Unavailable response.
    *
-   * @param  {Error} error - The exception rasied on fetching from the server.
+   * @param  {Error} error - The exception raised on fetching from the server.
    * @return {Response}    - A 503 Service Unavailable response.
    */
   fetchFailure(error) {
@@ -287,8 +287,8 @@ class Reconstructive {
    * Creates a string representing an HTML element to be injected in the response's HTML body.
    *
    * @param  {string} datetime - The datetime of the capture
-   * @param  {string} urir - The original urir
-   * @return {string} - The banner setup
+   * @param  {string} urir     - The original urir
+   * @return {string}          - The banner markup
    */
   createBanner(datetime, urir) {
     return `<script src="${this.bannerElementLocation}"></script>
