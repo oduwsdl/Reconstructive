@@ -11,8 +11,8 @@ importScripts('reconstructive.js');
 //   showBanner: false,
 //   debug: false
 // });
-let currentPath = self.location.href.substring(0, self.location.href.lastIndexOf('/'));
-Reconstructive.init({
+const currentPath = self.location.href.substring(0, self.location.href.lastIndexOf('/'));
+const rc = new Reconstructive({
   debug: true,
   showBanner: true,
   bannerElementLocation: `${currentPath}/reconstructive-banner.js`,
@@ -20,29 +20,25 @@ Reconstructive.init({
 });
 
 // Add any custom exclusions or modify or delete default ones
-//> reconstructive.exclusions;
-//< {
-//<   notGet: f (event, config) => boolean,
-//<   bannerElement: f (event, config) => boolean,
-//<   localResource: f (event, config) => boolean
-//< }
+// > reconstructive.exclusions;
+// < {
+// <   notGet: f (event) => boolean,
+// <   bannerElement: f (event) => boolean,
+// <   localResource: f (event) => boolean
+// < }
 
-// Pass a custom function to generate banner markup
-// reconstructive.bannerCreator(f (event, response, config) => HTMLString);
-// Or update the rewriting logic
-// reconstructive.updateRewriter(f (event, response, config) => Response);
 
 // This is not necessary, but can be useful for debugging or in future
-self.addEventListener('install', function(event) {
+self.addEventListener('install', (event) => {
   console.log('ServiceWorker installed');
 });
 
 // This is not necessary, but can be useful for debugging or in future
-self.addEventListener('activate', function(event) {
+self.addEventListener('activate', (event) => {
   console.log('ServiceWorker Activated');
 });
 
-self.addEventListener('fetch', function(event) {
+self.addEventListener('fetch', (event) => {
   // Add any custom logic here to conditionally call the reroute function
-  Reconstructive.reroute(event);
+  rc.reroute(event);
 });
