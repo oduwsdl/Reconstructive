@@ -12,11 +12,11 @@ importScripts('reconstructive.js');
 //   debug: false
 // });
 const currentPath = self.location.href.substring(0, self.location.href.lastIndexOf('/'));
-const reconstructive = new Reconstructive({
+const rc = new Reconstructive({
   debug: true,
   showBanner: true,
   bannerElementLocation: `${currentPath}/reconstructive-banner.js`,
-  urimPattern: `${currentPath}/tests/<datetime>/<urir>`,
+  urimPattern: `${currentPath}/tests/<datetime>/<urir>`
 });
 
 // Add any custom exclusions or modify or delete default ones
@@ -40,5 +40,5 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   // Add any custom logic here to conditionally call the reroute function
-  reconstructive.reroute(event);
+  rc.reroute(event);
 });
