@@ -58,7 +58,7 @@ class Reconstructive {
      *
      * @type {boolean}
      */
-    this.debug = true;
+    this.debug = false;
 
     /**
      * An object of functions to check whether the request should be excluded from being rerouted.
