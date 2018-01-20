@@ -1,0 +1,19 @@
+{
+  "name": "Reconstructive",
+  "version": "0.5.0",
+  "repository": "https://github.com/oduwsdl/Reconstructive",
+  "author": "Sawood Alam <ibnesayeed@gmail.com>",
+  "contributors": ["John Berlin <n0tan3rd@gmail.com>"],
+  "license": "MIT",
+  "devDependencies": {
+    "esdoc": "^1.0.4",
+    "esdoc-external-ecmascript-plugin": "^1.0.0",
+    "esdoc-external-webapi-plugin": "^1.0.0",
+    "esdoc-standard-plugin": "^1.0.0",
+    "serve": "^6.4.8"
+  },
+  "scripts": {
+    "docs": "mkdir -p Reconstructive && cp reconstructive.js Reconstructive && esdoc && rm -rd Reconstructive && cp -r resources docs/resources",
+    "dev": "serve ."
+  }
+}

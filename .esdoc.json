@@ -1,0 +1,23 @@
+{
+  "source": "./Reconstructive",
+  "destination": "./docs",
+  "plugins": [
+    {"name": "esdoc-external-webapi-plugin", "option": {"enable": true}},
+    {"name": "esdoc-external-ecmascript-plugin", "option": {"enable": true}},
+    {
+      "name": "esdoc-standard-plugin",
+      "option": {
+        "typeInference": {"enable": true},
+        "undocumentIdentifier": {"enable": true},
+        "unexportedIdentifier": {"enable": true},
+        "brand": {
+          "logo": "./resources/reconstructive-logo.png",
+          "title": "Reconstructive",
+          "description": "Reconstructive is a ServiceWorker module for client-side reconstruction of composite mementos",
+          "repository": "https://github.com/oduwsdl/reconstructive",
+          "author": "https://twitter.com/ibnesayeed"
+        }
+      }
+    }
+  ]
+}
