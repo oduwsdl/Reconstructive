@@ -247,7 +247,7 @@ class Reconstructive {
    * Rewrites the fetched response when necessary.
    * Potential uses are to fix certain replay issues, adding an archival banner, or modifying hyperlinks.
    * When the showBanner config is set to true, it tries to add a banner in navigational HTML pages.
-   * Returns a potentially modified response.
+   * Resolves to a potentially modified response.
    *
    * @param  {Response}   response - Original response object.
    * @param  {FetchEvent} event    - The fetch event.
