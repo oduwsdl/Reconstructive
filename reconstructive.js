@@ -71,6 +71,26 @@ class Reconstructive {
      */
     this.debug = false;
 
+    // Iterate over the supplied configuration object to overwrite defaults and add new properties
+    if (config instanceof Object) {
+      for (const [k, v] of Object.entries(config)) {
+        /** @ignore **/
+        this[k] = v;
+      }
+    }
+
+    /**
+     * A private object with varius RegExp properties (possibly derived from other properties) for internal use.
+     * 
+     * @private
+     * @type    {{urimPattern: RegExp, absoluteRefrence: RegExp, bodyEnd: RegExp}}
+     */
+    this._regexps = {
+      urimPattern: new RegExp(`^${this.urimPattern.replace('<datetime>', '(\\d{14})').replace('<urir>', '(.*)')}$`),
+      absoluteRefrence: new RegExp(`(<(iframe|a).*?\\s+(src|href)\\s*=\\s*["']?)(https?:\/\/[^'"\\s]+)(.*?>)`, 'ig'),
+      bodyEnd: new RegExp('<\/(body|html)>', 'i')
+    };
+
     /**
      * An object of functions to check whether the request should be excluded from being rerouted.
      * Add more members to the object to add more exclusions or modify/delete existing ones.
@@ -83,29 +103,10 @@ class Reconstructive {
     this.exclusions = {
       notGet: event => event.request.method !== 'GET',
       bannerElement: event => this.showBanner && event.request.url.endsWith(this.bannerElementLocation),
-      localResource: event => !(this._urimRegex.test(event.request.url) || this._urimRegex.test(event.request.referrer))
-    }
+      localResource: event => !(this._regexps.urimPattern.test(event.request.url) || this._regexps.urimPattern.test(event.request.referrer))
+    };
 
-    if (config instanceof Object) {
-      for (const [k, v] of Object.entries(config)) {
-        /** @ignore **/
-        this[k] = v;
-      }
-    }
-
-    /**
-     * @type {RegExp}
-     * @private
-     */
-    this._absoluteRefrencePattern = new RegExp('(<(iframe|a).*?\\s+(src|href)\\s*=\\s*["\']?)(https?:\/\/[^\'"\\s]+)(.*?>)', 'ig');
-
-    /**
-     * @type {RegExp}
-     * @private
-     */
-    this._urimRegex = new RegExp(`^${this.urimPattern.replace('<datetime>', '(\\d{14})').replace('<urir>', '(.*)')}$`);
-
-    this.debug && console.log(`${this.NAME}:${this.VERSION} initialized with supplied options`);
+    this.debug && console.log(`${this.NAME}:${this.VERSION} initialized:`, this);
 
     this.fetchFailure = this.fetchFailure.bind(this)
   }
@@ -157,7 +158,7 @@ class Reconstructive {
    * @return {string[]}      - An array of datetime and URI-R
    */
   extractDatetimeUrir(urim) {
-    let [, datetime, urir] = urim.match(this._urimRegex);
+    let [, datetime, urir] = urim.match(this._regexps.urimPattern);
     // Swap the two extracted values if the datetime pattern appeared after the URI-R.
     // This is not a common practice, but possible if an archive uses query parameters instead of paths.
     if (isNaN(datetime)) {
@@ -276,14 +277,14 @@ class Reconstructive {
       return response.text().then(body => {
         let [datetime, urir] = this.extractDatetimeUrir(response.url);
         // Replace all absolute URLs in src and href attributes of <iframe> and <a> elements with corresponding URI-Ms to avoid replay and navigation issues.
-        body = body.replace(this._absoluteRefrencePattern, `$1${this.urimPattern.replace('<datetime>', datetime).replace('<urir>', '$4')}$5`);
+        body = body.replace(this._regexps.absoluteRefrence, `$1${this.urimPattern.replace('<datetime>', datetime).replace('<urir>', '$4')}$5`);
         // Inject a banner only on navigational HTML pages when showBanner config is set to true.
         if (this.showBanner && event.request.mode === 'navigate') {
           let banner = this.createBanner(datetime, urir);
           // Try to inject the banner markup before closing </body> tag, fallback to </html>.
           // If none of the two closing tags are found, append it to the body.
-          if (/<\/(body|html)>/i.test(body)) {
-            body = body.replace(/<\/(body|html)>/i, banner+'</$1>');
+          if (this._regexps.bodyEnd.test(body)) {
+            body = body.replace(this._regexps.bodyEnd, banner+'</$1>');
           } else {
             body += banner;
           }
@@ -321,7 +322,7 @@ class Reconstructive {
     // Let the browser deal with the requests if it matches a rerouting exclusion.
     if (this.shouldExclude(event)) return;
     // This condition will match if the request URL is not a URI-M.
-    if (this._urimRegex.test(event.request.url)) {
+    if (this._regexps.urimPattern.test(event.request.url)) {
       let request = this.createRequest(event);
       event.respondWith(
         fetch(request)

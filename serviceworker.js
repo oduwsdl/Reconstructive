@@ -22,9 +22,9 @@ const rc = new Reconstructive({
 // Add any custom exclusions or modify or delete default ones
 // > rc.exclusions;
 // < {
-// <   notGet: f (event) => boolean,
-// <   bannerElement: f (event) => boolean,
-// <   localResource: f (event) => boolean
+// <   notGet: function(FetchEvent) => boolean,
+// <   bannerElement: function(FetchEvent) => boolean,
+// <   localResource: function(FetchEvent) => boolean
 // < }
 
 // This is not necessary, but can be useful for debugging or in future
