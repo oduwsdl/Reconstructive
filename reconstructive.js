@@ -275,12 +275,12 @@ class Reconstructive {
         headers: headers
       };
       return response.text().then(body => {
-        let [datetime, urir] = this.extractDatetimeUrir(response.url);
+        const [datetime] = this.extractDatetimeUrir(response.url);
         // Replace all absolute URLs in src and href attributes of <iframe> and <a> elements with corresponding URI-Ms to avoid replay and navigation issues.
         body = body.replace(this._regexps.absoluteRefrence, `$1${this.urimPattern.replace('<datetime>', datetime).replace('<urir>', '$4')}$5`);
         // Inject a banner only on navigational HTML pages when showBanner config is set to true.
         if (this.showBanner && event.request.mode === 'navigate') {
-          let banner = this.createBanner(datetime, urir);
+          const banner = this.createBanner(response, event);
           // Try to inject the banner markup before closing </body> tag, fallback to </html>.
           // If none of the two closing tags are found, append it to the body.
           if (this._regexps.bodyEnd.test(body)) {
@@ -296,13 +296,14 @@ class Reconstructive {
   }
 
   /**
-   * Creates a string representing an HTML element to be injected in the response's HTML body.
+   * Creates a string representing an HTML block to be injected in the response's HTML body.
    *
-   * @param  {string} datetime - The datetime of the capture
-   * @param  {string} urir     - The original urir
-   * @return {string}          - The banner markup
+   * @param  {Response}   response - Original response object
+   * @param  {FetchEvent} event    - The fetch event
+   * @return {string}              - The banner markup
    */
-  createBanner(datetime, urir) {
+  createBanner(response, event) {
+    const [datetime, urir] = this.extractDatetimeUrir(response.url);
     return `<script src="${this.bannerElementLocation}"></script>
             <reconstructive-banner urir="${urir}" datetime="${datetime}"></reconstructive-banner>`;
   }
