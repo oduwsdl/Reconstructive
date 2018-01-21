@@ -101,7 +101,7 @@ Hence, it is possible to have some custom ServiceWorker logic in place while sel
 
 ```js
 self.addEventListener('fetch', function(event) {
-  if (event.requests.url.startsWith(`https://example.com/api/`)) {
+  if (event.requests.url.startsWith('https://example.com/api/')) {
     event.respondWith(fetch(event.request, {
       mode: 'cors'
     }));
