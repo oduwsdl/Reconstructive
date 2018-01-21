@@ -21,9 +21,9 @@ Read our introductory blog post [Introducing Reconstructive - An Archival Replay
 Assuming that your ServiceWorker script (e.g., `serviceworker.js`) is already registered, add the following lines in that script.
 
 ```js
-importScripts('https://oduwsdl.github.io/reconstructive/reconstructive.js');
-
-self.addEventListener('fetch', Reconstructive.reroute);
+importScripts('https://oduwsdl.github.io/Reconstructive/reconstructive.js');
+const rc = new Reconstructive();
+self.addEventListener('fetch', rc.reroute);
 ```
 
 This will start monitoring every request originated from its scope and reroute them to their appropriate mementos at `/memento/<datetime>/<urir>` as necessary.
@@ -32,55 +32,62 @@ So, Reconstructive allows customization to fit to different needs.
 
 ## Configuration and Customization
 
-When the script is imported, it provides a module named `Reconstructive`.
-The module has following public members:
+When the script is imported, it provides a class named `Reconstructive`.
+An instance from this class can be created with various configuration options.
+The instance has following public members:
 
-* `init`           - Initialization fucntion to update configs.
-* `exclusions`     - Object of rerouting exclusion functions.
-* `reroute`        - Callback function to be bound on fetch event.
-* `updateRewriter` - Setter function to override rewrite() function.
-* `bannerCreator`  - Setter function to override createBanner() function.
+* `exclusions`   - Object of rerouting exclusion functions.
+* `reroute`      - Callback function to be bound on fetch event.
+* `rewrite`      - Function to rewrite response to fix any replay issues and add an archival banner.
+* `createBanner` - Function to return the banner markup to the `rewrite` function.
 
 ### Update Configurations
 
-The `init()` function is a setter that allows changing private configuration options.
-It merges supplied options into the existing configurations.
-Let's change some options:
+The `constructor` method of the `Reconstructive` class accepts an object that allows overwriting default configuration options and adding new members as necessary.
+Following are the default options:
 
 ```js
-// Following is the default config object.
-// config = {
-//   id: `${NAME}:${VERSION}`,
-//   urimPattern: `${self.location.origin}/memento/<datetime>/<urir>`,
-//   bannerElementLocation: `${self.location.origin}/reconstructive-banner.js`,
-//   showBanner: false,
-//   debug: false
-// }
-Reconstructive.init({
+{
+  id: `${NAME}:${VERSION}`,
+  urimPattern: `${self.location.origin}/memento/<datetime>/<urir>`,
+  bannerElementLocation: `${self.location.origin}/reconstructive-banner.js`,
+  showBanner: false,
+  debug: false
+}
+```
+
+To instantiate an object `rc` with custom configurations, initialize as following:
+
+```js
+const rc = new Reconstructive({
   urimPattern: `${self.location.origin}/archived/<datetime>/<urir>`,
-  bannerElementLocation: 'https://oduwsdl.github.io/reconstructive/reconstructive-banner.js',
+  bannerElementLocation: 'https://oduwsdl.github.io/Reconstructive/reconstructive-banner.js',
   showBanner: true,
   debug: true,
   customColor: '#0C383B'
 });
 ```
 
-We have updated three existing options and added a new one, `customColor`, which we can use later in our custom logic.
-There is also a derived option `config.urimRegex` available that is the RegExp form of the `config.urimPattern` which is updated automatically.
+We have updated four existing options and added a new one, `customColor`, which we can use later in our custom logic.
 
 ### Adding Exclusions
 
-`Reconstructive.exclusions` is a publicly exposed object of functions.
+The `exclusions` property of the class is an object of functions.
+Each member of this object checks for certain criteria and returns a boolean to express whether or not the fetch event should be excluded from being rerouted.
+Following is the default exclusions object.
+
+```js
+{
+  notGet: event => event.request.method !== 'GET',
+  bannerElement: event => this.showBanner && event.request.url.endsWith(this.bannerElementLocation),
+  localResource: event => !(this._regexps.urimPattern.test(event.request.url) || this._regexps.urimPattern.test(event.request.referrer))
+}
+```
+
 Add more members to the object to add more exclusions or modify/delete existing ones.
 
 ```js
-// Following is the default exclusions object.
-// exclusions = {
-//   notGet: (event, config) => event.request.method != 'GET',
-//   bannerElement: (event, config) => config.showBanner && event.request.url.endsWith(config.bannerElementLocation),
-//   localResource: (event, config) => !(config.urimRegex.test(event.request.url) || config.urimRegex.test(event.request.referrer))
-// }
-Reconstructive.exclusions.bannerLogo = (event, config) => event.request.url.endsWith('replay-banner-logo.png');
+rc.exclusions.bannerLogo = event => event.request.url.endsWith('replay-banner-logo.png');
 ```
 
 We have added a new exclusion named `bannerLogo` which will return `true` if the requested URL ends with `replay-banner-logo.png`.
@@ -89,7 +96,7 @@ In a practical application such exclusion rules should be kept very tight to avo
 
 ### Custom Rerouting
 
-`Reconstructive` does not register itself as a ServiceWorker, instead it is added as a module to an existing ServiceWorker for archival replay rerouting logic.
+Reconstructive does not register itself as a ServiceWorker, instead it is added as a module to an existing ServiceWorker for archival replay rerouting logic.
 Hence, it is possible to have some custom ServiceWorker logic in place while selectively calling `reroute()` function on some requests.
 
 ```js
@@ -99,39 +106,46 @@ self.addEventListener('fetch', function(event) {
       mode: 'cors'
     }));
   } else {
-    Reconstructive.reroute(event);
+    rc.reroute(event);
   }
 });
 ```
 
 ### Custom Rewriting
 
-Reconstructive has a built-in private `rewrite()` function that tries to make necessary changes in the HTML pages to fix some common replay issues and changes hyperlinks to their archival context.
+Reconstructive has a `rewrite()` method that tries to make necessary changes in the HTML pages to fix some common replay issues and changes hyperlinks to their archival context.
 However, there might be times when you need some custom rewriting logic in your archival replay system.
-The `updateRewriter()` public function can be used to override private `rewrite()` function with a custom one.
+To accomplish this either override the `rewrite()` method of the instance or extend the `Reconstructive` class with an updated `rewrite()` method.
+The method is called with original `response` and `event` objects and returns a `Promise` that resolves to a `Response` object.
+We are illustrating the first approach below.
 
 ```js
-let customRewriter = (response, event, config) => {
+const customRewrite = (response, event) => {
   let customResponse = new Response();
   // Do something with the original response to create a custom response.
   return customResponse;
-}
-Reconstructive.updateRewriter(customRewriter);
+};
+rc.rewrite = customRewrite;
 ```
+
+**Note:** When overriding a method of a class instance the context of `this` inside the custom function could be different (use the instance name e.g., `rc` in place of `this` instead).
 
 ### Custom Banner
 
-Reconstructive has a built-in private `createBanner()` function that creates a banner markup using [Web Components](https://www.webcomponents.org/).
-This markup is then injected into navigational HTML pages by the `rewrite()` function if the `showBanner` configuration option is set to `true`.
-However, it is possible to override the private `createBanner()` function using the public `bannerCreator()` function.
-Note that the banner is included by the built-in `rewrite()` function, which if overriden, may not include the banner unless `rewrite()` is called by the `customRewriter()` too.
+Reconstructive has a `createBanner()` method that creates a banner markup using [Web Components](https://www.webcomponents.org/).
+This markup is then injected into navigational HTML pages by the `rewrite()` method if the `showBanner` configuration option is set to `true`.
+However, the default banner might not be suitable for every archival replay system.
+This can be updated by overriding the `createBanner()` method the same way as described above for the `rewrite()` method.
+Note that the banner is included by the built-in `rewrite()` method, which if overriden, may not include the banner unless `createBanner()` is called by the `customRewrite()` too.
 
 ```js
-let customBannerCreator = (response, event, config) => {
-  return `<custom-replay-banner background="${config.customColor}"></custom-replay-banner>`;
-}
-Reconstructive.bannerCreator(customRewriter);
+const customCreateBanner = (response, event) => {
+  return `<custom-replay-banner background="${rc.customColor}"></custom-replay-banner>`;
+};
+rc.createBanner = customCreateBanner;
 ```
+
+As an aside, we used `rc.customColor` here that was an additional configuration option we supplied at the instance initialization.
 
 ## How it Works?
 
