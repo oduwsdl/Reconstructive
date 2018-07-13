@@ -83,11 +83,11 @@ class Reconstructive {
      * A private object with varius RegExp properties (possibly derived from other properties) for internal use.
      * 
      * @private
-     * @type    {{urimPattern: RegExp, absoluteRefrence: RegExp, bodyEnd: RegExp}}
+     * @type    {{urimPattern: RegExp, absoluteReference: RegExp, bodyEnd: RegExp}}
      */
     this._regexps = {
       urimPattern: new RegExp(`^${this.urimPattern.replace('<datetime>', '(\\d{14})').replace('<urir>', '(.*)')}$`),
-      absoluteRefrence: new RegExp(`(<(iframe|a).*?\\s+(src|href)\\s*=\\s*["']?)(https?:\/\/[^'"\\s]+)(.*?>)`, 'ig'),
+      absoluteReference: new RegExp(`(<(iframe|a).*?\\s+(src|href)\\s*=\\s*["']?)(https?:\/\/[^'"\\s]+)(.*?>)`, 'ig'),
       bodyEnd: new RegExp('<\/(body|html)>', 'i')
     };
 
@@ -277,7 +277,7 @@ class Reconstructive {
       return response.text().then(body => {
         const [datetime] = this.extractDatetimeUrir(response.url);
         // Replace all absolute URLs in src and href attributes of <iframe> and <a> elements with corresponding URI-Ms to avoid replay and navigation issues.
-        body = body.replace(this._regexps.absoluteRefrence, `$1${this.urimPattern.replace('<datetime>', datetime).replace('<urir>', '$4')}$5`);
+        body = body.replace(this._regexps.absoluteReference, `$1${this.urimPattern.replace('<datetime>', datetime).replace('<urir>', '$4')}$5`);
         // Inject a banner only on navigational HTML pages when showBanner config is set to true.
         if (this.showBanner && event.request.mode === 'navigate') {
           const banner = this.createBanner(response, event);
