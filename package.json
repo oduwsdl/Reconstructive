@@ -13,7 +13,7 @@
     "serve": "^6.4.8"
   },
   "scripts": {
-    "docs": "mkdir -p Reconstructive && cp reconstructive.js Reconstructive && esdoc && rm -rd Reconstructive && cp -r resources docs/resources",
+    "docs": "mkdir -p Reconstructive && cp reconstructive.js reconstructive-banner.js Reconstructive && esdoc && rm -rf Reconstructive && cp -r resources docs/",
     "dev": "serve ."
   }
 }
