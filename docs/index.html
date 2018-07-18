@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl">
+  <title data-ice="title">Home | Reconstructive: An Archival Replay ServiceWorker</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="Reconstructive is a ServiceWorker Module for Client-side Reconstruction of Composite Mementos"><meta property="og:type" content="website"><meta property="og:url" content="https://oduwsdl.github.io/Reconstructive/"><meta property="og:site_name" content="Reconstructive: An Archival Replay ServiceWorker"><meta property="og:title" content="Reconstructive: An Archival Replay ServiceWorker"><meta property="og:image" content="./resources/reconstructive-logo.png"><meta property="og:description" content="Reconstructive is a ServiceWorker Module for Client-side Reconstruction of Composite Mementos"><meta property="og:author" content="https://twitter.com/ibnesayeed"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="Reconstructive: An Archival Replay ServiceWorker"><meta property="twitter:description" content="Reconstructive is a ServiceWorker Module for Client-side Reconstruction of Composite Mementos"><meta property="twitter:image" content="./resources/reconstructive-logo.png"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./" style="display: flex; align-items: center;"><img src="./image/brand_logo.png" style="width:34px;"></a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/oduwsdl/Reconstructive"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html">ReconstructiveBanner</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/Reconstructive/reconstructive.js~Reconstructive.html">Reconstructive</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="reconstructive">Reconstructive</h1><p>Traditionally, web archival replay systems rewrite link and resource references in HTML/CSS/JavaScript responses so that they resolve to their corresponding archival version.
+Failure to do so would result in a broken rendering of archived pages (composite mementos) as the embedded resource references might resolve to their live version or an invalid location.
+With the growing use of JavaScript in web applications, often resources are injected dynamically, hence rewriting such references is not possible from the server side.
+To mitigate this issue, some JavaScript is injected in the page that overrides the global namespace to modify the DOM and monitor every network activity.
+We proposed a ServiceWorker-based solution to this issue that requires no server-side rewriting, but catches every network request, even those that were initiated due to dynamic resource injection.</p>
+<p>Reconstructive is a <a href="https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API">ServiceWorker</a> module for client-side reconstruction of composite <a href="https://tools.ietf.org/html/rfc7089">mementos</a> by rerouting resource requests to corresponding archived copies.
+This is an implementation of a <a href="http://www.cs.odu.edu/~mln/pubs/jcdl-2017/jcdl-2017-alam-service-worker.pdf">published research paper</a>.
+This can be used in archival replay systems such as <a href="https://github.com/oduwsdl/ipwb">IPWB</a> or in the UI of memento aggregators such as <a href="https://github.com/oduwsdl/memgator">MemGator</a>.</p>
+<p>The following figure illustrates an example where an external image reference in an archived web page would have leaked to the live-web, but due to the presence of Reconstructive, it was successfully rerouted to the corresponding archived copy instead.</p>
+<p><img src="resources/reconstructive-example.png" alt="Reconstructive Example"></p>
+<p>Read our introductory blog post <a href="http://ws-dl.blogspot.com/2018/01/2018-01-08-introducing-reconstructive.html">Introducing Reconstructive - An Archival Replay ServiceWorker Module</a> for more details.</p>
+<h2 id="getting-started">Getting Started</h2><p>Assuming that your ServiceWorker script (e.g., <code>serviceworker.js</code>) is already registered, add the following lines in that script.</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">importScripts(&apos;https://oduwsdl.github.io/Reconstructive/reconstructive.js&apos;);
+const rc = new Reconstructive();
+self.addEventListener(&apos;fetch&apos;, rc.reroute);</code>
+</code></pre>
+<p>This will start monitoring every request originated from its scope and reroute them to their appropriate mementos at <code>/memento/&lt;datetime&gt;/&lt;urir&gt;</code> as necessary.
+However, the default rerouting might not work for every archival replay system.
+So, Reconstructive allows customization to fit to different needs.</p>
+<h2 id="configuration-and-customization">Configuration and Customization</h2><p>When the script is imported, it provides a class named <code>Reconstructive</code>.
+An instance from this class can be created with various configuration options.
+The instance has following public members:</p>
+<ul>
+<li><code>exclusions</code>   - Object of rerouting exclusion functions.</li>
+<li><code>reroute</code>      - Callback function to be bound on fetch event.</li>
+<li><code>rewrite</code>      - Function to rewrite response to fix any replay issues and add an archival banner.</li>
+<li><code>createBanner</code> - Function to return the banner markup to the <code>rewrite</code> function.</li>
+</ul>
+<h3 id="update-configurations">Update Configurations</h3><p>The <code>constructor</code> method of the <code>Reconstructive</code> class accepts an object that allows overwriting default configuration options and adding new members as necessary.
+Following are the default options:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">{
+  id: `${NAME}:${VERSION}`,
+  urimPattern: `${self.location.origin}/memento/&lt;datetime&gt;/&lt;urir&gt;`,
+  bannerElementLocation: `${self.location.origin}/reconstructive-banner.js`,
+  showBanner: false,
+  debug: false
+}</code>
+</code></pre>
+<p>To instantiate an object <code>rc</code> with custom configurations, initialize as following:</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">const rc = new Reconstructive({
+  urimPattern: `${self.location.origin}/archived/&lt;datetime&gt;/&lt;urir&gt;`,
+  bannerElementLocation: &apos;https://oduwsdl.github.io/Reconstructive/reconstructive-banner.js&apos;,
+  showBanner: true,
+  debug: true,
+  customColor: &apos;#0C383B&apos;
+});</code>
+</code></pre>
+<p>We have updated four existing options and added a new one, <code>customColor</code>, which we can use later in our custom logic.</p>
+<h3 id="adding-exclusions">Adding Exclusions</h3><p>The <code>exclusions</code> property of the class is an object of functions.
+Each member of this object checks for certain criteria and returns a boolean to express whether or not the fetch event should be excluded from being rerouted.
+Following is the default exclusions object.</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">{
+  notGet: event =&gt; event.request.method !== &apos;GET&apos;,
+  bannerElement: event =&gt; this.showBanner &amp;&amp; event.request.url.endsWith(this.bannerElementLocation),
+  localResource: event =&gt; !(this._regexps.urimPattern.test(event.request.url) || this._regexps.urimPattern.test(event.request.referrer))
+}</code>
+</code></pre>
+<p>Add more members to the object to add more exclusions or modify/delete existing ones.</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">rc.exclusions.bannerLogo = event =&gt; event.request.url.endsWith(&apos;replay-banner-logo.png&apos;);</code>
+</code></pre>
+<p>We have added a new exclusion named <code>bannerLogo</code> which will return <code>true</code> if the requested URL ends with <code>replay-banner-logo.png</code>.
+This exclusion will ensure that the request will not be routed to an archived version of the logo.
+In a practical application such exclusion rules should be kept very tight to avoid any false positives.</p>
+<h3 id="custom-rerouting">Custom Rerouting</h3><p>Reconstructive does not register itself as a ServiceWorker, instead it is added as a module to an existing ServiceWorker for archival replay rerouting logic.
+Hence, it is possible to have some custom ServiceWorker logic in place while selectively calling <code>reroute()</code> function on some requests.</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">self.addEventListener(&apos;fetch&apos;, function(event) {
+  if (event.requests.url.startsWith(&apos;https://example.com/api/&apos;)) {
+    event.respondWith(fetch(event.request, {
+      mode: &apos;cors&apos;
+    }));
+  } else {
+    rc.reroute(event);
+  }
+});</code>
+</code></pre>
+<h3 id="custom-rewriting">Custom Rewriting</h3><p>Reconstructive has a <code>rewrite()</code> method that tries to make necessary changes in the HTML pages to fix some common replay issues and changes hyperlinks to their archival context.
+However, there might be times when you need some custom rewriting logic in your archival replay system.
+To accomplish this either override the <code>rewrite()</code> method of the instance or extend the <code>Reconstructive</code> class with an updated <code>rewrite()</code> method.
+The method is called with original <code>response</code> and <code>event</code> objects and returns a <code>Promise</code> that resolves to a <code>Response</code> object.
+We are illustrating the first approach below.</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">const customRewrite = (response, event) =&gt; {
+  let customResponse = new Response();
+  // Do something with the original response to create a custom response.
+  return customResponse;
+};
+rc.rewrite = customRewrite;</code>
+</code></pre>
+<p><strong>Note:</strong> When overriding a method of a class instance the context of <code>this</code> inside the custom function could be different (use the instance name e.g., <code>rc</code> in place of <code>this</code> instead).</p>
+<h3 id="custom-banner">Custom Banner</h3><p>Reconstructive has a <code>createBanner()</code> method that creates a banner markup using <a href="https://www.webcomponents.org/">Web Components</a>.
+This markup is then injected into navigational HTML pages by the <code>rewrite()</code> method if the <code>showBanner</code> configuration option is set to <code>true</code>.
+However, the default banner might not be suitable for every archival replay system.
+This can be updated by overriding the <code>createBanner()</code> method the same way as described above for the <code>rewrite()</code> method.
+Note that the banner is included by the built-in <code>rewrite()</code> method, which if overriden, may not include the banner unless <code>createBanner()</code> is called by the <code>customRewrite()</code> too.</p>
+<pre><code class="lang-js"><code class="source-code prettyprint">const customCreateBanner = (response, event) =&gt; {
+  return `&lt;custom-replay-banner background=&quot;${rc.customColor}&quot;&gt;&lt;/custom-replay-banner&gt;`;
+};
+rc.createBanner = customCreateBanner;</code>
+</code></pre>
+<p>As an aside, we used <code>rc.customColor</code> here that was an additional configuration option we supplied at the instance initialization.</p>
+<h2 id="how-it-works-">How it Works?</h2><p>In order to reroute requests to the URI of a potential archived copy (also known as Memento URI or URI-M) Reconstructive needs the request URL and the referrer URL, of which the latter must be a URI-M.
+It extracts the datetime and the original URI (or URI-R) of the referrer then combines them with the request URL as necessary to construct a potential URI-M for the request to be rerouted to.
+If the request URL is already a URI-M, it simply adds a custom request header <code>X-ServiceWorker</code> and fetches the response from the server.
+When necessary, the response is rewritten on the client-side to fix some quirks to make sure that the replay works as expected or to optionally add an archival banner.
+The following flowchart diagram shows what happens in every request/response cycle of a fetch event in Reconstructive.</p>
+<p><img src="resources/reconstructive-flowchart.png" alt="Reconstructive Flowchart"></p>
+</div>
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
