@@ -2,7 +2,20 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Reconstructive</title>
+    <title>Reconstructive: An Archival Replay ServiceWorker</title>
+    <meta name="description" content="Reconstructive is a ServiceWorker Module for Client-side Reconstruction of Composite Mementos">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://oduwsdl.github.io/Reconstructive/">
+    <meta property="og:site_name" content="Reconstructive: An Archival Replay ServiceWorker">
+    <meta property="og:title" content="Reconstructive: An Archival Replay ServiceWorker">
+    <meta property="og:image" content="./resources/reconstructive-logo.png">
+    <meta property="og:description" content="Reconstructive is a ServiceWorker Module for Client-side Reconstruction of Composite Mementos">
+    <meta property="og:author" content="https://twitter.com/ibnesayeed">
+    <meta property="twitter:card" content="summary">
+    <meta property="twitter:title" content="Reconstructive: An Archival Replay ServiceWorker">
+    <meta property="twitter:description" content="Reconstructive is a ServiceWorker Module for Client-side Reconstruction of Composite Mementos">
+    <meta property="twitter:image" content="./resources/reconstructive-logo.png">
+    <link rel="icon" href="favicon.ico" />
     <script type="text/javascript">
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('serviceworker.js', {
@@ -24,6 +37,7 @@
         margin: 0;
         padding: 0;
         font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        text-align: center;
       }
       section {
         max-width: 600px;
@@ -33,6 +47,9 @@
         border-radius: 10px;
         display: block;
       }
+      h1 {
+        font-size: 40px;
+      }
       a {
         color: #38488f;
         text-decoration: none;
@@ -40,20 +57,22 @@
       a:link.btn, a:visited.btn {
         font-weight: bold;
         padding: 10px;
+        margin: 10px;
         border: 1px solid #999;
         background: #f0f0f0;
         border-radius: 5px;
+        display: inline-block;
+        min-width: 150px;
       }
-      p.test {
-        text-align: right;
+      p.buttons {
         padding-top: 20px;
+      }
+      img.logo {
+        width: 100px;
       }
       @media (max-width: 700px) {
         body {
           background-color: #fff;
-        }
-        p.test {
-          text-align: center;
         }
         section {
           width: auto;
@@ -63,15 +82,23 @@
         }
       }
     </style>
-    <link rel="icon" href="favicon.ico" />
   </head>
   <body>
     <section>
-      <h1><a href="https://github.com/oduwsdl/Reconstructive">Reconstructive</a></h1>
+      <h1>
+        <a href="https://github.com/oduwsdl/Reconstructive">
+          <img src="./resources/reconstructive-logo.png" alt="Reconstructive" class="logo"><br>
+          Reconstructive
+        </a>
+      </h1>
 
       <p>Reconstructive is a ServiceWorker module for client-side reconstruction of composite mementos by rerouting resource requests to corresponding archived copies.</p>
 
-      <p class="test"><a class="btn" href="tests/20170206002337/https://ibnesayeed.github.io/acrts/">Check the test page!</a></p>
+      <p class="buttons">
+        <a class="btn" href="https://github.com/oduwsdl/Reconstructive">Code</a>
+        <a class="btn" href="./docs/">Documentation</a>
+        <a class="btn" href="tests/20170206002337/https://ibnesayeed.github.io/acrts/">Test</a>
+      </p>
     </section>
   </body>
 </html>
