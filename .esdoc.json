@@ -12,10 +12,12 @@
         "unexportedIdentifier": {"enable": true},
         "brand": {
           "logo": "./resources/reconstructive-logo.png",
-          "title": "Reconstructive",
-          "description": "Reconstructive is a ServiceWorker module for client-side reconstruction of composite mementos",
-          "repository": "https://github.com/oduwsdl/reconstructive",
-          "author": "https://twitter.com/ibnesayeed"
+          "title": "Reconstructive: An Archival Replay ServiceWorker",
+          "description": "Reconstructive is a ServiceWorker Module for Client-side Reconstruction of Composite Mementos",
+          "repository": "https://github.com/oduwsdl/Reconstructive",
+          "site": "https://oduwsdl.github.io/Reconstructive/",
+          "author": "https://twitter.com/ibnesayeed",
+          "image": "./resources/reconstructive-logo.png"
         }
       }
     }
