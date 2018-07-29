@@ -119,8 +119,8 @@ class Reconstructive {
    * @return {boolean}          - Should the request be rerouted?
    */
   shouldExclude(event) {
-    return Object.entries(this.exclusions).some(([exclusionName, exclusionFun]) => {
-      if (exclusionFun(event)) {
+    return Object.entries(this.exclusions).some(([exclusionName, exclusionFunc]) => {
+      if (exclusionFunc(event)) {
         this.debug && console.log('Exclusion found:', exclusionName, event.request.url);
         return true
       }
@@ -322,7 +322,7 @@ class Reconstructive {
     this.debug && console.log('Rerouting requested', event);
     // Let the browser deal with the requests if it matches a rerouting exclusion.
     if (this.shouldExclude(event)) return;
-    // This condition will match if the request URL is not a URI-M.
+    // This condition will match if the request URL is a URI-M.
     if (this._regexps.urimPattern.test(event.request.url)) {
       let request = this.createRequest(event);
       event.respondWith(
