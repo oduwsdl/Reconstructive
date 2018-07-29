@@ -5,7 +5,6 @@
  *
  * @overview  Reconstructive is a module to be used in a ServiceWorker of an archival replay.
  * @author    Sawood Alam <ibnesayeed@gmail.com>
- * @version   0.5.0
  * @license   MIT
  * @copyright ODU Web Science / Digital Libraries Research Group 2017
  */
