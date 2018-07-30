@@ -328,8 +328,8 @@ class Reconstructive {
     let rels = {};
     const links = response.headers.get('Link');
     if (links) {
-      links.replace(/^\W+/, '')
-           .replace(/\W+$/, '')
+      links.replace(/[\r\n]+/g, ' ')
+           .replace(/^\W+|\W+$/g, '')
            .split(/\W+</)
            .forEach(l => {
              let segs = l.split(/\W*;\W*/);
