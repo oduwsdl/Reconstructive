@@ -2,7 +2,7 @@
  * [ReconstructiveBanner](https://oduwsdl.github.io/Reconstructive/reconstructive-banner.js) implements `<reconstructive-banner>` [Custom Element](https://html.spec.whatwg.org/multipage/custom-elements.html#custom-elements).
  * It is an unobtrusive archival replay banner to make [mementos](http://mementoweb.org/about/) interactive and surface on-demand metadata about the archived resource.
  * Use it in an HTML page as illustrated below:
- * 
+ *
  * ```html
  * <script src="reconstructive-banner.js"></script>
  * <reconstructive-banner logo-src=""
@@ -167,6 +167,7 @@ class ReconstructiveBanner extends HTMLElement {
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
+          cursor: default;
         }
         #next {
           grid-column: 5;
