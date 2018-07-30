@@ -52,6 +52,7 @@ Following are the default options:
   urimPattern: `${self.location.origin}/memento/<datetime>/<urir>`,
   bannerElementLocation: `${self.location.origin}/reconstructive-banner.js`,
   bannerLogoLocation: '',
+  bannerLogoHref: '/',
   showBanner: false,
   debug: false
 }
@@ -64,6 +65,7 @@ const rc = new Reconstructive({
   urimPattern: `${self.location.origin}/archived/<datetime>/<urir>`,
   bannerElementLocation: 'https://oduwsdl.github.io/Reconstructive/reconstructive-banner.js',
   bannerLogoLocation: 'https://oduwsdl.github.io/Reconstructive/resources/reconstructive-logo.svg',
+  bannerLogoHref: `${self.location.origin}`,
   showBanner: true,
   debug: true,
   customColor: '#0C383B'

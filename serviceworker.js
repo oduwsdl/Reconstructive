@@ -9,6 +9,7 @@ importScripts('reconstructive.js');
 //   urimPattern: `${self.location.origin}/memento/<datetime>/<urir>`,
 //   bannerElementLocation: `${self.location.origin}/reconstructive-banner.js`,
 //   bannerLogoLocation: '',
+//   bannerLogoHref: '/',
 //   showBanner: false,
 //   debug: false
 // });

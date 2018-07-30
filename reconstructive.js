@@ -71,6 +71,15 @@ class Reconstructive {
     this.bannerLogoLocation = '';
 
     /**
+     * The URL or absolute path to link from the logo image in the banner.
+     * This should generally be set to the address of the homepage.
+     * Only necessary if showBanner is set to true.
+     *
+     * @type {string}
+     */
+    this.bannerLogoHref = '/';
+
+    /**
      * Whether or not to show an archival banner.
      * Defaults to false.
      *
@@ -348,6 +357,7 @@ class Reconstructive {
     return `
       <script src="${this.bannerElementLocation}"></script>
       <reconstructive-banner logo-src="${this.bannerLogoLocation}"
+                             home-href="${this.bannerLogoHref}"
                              urir="${urir}"
                              memento-datetime="${mementoDatetime}"
                              first-urim="${rels.first && rels.first.href || ''}"
