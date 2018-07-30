@@ -179,6 +179,7 @@ class ReconstructiveBanner extends HTMLElement {
           overflow: hidden;
           text-overflow: ellipsis;
           cursor: default;
+          user-select: none;
         }
         #next {
           grid-column: 5;
