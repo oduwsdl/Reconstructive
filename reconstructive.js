@@ -18,14 +18,14 @@
 class Reconstructive {
   /**
    * Creates a new Reconstructive instance with optional configurations.
-   * 
+   *
    * @param {{id: string, urimPattern: string, bannerElementLocation: string, bannerLogoLocation: string, showBanner: boolean, debug: boolean}} [config] - Configuration options
    */
   constructor(config) {
     /**
      * Name of the module.
      * Treated as a constant.
-     * 
+     *
      * @type {string}
      */
     this.NAME = 'Reconstructive';
@@ -33,7 +33,7 @@ class Reconstructive {
     /**
      * Version of the module.
      * Treated as a constant.
-     * 
+     *
      * @type {string}
      */
     this.VERSION = '0.6.0';
@@ -96,7 +96,7 @@ class Reconstructive {
 
     /**
      * A private object with varius RegExp properties (possibly derived from other properties) for internal use.
-     * 
+     *
      * @private
      * @type    {{urimPattern: RegExp, absoluteReference: RegExp, bodyEnd: RegExp}}
      */
@@ -324,20 +324,40 @@ class Reconstructive {
     if (!mementoDatetime) {
       mementoDatetime = new Date(`${datetime.slice(0, 4)}-${datetime.slice(4, 6)}-${datetime.slice(6, 8)}T${datetime.slice(8, 10)}:${datetime.slice(10, 12)}:${datetime.slice(12, 14)}Z`).toUTCString()
     }
-    // TODO: Parse Link header to populate navigational attributes
+    // TODO: Extract link parser in a method
+    let rels = {};
+    const links = response.headers.get('Link');
+    if (links) {
+      links.replace(/^\W+/, '')
+           .replace(/\W+$/, '')
+           .split(/\W+</)
+           .forEach(l => {
+             let segs = l.split(/\W*;\W*/);
+             let href = segs.shift();
+             let attributes = {};
+             segs.forEach(s => {
+               let [k, v] = s.split(/\W*=\W*/);
+               attributes[k] = v;
+             });
+             attributes['rel'].split(/\s+/)
+                              .forEach(r => {
+                                rels[r] = {href: href, datetime: attributes['datetime']};
+                              });
+           });
+    }
     return `
       <script src="${this.bannerElementLocation}"></script>
       <reconstructive-banner logo-src="${this.bannerLogoLocation}"
                              urir="${urir}"
                              memento-datetime="${mementoDatetime}"
-                             first-urim=""
-                             first-datetime=""
-                             last-urim=""
-                             last-datetime=""
-                             prev-urim=""
-                             prev-datetime=""
-                             next-urim=""
-                             next-datetime="">
+                             first-urim="${rels.first ? rels.first.href : ''}"
+                             first-datetime="${rels.first ? rels.first.datetime : ''}"
+                             last-urim="${rels.last ? rels.last.href : ''}"
+                             last-datetime="${rels.last ? rels.last.datetime : ''}"
+                             prev-urim="${rels.prev ? rels.prev.href : ''}"
+                             prev-datetime="${rels.prev ? rels.prev.datetime : ''}"
+                             next-urim="${rels.next ? rels.next.href : ''}"
+                             next-datetime="${rels.next ? rels.next.datetime : ''}">
       </reconstructive-banner>
     `;
   }
