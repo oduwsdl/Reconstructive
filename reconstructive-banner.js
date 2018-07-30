@@ -54,19 +54,25 @@ class ReconstructiveBanner extends HTMLElement {
       if (diff < 0) {
         return 'Capture from the future!';
       }
+      let unit, quotient;
       if (diff >= 31622400000) {
-        return `Captured ${Math.round(diff / 31622400000)} year(s) ago`;
+        unit = 'year';
+        quotient = Math.round(diff / 31622400000);
+      } else if (diff >= 2629746000) {
+        unit = 'month';
+        quotient = Math.round(diff / 2629746000);
+      } else if (diff >= 86400000) {
+        unit = 'day';
+        quotient = Math.round(diff / 86400000);
+      } else if (diff >= 3600000) {
+        unit = 'hour';
+        quotient = Math.round(diff / 3600000);
+      } else {
+        unit = 'minute';
+        quotient = Math.round(diff / 60000);
       }
-      if (diff >= 2629746000) {
-        return `Captured ${Math.round(diff / 2629746000)} month(s) ago`;
-      }
-      if (diff >= 86400000) {
-        return `Captured ${Math.round(diff / 86400000)} day(s) ago`;
-      }
-      if (diff >= 3600000) {
-        return `Captured ${Math.round(diff / 3600000)} hour(s) ago`;
-      }
-      return `Captured ${Math.round(diff / 60000)} minute(s) ago`;
+      const diffStr = quotient == 1 ? `one ${unit}` : `${quotient} ${unit}s`;
+      return `Captured ${diffStr} ago`;
     })();
 
     const template = `
