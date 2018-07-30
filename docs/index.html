@@ -70,6 +70,7 @@ Following are the default options:</p>
   urimPattern: `${self.location.origin}/memento/&lt;datetime&gt;/&lt;urir&gt;`,
   bannerElementLocation: `${self.location.origin}/reconstructive-banner.js`,
   bannerLogoLocation: &apos;&apos;,
+  bannerLogoHref: &apos;/&apos;,
   showBanner: false,
   debug: false
 }</code>
@@ -79,6 +80,7 @@ Following are the default options:</p>
   urimPattern: `${self.location.origin}/archived/&lt;datetime&gt;/&lt;urir&gt;`,
   bannerElementLocation: &apos;https://oduwsdl.github.io/Reconstructive/reconstructive-banner.js&apos;,
   bannerLogoLocation: &apos;https://oduwsdl.github.io/Reconstructive/resources/reconstructive-logo.svg&apos;,
+  bannerLogoHref: `${self.location.origin}`,
   showBanner: true,
   debug: true,
   customColor: &apos;#0C383B&apos;
@@ -92,6 +94,7 @@ Following is the default exclusions object.</p>
   notGet: event =&gt; event.request.method !== &apos;GET&apos;,
   bannerElement: event =&gt; this.showBanner &amp;&amp; event.request.url.endsWith(this.bannerElementLocation),
   bannerLogo: event =&gt; this.showBanner &amp;&amp; this.bannerLogoLocation &amp;&amp; event.request.url.endsWith(this.bannerLogoLocation),
+  homePage: event =&gt; this.showBanner &amp;&amp; this.bannerLogoHref &amp;&amp; event.request.url === this.bannerLogoHref,
   localResource: event =&gt; !(this._regexps.urimPattern.test(event.request.url) || this._regexps.urimPattern.test(event.request.referrer))
 }</code>
 </code></pre>

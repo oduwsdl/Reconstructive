@@ -378,6 +378,12 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "reconstructive/reconstructive-banner.js~reconstructivebanner#homehref",
+    "class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-homeHref",
+    "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#homeHref",
+    "member"
+  ],
+  [
     "reconstructive/reconstructive-banner.js~reconstructivebanner#lastdatetime",
     "class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-lastDatetime",
     "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#lastDatetime",
@@ -471,6 +477,12 @@ window.esdocSearchIndex = [
     "reconstructive/reconstructive.js~reconstructive#bannerelementlocation",
     "class/Reconstructive/reconstructive.js~Reconstructive.html#instance-member-bannerElementLocation",
     "Reconstructive/reconstructive.js~Reconstructive#bannerElementLocation",
+    "member"
+  ],
+  [
+    "reconstructive/reconstructive.js~reconstructive#bannerlogohref",
+    "class/Reconstructive/reconstructive.js~Reconstructive.html#instance-member-bannerLogoHref",
+    "Reconstructive/reconstructive.js~Reconstructive#bannerLogoHref",
     "member"
   ],
   [

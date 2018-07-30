@@ -56,14 +56,14 @@
 class Reconstructive {
   /**
    * Creates a new Reconstructive instance with optional configurations.
-   * 
+   *
    * @param {{id: string, urimPattern: string, bannerElementLocation: string, bannerLogoLocation: string, showBanner: boolean, debug: boolean}} [config] - Configuration options
    */
   constructor(config) {
     /**
      * Name of the module.
      * Treated as a constant.
-     * 
+     *
      * @type {string}
      */
     this.NAME = &apos;Reconstructive&apos;;
@@ -71,7 +71,7 @@ class Reconstructive {
     /**
      * Version of the module.
      * Treated as a constant.
-     * 
+     *
      * @type {string}
      */
     this.VERSION = &apos;0.6.0&apos;;
@@ -109,6 +109,15 @@ class Reconstructive {
     this.bannerLogoLocation = &apos;&apos;;
 
     /**
+     * The URL or absolute path to link from the logo image in the banner.
+     * This should generally be set to the address of the homepage.
+     * Only necessary if showBanner is set to true.
+     *
+     * @type {string}
+     */
+    this.bannerLogoHref = &apos;/&apos;;
+
+    /**
      * Whether or not to show an archival banner.
      * Defaults to false.
      *
@@ -134,7 +143,7 @@ class Reconstructive {
 
     /**
      * A private object with varius RegExp properties (possibly derived from other properties) for internal use.
-     * 
+     *
      * @private
      * @type    {{urimPattern: RegExp, absoluteReference: RegExp, bodyEnd: RegExp}}
      */
@@ -151,12 +160,13 @@ class Reconstructive {
      * Each member function is called with the fetch event as parameters.
      * If any member returns true, the fetch event is excluded from being rerouted.
      *
-     * @type {{notGet: function(event: FetchEvent): boolean, bannerElement: function(event: FetchEvent): boolean, bannerLogo: function(event: FetchEvent): boolean, localResource: function(event: FetchEvent): boolean}}
+     * @type {{notGet: function(event: FetchEvent): boolean, bannerElement: function(event: FetchEvent): boolean, bannerLogo: function(event: FetchEvent): boolean, homePage: function(event: FetchEvent): boolean, localResource: function(event: FetchEvent): boolean}}
      */
     this.exclusions = {
       notGet: event =&gt; event.request.method !== &apos;GET&apos;,
       bannerElement: event =&gt; this.showBanner &amp;&amp; event.request.url.endsWith(this.bannerElementLocation),
       bannerLogo: event =&gt; this.showBanner &amp;&amp; this.bannerLogoLocation &amp;&amp; event.request.url.endsWith(this.bannerLogoLocation),
+      homePage: event =&gt; this.showBanner &amp;&amp; this.bannerLogoHref &amp;&amp; event.request.url === this.bannerLogoHref,
       localResource: event =&gt; !(this._regexps.urimPattern.test(event.request.url) || this._regexps.urimPattern.test(event.request.referrer))
     };
 
@@ -362,20 +372,41 @@ class Reconstructive {
     if (!mementoDatetime) {
       mementoDatetime = new Date(`${datetime.slice(0, 4)}-${datetime.slice(4, 6)}-${datetime.slice(6, 8)}T${datetime.slice(8, 10)}:${datetime.slice(10, 12)}:${datetime.slice(12, 14)}Z`).toUTCString()
     }
-    // TODO: Parse Link header to populate navigational attributes
+    // TODO: Extract link parser in a method
+    let rels = {};
+    const links = response.headers.get(&apos;Link&apos;);
+    if (links) {
+      links.replace(/[\r\n]+/g, &apos; &apos;)
+           .replace(/^\W+|\W+$/g, &apos;&apos;)
+           .split(/\W+&lt;/)
+           .forEach(l =&gt; {
+             let segs = l.split(/\W*;\W*/);
+             let href = segs.shift();
+             let attributes = {};
+             segs.forEach(s =&gt; {
+               let [k, v] = s.split(/\W*=\W*/);
+               attributes[k] = v;
+             });
+             attributes[&apos;rel&apos;].split(/\s+/)
+                              .forEach(r =&gt; {
+                                rels[r] = {href: href, datetime: attributes[&apos;datetime&apos;]};
+                              });
+           });
+    }
     return `
       &lt;script src=&quot;${this.bannerElementLocation}&quot;&gt;&lt;/script&gt;
       &lt;reconstructive-banner logo-src=&quot;${this.bannerLogoLocation}&quot;
+                             home-href=&quot;${this.bannerLogoHref}&quot;
                              urir=&quot;${urir}&quot;
                              memento-datetime=&quot;${mementoDatetime}&quot;
-                             first-urim=&quot;&quot;
-                             first-datetime=&quot;&quot;
-                             last-urim=&quot;&quot;
-                             last-datetime=&quot;&quot;
-                             prev-urim=&quot;&quot;
-                             prev-datetime=&quot;&quot;
-                             next-urim=&quot;&quot;
-                             next-datetime=&quot;&quot;&gt;
+                             first-urim=&quot;${rels.first &amp;&amp; rels.first.href || &apos;&apos;}&quot;
+                             first-datetime=&quot;${rels.first &amp;&amp; rels.first.datetime || &apos;&apos;}&quot;
+                             last-urim=&quot;${rels.last &amp;&amp; rels.last.href || &apos;&apos;}&quot;
+                             last-datetime=&quot;${rels.last &amp;&amp; rels.last.datetime || &apos;&apos;}&quot;
+                             prev-urim=&quot;${rels.prev &amp;&amp; rels.prev.href || &apos;&apos;}&quot;
+                             prev-datetime=&quot;${rels.prev &amp;&amp; rels.prev.datetime || &apos;&apos;}&quot;
+                             next-urim=&quot;${rels.next &amp;&amp; rels.next.href || &apos;&apos;}&quot;
+                             next-datetime=&quot;${rels.next &amp;&amp; rels.next.datetime || &apos;&apos;}&quot;&gt;
       &lt;/reconstructive-banner&gt;
     `;
   }

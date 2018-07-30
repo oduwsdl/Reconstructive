@@ -40,10 +40,11 @@
  * [ReconstructiveBanner](https://oduwsdl.github.io/Reconstructive/reconstructive-banner.js) implements `&lt;reconstructive-banner&gt;` [Custom Element](https://html.spec.whatwg.org/multipage/custom-elements.html#custom-elements).
  * It is an unobtrusive archival replay banner to make [mementos](http://mementoweb.org/about/) interactive and surface on-demand metadata about the archived resource.
  * Use it in an HTML page as illustrated below:
- * 
+ *
  * ```html
  * &lt;script src=&quot;reconstructive-banner.js&quot;&gt;&lt;/script&gt;
  * &lt;reconstructive-banner logo-src=&quot;&quot;
+ *                        home-href=&quot;/&quot;
  *                        urir=&quot;https://example.com/&quot;
  *                        memento-datetime=&quot;Mon, 06 Feb 2017 00:23:37 GMT&quot;
  *                        first-urim=&quot;https://archive.host/memento/20170206002337/https://example.com/&quot;
@@ -72,6 +73,7 @@ class ReconstructiveBanner extends HTMLElement {
   }
 
   connectedCallback() {
+    this.homeHref = this.getAttribute(&apos;home-href&apos;) || &apos;/&apos;;
     this.logoSrc = this.getAttribute(&apos;logo-src&apos;) || &apos;data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+PHBhdGggZD0iTTAgMyBhMyAzIDAgMCAxIDMtMyBoMiBsMyAzIGgtMyBhMiAyIDAgMCAwLTIgMiB2NiBhMiAyIDAgMCAwIDIgMiBoMSBsMyAzIGgtNiBhMyAzIDAgMCAxLTMtMyBaIiBmaWxsPSIjMUI0ODY5IiAvPjxwYXRoIGQ9Ik0xNiAxNiBoLTQgbC05LTkgaDYgYTIgMiAwIDAgMCAwLTQgaC0xIGwtMy0zIGg2IGEzIDMgMCAwIDEgMyAzIHY0IGEzIDMgMCAwIDEtMyAzIGgtMSBaIiBmaWxsPSIjRjI0NzM4IiAvPjwvc3ZnPg==&apos;;
     this.urir = this.getAttribute(&apos;urir&apos;) || &apos;&apos;;
     this.mementoDatetime = this.getAttribute(&apos;memento-datetime&apos;) || &apos;&apos;;
@@ -92,25 +94,37 @@ class ReconstructiveBanner extends HTMLElement {
       if (diff &lt; 0) {
         return &apos;Capture from the future!&apos;;
       }
-      if (diff &gt;= 31622400000) {
-        return `Captured ${Math.round(diff / 31622400000)} year(s) ago`;
+      const minuteMilliseconds = 60000,
+            hourMilliseconds = 3600000,
+            dayMilliseconds = 86400000,
+            monthMilliseconds = 2629746000,
+            yearMilliseconds = 31622400000;
+      let unit, quotient;
+      if (diff &gt;= yearMilliseconds) {
+        unit = &apos;year&apos;;
+        quotient = Math.round(diff / yearMilliseconds);
+      } else if (diff &gt;= monthMilliseconds) {
+        unit = &apos;month&apos;;
+        quotient = Math.round(diff / monthMilliseconds);
+      } else if (diff &gt;= dayMilliseconds) {
+        unit = &apos;day&apos;;
+        quotient = Math.round(diff / dayMilliseconds);
+      } else if (diff &gt;= hourMilliseconds) {
+        unit = &apos;hour&apos;;
+        quotient = Math.round(diff / hourMilliseconds);
+      } else {
+        unit = &apos;minute&apos;;
+        quotient = Math.round(diff / minuteMilliseconds);
       }
-      if (diff &gt;= 2629746000) {
-        return `Captured ${Math.round(diff / 2629746000)} month(s) ago`;
-      }
-      if (diff &gt;= 86400000) {
-        return `Captured ${Math.round(diff / 86400000)} day(s) ago`;
-      }
-      if (diff &gt;= 3600000) {
-        return `Captured ${Math.round(diff / 3600000)} hour(s) ago`;
-      }
-      return `Captured ${Math.round(diff / 60000)} minute(s) ago`;
+      const diffStr = quotient == 1 ? `one ${unit}` : `${quotient} ${unit}s`;
+      return `Captured ${diffStr} ago`;
     })();
 
     const template = `
       &lt;style&gt;
         a[href=&apos;&apos;] {
           pointer-events: none;
+          opacity: 0.4;
         }
         #wrapper {
           z-index: 99999999;
@@ -205,6 +219,8 @@ class ReconstructiveBanner extends HTMLElement {
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
+          cursor: default;
+          user-select: none;
         }
         #next {
           grid-column: 5;
@@ -238,7 +254,9 @@ class ReconstructiveBanner extends HTMLElement {
       &lt;/style&gt;
       &lt;div id=&quot;wrapper&quot; class=&quot;fab&quot;&gt;
         &lt;div id=&quot;container&quot;&gt;
-          &lt;img id=&quot;logo&quot; class=&quot;branding&quot; src=&quot;${this.logoSrc}&quot; alt=&quot;Reconstructive Banner Logo&quot;&gt;
+          &lt;a id=&quot;home&quot; title=&quot;Go to home&quot; href=&quot;${this.homeHref}&quot;&gt;
+            &lt;img id=&quot;logo&quot; class=&quot;branding&quot; src=&quot;${this.logoSrc}&quot; alt=&quot;Reconstructive Banner Logo&quot;&gt;
+          &lt;/a&gt;
           &lt;form id=&quot;lookup&quot;&gt;
             &lt;input id=&quot;urir&quot; class=&quot;url&quot; value=&quot;${this.urir}&quot;&gt;
           &lt;form&gt;
