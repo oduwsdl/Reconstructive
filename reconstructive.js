@@ -350,14 +350,14 @@ class Reconstructive {
       <reconstructive-banner logo-src="${this.bannerLogoLocation}"
                              urir="${urir}"
                              memento-datetime="${mementoDatetime}"
-                             first-urim="${rels.first ? rels.first.href : ''}"
-                             first-datetime="${rels.first ? rels.first.datetime : ''}"
-                             last-urim="${rels.last ? rels.last.href : ''}"
-                             last-datetime="${rels.last ? rels.last.datetime : ''}"
-                             prev-urim="${rels.prev ? rels.prev.href : ''}"
-                             prev-datetime="${rels.prev ? rels.prev.datetime : ''}"
-                             next-urim="${rels.next ? rels.next.href : ''}"
-                             next-datetime="${rels.next ? rels.next.datetime : ''}">
+                             first-urim="${rels.first && rels.first.href || ''}"
+                             first-datetime="${rels.first && rels.first.datetime || ''}"
+                             last-urim="${rels.last && rels.last.href || ''}"
+                             last-datetime="${rels.last && rels.last.datetime || ''}"
+                             prev-urim="${rels.prev && rels.prev.href || ''}"
+                             prev-datetime="${rels.prev && rels.prev.datetime || ''}"
+                             next-urim="${rels.next && rels.next.href || ''}"
+                             next-datetime="${rels.next && rels.next.datetime || ''}">
       </reconstructive-banner>
     `;
   }
