@@ -324,6 +324,7 @@ class Reconstructive {
     if (!mementoDatetime) {
       mementoDatetime = new Date(`${datetime.slice(0, 4)}-${datetime.slice(4, 6)}-${datetime.slice(6, 8)}T${datetime.slice(8, 10)}:${datetime.slice(10, 12)}:${datetime.slice(12, 14)}Z`).toUTCString()
     }
+    // TODO: Parse Link header to populate navigational attributes
     return `
       <script src="${this.bannerElementLocation}"></script>
       <reconstructive-banner logo-src="${this.bannerLogoLocation}"
