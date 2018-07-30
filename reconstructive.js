@@ -312,12 +312,21 @@ class Reconstructive {
    */
   createBanner(response, event) {
     const [datetime, urir] = this.extractDatetimeUrir(response.url);
-    return `<script src="${this.bannerElementLocation}"></script>
-            <reconstructive-banner
-              logo-src="${this.bannerLogoLocation}"
-              urir="${urir}"
-              memento-datetime="${datetime}">
-            </reconstructive-banner>`;
+    return `
+      <script src="${this.bannerElementLocation}"></script>
+      <reconstructive-banner logo-src="${this.bannerLogoLocation}"
+                             urir="${urir}"
+                             memento-datetime="${datetime}"
+                             first-urim=""
+                             first-datetime=""
+                             last-urim=""
+                             last-datetime=""
+                             prev-urim=""
+                             prev-datetime=""
+                             next-urim=""
+                             next-datetime="">
+      </reconstructive-banner>
+    `;
   }
 
   /**
