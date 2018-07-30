@@ -360,9 +360,15 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
-    "reconstructive/reconstructive-banner.js~reconstructivebanner#datetime",
-    "class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-datetime",
-    "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#datetime",
+    "reconstructive/reconstructive-banner.js~reconstructivebanner#firstdatetime",
+    "class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-firstDatetime",
+    "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#firstDatetime",
+    "member"
+  ],
+  [
+    "reconstructive/reconstructive-banner.js~reconstructivebanner#firsturim",
+    "class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-firstUrim",
+    "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#firstUrim",
     "member"
   ],
   [
@@ -372,9 +378,63 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "reconstructive/reconstructive-banner.js~reconstructivebanner#lastdatetime",
+    "class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-lastDatetime",
+    "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#lastDatetime",
+    "member"
+  ],
+  [
+    "reconstructive/reconstructive-banner.js~reconstructivebanner#lasturim",
+    "class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-lastUrim",
+    "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#lastUrim",
+    "member"
+  ],
+  [
+    "reconstructive/reconstructive-banner.js~reconstructivebanner#logosrc",
+    "class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-logoSrc",
+    "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#logoSrc",
+    "member"
+  ],
+  [
+    "reconstructive/reconstructive-banner.js~reconstructivebanner#mementodatetime",
+    "class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-mementoDatetime",
+    "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#mementoDatetime",
+    "member"
+  ],
+  [
+    "reconstructive/reconstructive-banner.js~reconstructivebanner#nextdatetime",
+    "class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-nextDatetime",
+    "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#nextDatetime",
+    "member"
+  ],
+  [
+    "reconstructive/reconstructive-banner.js~reconstructivebanner#nexturim",
+    "class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-nextUrim",
+    "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#nextUrim",
+    "member"
+  ],
+  [
+    "reconstructive/reconstructive-banner.js~reconstructivebanner#prevdatetime",
+    "class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-prevDatetime",
+    "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#prevDatetime",
+    "member"
+  ],
+  [
+    "reconstructive/reconstructive-banner.js~reconstructivebanner#prevurim",
+    "class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-prevUrim",
+    "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#prevUrim",
+    "member"
+  ],
+  [
     "reconstructive/reconstructive-banner.js~reconstructivebanner#shadow",
     "class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-shadow",
     "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#shadow",
+    "member"
+  ],
+  [
+    "reconstructive/reconstructive-banner.js~reconstructivebanner#timediff",
+    "class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-timeDiff",
+    "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#timeDiff",
     "member"
   ],
   [
@@ -411,6 +471,12 @@ window.esdocSearchIndex = [
     "reconstructive/reconstructive.js~reconstructive#bannerelementlocation",
     "class/Reconstructive/reconstructive.js~Reconstructive.html#instance-member-bannerElementLocation",
     "Reconstructive/reconstructive.js~Reconstructive#bannerElementLocation",
+    "member"
+  ],
+  [
+    "reconstructive/reconstructive.js~reconstructive#bannerlogolocation",
+    "class/Reconstructive/reconstructive.js~Reconstructive.html#instance-member-bannerLogoLocation",
+    "Reconstructive/reconstructive.js~Reconstructive#bannerLogoLocation",
     "member"
   ],
   [

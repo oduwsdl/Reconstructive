@@ -663,9 +663,9 @@
     "__docId__": 57,
     "kind": "file",
     "name": "Reconstructive/reconstructive-banner.js",
-    "content": "class ReconstructiveBanner extends HTMLElement {\n  constructor() {\n    super();\n    this.shadow = this.attachShadow({mode: 'closed'});\n  }\n\n  connectedCallback() {\n    this.urir = this.getAttribute('urir');\n    this.datetime = this.getAttribute('datetime');\n    console.log(this.urir);\n    let template = `\n      <style>\n        div#reconstructive-banner-aligner {\n          width: 100%;\n          position: fixed;\n          bottom: 0;\n          transition: opacity 0.5s ease-in;\n        }\n        div.hidden {\n          opacity: 0;\n          transition: opacity 0.5s ease-in;\n        }\n        div#reconstructive-banner-container {\n          max-width: 500px;\n          height: 60px;\n          border: 2px solid #FF8B00;\n          background-color: #F2FFE3;\n          border-radius: 5px;\n          color: #1B4869;\n          margin: 10px auto;\n          padding: 5px;\n          display: grid;\n          grid-gap: 5px;\n          box-shadow: 0 0 10px;\n        }\n        input {\n          padding: 3px;\n          box-sizing:border-box;\n        }\n        input.urir {\n          grid-column: 1 / 3;\n          grid-row: 1;\n        }\n        p.label {\n          grid-column: 1;\n          grid-row: 2;\n          margin: 0;\n        }\n        input.datetime {\n          grid-column: 2;\n          grid-row: 2;\n        }\n      </style>\n      <div id=\"reconstructive-banner-aligner\" class=\"\">\n        <div id=\"reconstructive-banner-container\">\n          <input class=\"urir\" value=\"${this.urir}\">\n          <p class=\"label\">Archived at:</p>\n          <input class=\"datetime\" value=\"${this.datetime}\">\n        </div>\n      </div>\n    `;\n    this.shadow.innerHTML = template;\n\n    let container = this.shadow.getElementById('reconstructive-banner-container');\n    this.focused = false;\n    container.onmouseover = () => this.focused = true;\n    container.onmouseout = () => this.focused = false;\n    let aligner = this.shadow.getElementById('reconstructive-banner-aligner');\n    let t;\n    let resetTimer = () => {\n      aligner.classList.remove('hidden');\n      clearTimeout(t);\n      t = setTimeout(() => !this.focused && aligner.classList.add('hidden'), 2000);\n    }\n    window.addEventListener('load', resetTimer);\n    window.addEventListener('mousemove', resetTimer);\n    window.addEventListener('mousedown', resetTimer);\n    window.addEventListener('click', resetTimer);\n    window.addEventListener('scroll', resetTimer);\n    window.addEventListener('keypress', resetTimer);\n  }\n}\n\ncustomElements.define('reconstructive-banner', ReconstructiveBanner);\n",
+    "content": "/**\n * [ReconstructiveBanner](https://oduwsdl.github.io/Reconstructive/reconstructive-banner.js) implements `<reconstructive-banner>` [Custom Element](https://html.spec.whatwg.org/multipage/custom-elements.html#custom-elements).\n * It is an unobtrusive archival replay banner to make [mementos](http://mementoweb.org/about/) interactive and surface on-demand metadata about the archived resource.\n * Use it in an HTML page as illustrated below:\n * \n * ```html\n * <script src=\"reconstructive-banner.js\"></script>\n * <reconstructive-banner logo-src=\"\"\n *                        urir=\"https://example.com/\"\n *                        memento-datetime=\"Mon, 06 Feb 2017 00:23:37 GMT\"\n *                        first-urim=\"https://archive.host/memento/20170206002337/https://example.com/\"\n *                        first-datetime=\"Mon, 06 Feb 2017 00:23:37 GMT\"\n *                        last-urim=\"https://archive.host/memento/20170206002337/https://example.com/\"\n *                        last-datetime=\"Mon, 06 Feb 2017 00:23:37 GMT\"\n *                        prev-urim=\"\"\n *                        prev-datetime=\"\"\n *                        next-urim=\"\"\n *                        next-datetime=\"\">\n * </reconstructive-banner>\n * ```\n *\n * @overview  ReconstructiveBanner implements <reconstructive-banner> Custom Element for archival replay banners.\n * @author    Sawood Alam <ibnesayeed@gmail.com>\n * @license   MIT\n * @copyright ODU Web Science / Digital Libraries Research Group 2017\n */\nclass ReconstructiveBanner extends HTMLElement {\n  /**\n   * Creates a new ReconstructiveBanner instance and attaches a Shadow DOM.\n   */\n  constructor() {\n    super();\n    this.shadow = this.attachShadow({mode: 'closed'});\n  }\n\n  connectedCallback() {\n    this.logoSrc = this.getAttribute('logo-src') || 'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+PHBhdGggZD0iTTAgMyBhMyAzIDAgMCAxIDMtMyBoMiBsMyAzIGgtMyBhMiAyIDAgMCAwLTIgMiB2NiBhMiAyIDAgMCAwIDIgMiBoMSBsMyAzIGgtNiBhMyAzIDAgMCAxLTMtMyBaIiBmaWxsPSIjMUI0ODY5IiAvPjxwYXRoIGQ9Ik0xNiAxNiBoLTQgbC05LTkgaDYgYTIgMiAwIDAgMCAwLTQgaC0xIGwtMy0zIGg2IGEzIDMgMCAwIDEgMyAzIHY0IGEzIDMgMCAwIDEtMyAzIGgtMSBaIiBmaWxsPSIjRjI0NzM4IiAvPjwvc3ZnPg==';\n    this.urir = this.getAttribute('urir') || '';\n    this.mementoDatetime = this.getAttribute('memento-datetime') || '';\n    this.firstUrim = this.getAttribute('first-urim') || '';\n    this.firstDatetime = this.getAttribute('first-datetime') || '';\n    this.lastUrim = this.getAttribute('last-urim') || '';\n    this.lastDatetime = this.getAttribute('last-datetime') || '';\n    this.prevUrim = this.getAttribute('prev-urim') || '';\n    this.prevDatetime = this.getAttribute('prev-datetime') || '';\n    this.nextUrim = this.getAttribute('next-urim') || '';\n    this.nextDatetime = this.getAttribute('next-datetime') || '';\n\n    this.timeDiff = (() => {\n      const diff = Date.now() - new Date(this.mementoDatetime);\n      if (isNaN(diff)) {\n        return '';\n      }\n      if (diff < 0) {\n        return 'Capture from the future!';\n      }\n      if (diff >= 31622400000) {\n        return `Captured ${Math.round(diff / 31622400000)} year(s) ago`;\n      }\n      if (diff >= 2629746000) {\n        return `Captured ${Math.round(diff / 2629746000)} month(s) ago`;\n      }\n      if (diff >= 86400000) {\n        return `Captured ${Math.round(diff / 86400000)} day(s) ago`;\n      }\n      if (diff >= 3600000) {\n        return `Captured ${Math.round(diff / 3600000)} hour(s) ago`;\n      }\n      return `Captured ${Math.round(diff / 60000)} minute(s) ago`;\n    })();\n\n    const template = `\n      <style>\n        a[href=''] {\n          pointer-events: none;\n        }\n        #wrapper {\n          z-index: 99999999;\n          padding: 10px;\n          box-sizing: border-box;\n        }\n        #wrapper.fab {\n          position: fixed;\n          bottom: 10px;\n          right: 10px;\n          transition: all 0.5s ease-in;\n        }\n        #wrapper.expanded {\n          position: fixed;\n          top: 0;\n          left: 0;\n          margin: 0;\n          width: 100%;\n          height: 100%;\n          background: rgba(100, 100, 100, 0.6);\n          transition: all 0.5s ease-out;\n        }\n        #wrapper.hidden {\n          opacity: 0;\n          transition: opacity 0.5s ease-in;\n        }\n        #wrapper.closed {\n          display: none;\n        }\n        #container {\n          border: 2px solid #451212;\n          background-color: #F2FFE3;\n          border-radius: 10px;\n          color: #1B4869;\n          max-width: 600px;\n          margin: auto;\n          padding: 5px;\n          box-shadow: 0 0 20px;\n          display: grid;\n          grid-template-columns: 42px 20px 20px 1fr 20px 20px 20px;\n          grid-template-rows: 20px 20px 1fr;\n          grid-gap: 2px 10px;\n          box-sizing: border-box;\n          min-height: 50px;\n          transition: all 0.5s ease-in;\n        }\n        .expanded #container {\n          height: calc(100vh - 20px);\n          box-shadow: none;\n          transition: all 0.5s ease-out;\n        }\n        .fab #collapse, .fab #meta, .expanded #expand {\n          display: none;\n        }\n        form {\n          display: contents;\n        }\n        input {\n          padding: 0 5px;\n          box-sizing: border-box;\n        }\n        .branding {\n          width: 42px;\n        }\n        .icon {\n          width: 20px;\n        }\n        #logo {\n          grid-column: 1;\n          grid-row: 1 / 3;\n        }\n        #urir {\n          grid-column: 2 / 7;\n          grid-row: 1;\n        }\n        #first {\n          grid-column: 2;\n          grid-row: 2;\n        }\n        #prev {\n          grid-column: 3;\n          grid-row: 2;\n        }\n        #current {\n          grid-column: 4;\n          grid-row: 2;\n          margin: 0 5px;\n          font-size: 16px;\n          line-height: 22px;\n          color: #323B40;\n          text-align: center;\n          white-space: nowrap;\n          overflow: hidden;\n          text-overflow: ellipsis;\n        }\n        #next {\n          grid-column: 5;\n          grid-row: 2;\n        }\n        #last {\n          grid-column: 6;\n          grid-row: 2;\n        }\n        #close {\n          grid-column: 7;\n          grid-row: 1;\n        }\n        #expand {\n          grid-column: 7;\n          grid-row: 2;\n        }\n        #collapse {\n          grid-column: 7;\n          grid-row: 2;\n        }\n        #meta {\n          grid-column: 1 / 8;\n          grid-row: 3;\n          overflow: auto;\n          padding: 10px;\n          display: grid;\n          grid-template-columns: 1fr 1fr 1fr;\n          grid-template-rows: auto auto auto 130px 1fr;\n        }\n      </style>\n      <div id=\"wrapper\" class=\"fab\">\n        <div id=\"container\">\n          <img id=\"logo\" class=\"branding\" src=\"${this.logoSrc}\" alt=\"Reconstructive Banner Logo\">\n          <form id=\"lookup\">\n            <input id=\"urir\" class=\"url\" value=\"${this.urir}\">\n          <form>\n          <a id=\"first\" class=\"icon\" title=\"${this.firstDatetime}\" href=\"${this.firstUrim}\">\n            <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M4 28v-24h4v11l10-10v10l10-10v22l-10-10v10l-10-10v11z\"></path></svg>\n          </a>\n          <a id=\"prev\" class=\"icon\" title=\"${this.prevDatetime}\" href=\"${this.prevUrim}\">\n            <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M8 28v-24h4v11l10-10v22l-10-10v11z\"></path></svg>\n          </a>\n          <p id=\"current\" class=\"time\" title=\"${this.mementoDatetime}\">${this.timeDiff}</p>\n          <a id=\"next\" class=\"icon\" title=\"${this.nextDatetime}\" href=\"${this.nextUrim}\">\n            <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M24 4v24h-4v-11l-10 10v-22l10 10v-11z\"></path></svg>\n          </a>\n          <a id=\"last\" class=\"icon\" title=\"${this.lastDatetime}\" href=\"${this.lastUrim}\">\n            <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M28 4v24h-4v-11l-10 10v-10l-10 10v-22l10 10v-10l10 10v-11z\"></path></svg>\n          </a>\n          <a id=\"close\" class=\"icon\" href=\"#\">\n            <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M31.708 25.708c-0-0-0-0-0-0l-9.708-9.708 9.708-9.708c0-0 0-0 0-0 0.105-0.105 0.18-0.227 0.229-0.357 0.133-0.356 0.057-0.771-0.229-1.057l-4.586-4.586c-0.286-0.286-0.702-0.361-1.057-0.229-0.13 0.048-0.252 0.124-0.357 0.228 0 0-0 0-0 0l-9.708 9.708-9.708-9.708c-0-0-0-0-0-0-0.105-0.104-0.227-0.18-0.357-0.228-0.356-0.133-0.771-0.057-1.057 0.229l-4.586 4.586c-0.286 0.286-0.361 0.702-0.229 1.057 0.049 0.13 0.124 0.252 0.229 0.357 0 0 0 0 0 0l9.708 9.708-9.708 9.708c-0 0-0 0-0 0-0.104 0.105-0.18 0.227-0.229 0.357-0.133 0.355-0.057 0.771 0.229 1.057l4.586 4.586c0.286 0.286 0.702 0.361 1.057 0.229 0.13-0.049 0.252-0.124 0.357-0.229 0-0 0-0 0-0l9.708-9.708 9.708 9.708c0 0 0 0 0 0 0.105 0.105 0.227 0.18 0.357 0.229 0.356 0.133 0.771 0.057 1.057-0.229l4.586-4.586c0.286-0.286 0.362-0.702 0.229-1.057-0.049-0.13-0.124-0.252-0.229-0.357z\"></path></svg>\n          </a>\n          <a id=\"expand\" class=\"icon\" href=\"#\">\n            <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M32 0h-13l5 5-6 6 3 3 6-6 5 5z\"></path><path d=\"M32 32v-13l-5 5-6-6-3 3 6 6-5 5z\"></path><path d=\"M0 32h13l-5-5 6-6-3-3-6 6-5-5z\"></path><path d=\"M0 0v13l5-5 6 6 3-3-6-6 5-5z\"></path></svg>\n          </a>\n          <a id=\"collapse\" class=\"icon\" href=\"#\">\n            <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M18 14h13l-5-5 6-6-3-3-6 6-5-5z\"></path><path d=\"M18 18v13l5-5 6 6 3-3-6-6 5-5z\"></path><path d=\"M14 18h-13l5 5-6 6 3 3 6-6 5 5z\"></path><path d=\"M14 14v-13l-5 5-6-6-3 3 6 6-5 5z\"></path></svg>\n          </a>\n          <div id=\"meta\">\n            <!-- TODO: Add provenance infomration, metadata, and interactive visualizations here... -->\n          </div>\n        </div>\n      </div>\n    `;\n    this.shadow.innerHTML = template;\n\n    const container = this.shadow.getElementById('container');\n    const wrapper = this.shadow.getElementById('wrapper');\n\n    this.focused = false;\n    container.onmouseover = () => this.focused = true;\n    container.onmouseout = () => this.focused = false;\n    let focusTimer;\n    const resetTimer = () => {\n      wrapper.classList.remove('hidden');\n      clearTimeout(focusTimer);\n      focusTimer = setTimeout(() => !this.focused && wrapper.classList.contains('fab') && wrapper.classList.add('hidden'), 2000);\n    }\n    window.addEventListener('load', resetTimer);\n    window.addEventListener('mousemove', resetTimer);\n    window.addEventListener('mousedown', resetTimer);\n    window.addEventListener('click', resetTimer);\n    window.addEventListener('scroll', resetTimer);\n    window.addEventListener('keypress', resetTimer);\n\n    this.shadow.getElementById('close').onclick = e => {\n      e.preventDefault();\n      wrapper.classList.remove('fab', 'expanded');\n      wrapper.classList.add('closed');\n    };\n    this.shadow.getElementById('collapse').onclick = e => {\n      e.preventDefault();\n      wrapper.classList.replace('expanded', 'fab');\n    };\n    this.shadow.getElementById('expand').onclick = e => {\n      e.preventDefault();\n      wrapper.classList.replace('fab', 'expanded');\n    };\n    wrapper.onclick = e => {\n      if (e.target == wrapper) {\n        wrapper.classList.replace('expanded', 'fab');\n      }\n    };\n\n    this.shadow.getElementById('lookup').onsubmit = e => {\n      e.preventDefault();\n      const urir = this.shadow.getElementById('urir').value;\n      if (urir) {\n        window.location = window.location.href.replace(this.urir, urir)\n      }\n    };\n  }\n}\n\ncustomElements.define('reconstructive-banner', ReconstructiveBanner);\n",
     "static": true,
-    "longname": "/src/Reconstructive/reconstructive-banner.js",
+    "longname": "/app/Reconstructive/reconstructive-banner.js",
     "access": "public",
     "description": null,
     "lineNumber": 1
@@ -681,9 +681,26 @@
     "export": false,
     "importPath": "Reconstructive/Reconstructive/reconstructive-banner.js",
     "importStyle": null,
-    "description": null,
-    "lineNumber": 1,
-    "undocument": true,
+    "description": "[ReconstructiveBanner](https://oduwsdl.github.io/Reconstructive/reconstructive-banner.js) implements `<reconstructive-banner>` [Custom Element](https://html.spec.whatwg.org/multipage/custom-elements.html#custom-elements).\nIt is an unobtrusive archival replay banner to make [mementos](http://mementoweb.org/about/) interactive and surface on-demand metadata about the archived resource.\nUse it in an HTML page as illustrated below:\n\n```html\n<script src=\"reconstructive-banner.js\"></script>\n<reconstructive-banner logo-src=\"\"\n                       urir=\"https://example.com/\"\n                       memento-datetime=\"Mon, 06 Feb 2017 00:23:37 GMT\"\n                       first-urim=\"https://archive.host/memento/20170206002337/https://example.com/\"\n                       first-datetime=\"Mon, 06 Feb 2017 00:23:37 GMT\"\n                       last-urim=\"https://archive.host/memento/20170206002337/https://example.com/\"\n                       last-datetime=\"Mon, 06 Feb 2017 00:23:37 GMT\"\n                       prev-urim=\"\"\n                       prev-datetime=\"\"\n                       next-urim=\"\"\n                       next-datetime=\"\">\n</reconstructive-banner>\n```",
+    "lineNumber": 27,
+    "unknown": [
+      {
+        "tagName": "@overview",
+        "tagValue": " ReconstructiveBanner implements <reconstructive-banner> Custom Element for archival replay banners."
+      },
+      {
+        "tagName": "@author",
+        "tagValue": "   Sawood Alam <ibnesayeed@gmail.com>"
+      },
+      {
+        "tagName": "@license",
+        "tagValue": "  MIT"
+      },
+      {
+        "tagName": "@copyright",
+        "tagValue": "ODU Web Science / Digital Libraries Research Group 2017"
+      }
+    ],
     "interface": false,
     "extends": [
       "HTMLElement"
@@ -699,9 +716,8 @@
     "static": false,
     "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#constructor",
     "access": "public",
-    "description": null,
-    "lineNumber": 2,
-    "undocument": true
+    "description": "Creates a new ReconstructiveBanner instance and attaches a Shadow DOM.",
+    "lineNumber": 31
   },
   {
     "__docId__": 60,
@@ -712,7 +728,7 @@
     "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#shadow",
     "access": "public",
     "description": null,
-    "lineNumber": 4,
+    "lineNumber": 33,
     "undocument": true,
     "type": {
       "types": [
@@ -731,7 +747,7 @@
     "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#connectedCallback",
     "access": "public",
     "description": null,
-    "lineNumber": 7,
+    "lineNumber": 36,
     "undocument": true,
     "params": [],
     "return": null
@@ -739,13 +755,13 @@
   {
     "__docId__": 62,
     "kind": "member",
-    "name": "urir",
+    "name": "logoSrc",
     "memberof": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner",
     "static": false,
-    "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#urir",
+    "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#logoSrc",
     "access": "public",
     "description": null,
-    "lineNumber": 8,
+    "lineNumber": 37,
     "undocument": true,
     "type": {
       "types": [
@@ -756,13 +772,13 @@
   {
     "__docId__": 63,
     "kind": "member",
-    "name": "datetime",
+    "name": "urir",
     "memberof": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner",
     "static": false,
-    "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#datetime",
+    "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#urir",
     "access": "public",
     "description": null,
-    "lineNumber": 9,
+    "lineNumber": 38,
     "undocument": true,
     "type": {
       "types": [
@@ -773,13 +789,183 @@
   {
     "__docId__": 64,
     "kind": "member",
+    "name": "mementoDatetime",
+    "memberof": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner",
+    "static": false,
+    "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#mementoDatetime",
+    "access": "public",
+    "description": null,
+    "lineNumber": 39,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 65,
+    "kind": "member",
+    "name": "firstUrim",
+    "memberof": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner",
+    "static": false,
+    "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#firstUrim",
+    "access": "public",
+    "description": null,
+    "lineNumber": 40,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 66,
+    "kind": "member",
+    "name": "firstDatetime",
+    "memberof": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner",
+    "static": false,
+    "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#firstDatetime",
+    "access": "public",
+    "description": null,
+    "lineNumber": 41,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 67,
+    "kind": "member",
+    "name": "lastUrim",
+    "memberof": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner",
+    "static": false,
+    "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#lastUrim",
+    "access": "public",
+    "description": null,
+    "lineNumber": 42,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 68,
+    "kind": "member",
+    "name": "lastDatetime",
+    "memberof": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner",
+    "static": false,
+    "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#lastDatetime",
+    "access": "public",
+    "description": null,
+    "lineNumber": 43,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 69,
+    "kind": "member",
+    "name": "prevUrim",
+    "memberof": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner",
+    "static": false,
+    "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#prevUrim",
+    "access": "public",
+    "description": null,
+    "lineNumber": 44,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 70,
+    "kind": "member",
+    "name": "prevDatetime",
+    "memberof": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner",
+    "static": false,
+    "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#prevDatetime",
+    "access": "public",
+    "description": null,
+    "lineNumber": 45,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 71,
+    "kind": "member",
+    "name": "nextUrim",
+    "memberof": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner",
+    "static": false,
+    "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#nextUrim",
+    "access": "public",
+    "description": null,
+    "lineNumber": 46,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 72,
+    "kind": "member",
+    "name": "nextDatetime",
+    "memberof": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner",
+    "static": false,
+    "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#nextDatetime",
+    "access": "public",
+    "description": null,
+    "lineNumber": 47,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 73,
+    "kind": "member",
+    "name": "timeDiff",
+    "memberof": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner",
+    "static": false,
+    "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#timeDiff",
+    "access": "public",
+    "description": null,
+    "lineNumber": 49,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 74,
+    "kind": "member",
     "name": "focused",
     "memberof": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner",
     "static": false,
     "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#focused",
     "access": "public",
     "description": null,
-    "lineNumber": 65,
+    "lineNumber": 240,
     "undocument": true,
     "type": {
       "types": [
@@ -788,18 +974,18 @@
     }
   },
   {
-    "__docId__": 65,
+    "__docId__": 75,
     "kind": "file",
     "name": "Reconstructive/reconstructive.js",
-    "content": "/**\n * [Reconstructive](https://github.com/oduwsdl/reconstructive) is a ServiceWorker module for client-side reconstruction of composite mementos.\n * It reroutes embedded resource requests to their appropriate archival version without any URL rewriting.\n * It also provides functionality to add custom archival banners or rewrite hyperlinks on the client-side.\n *\n * @overview  Reconstructive is a module to be used in a ServiceWorker of an archival replay.\n * @author    Sawood Alam <ibnesayeed@gmail.com>\n * @version   0.5.0\n * @license   MIT\n * @copyright ODU Web Science / Digital Libraries Research Group 2017\n */\nclass Reconstructive {\n  /**\n   * Creates a new Reconstructive instance with optional configurations.\n   * \n   * @param {{id: string, urimPattern: string, bannerElementLocation: string, showBanner: boolean, debug: boolean}} [config] - Configuration options\n   */\n  constructor(config) {\n    /**\n     * Name of the module.\n     * Treated as a constant.\n     * \n     * @type {string}\n     */\n    this.NAME = 'Reconstructive';\n\n    /**\n     * Version of the module.\n     * Treated as a constant.\n     * \n     * @type {string}\n     */\n    this.VERSION = '0.5.0';\n\n    /**\n     * Identifier of the module, sent to the server as X-ServiceWorker header.\n     * Defaults to the name and version of the module.\n     *\n     * @type {string}\n     */\n    this.id = `${this.NAME}:${this.VERSION}`;\n\n    /**\n     * The format of URI-Ms (e.g., http://example.com/archive/<datetime>/<urir>).\n     *\n     * @type {string}\n     */\n    this.urimPattern = `${self.location.origin}/memento/<datetime>/<urir>`;\n\n    /**\n     * The URL or absolute path of the JS file that defines custom banner element.\n     * Only necessary if showBanner is set to true.\n     *\n     * @type {string}\n     */\n    this.bannerElementLocation = `${self.location.origin}/reconstructive-banner.js`;\n\n    /**\n     * Whether or not to show an archival banner.\n     * Defaults to false.\n     *\n     * @type {boolean}\n     */\n    this.showBanner = false;\n\n    /**\n     * Whether or not to show debug messages in the console.\n     * Defaults to false.\n     *\n     * @type {boolean}\n     */\n    this.debug = false;\n\n    // Iterate over the supplied configuration object to overwrite defaults and add new properties\n    if (config instanceof Object) {\n      for (const [k, v] of Object.entries(config)) {\n        /** @ignore **/\n        this[k] = v;\n      }\n    }\n\n    /**\n     * A private object with varius RegExp properties (possibly derived from other properties) for internal use.\n     * \n     * @private\n     * @type    {{urimPattern: RegExp, absoluteReference: RegExp, bodyEnd: RegExp}}\n     */\n    this._regexps = {\n      urimPattern: new RegExp(`^${this.urimPattern.replace('<datetime>', '(\\\\d{14})').replace('<urir>', '(.*)')}$`),\n      absoluteReference: new RegExp(`(<(iframe|a).*?\\\\s+(src|href)\\\\s*=\\\\s*[\"']?)(https?:\\/\\/[^'\"\\\\s]+)(.*?>)`, 'ig'),\n      bodyEnd: new RegExp('<\\/(body|html)>', 'i')\n    };\n\n    /**\n     * An object of functions to check whether the request should be excluded from being rerouted.\n     * Add more members to the object to add more exclusions or modify/delete existing ones.\n     * The property name can be anything descriptive of the particular exclusion, which will be shown in debug logs.\n     * Each member function is called with the fetch event as parameters.\n     * If any member returns true, the fetch event is excluded from being rerouted.\n     *\n     * @type {{notGet: function(event: FetchEvent): boolean, bannerElement: function(event: FetchEvent): boolean, localResource: function(event: FetchEvent): boolean}}\n     */\n    this.exclusions = {\n      notGet: event => event.request.method !== 'GET',\n      bannerElement: event => this.showBanner && event.request.url.endsWith(this.bannerElementLocation),\n      localResource: event => !(this._regexps.urimPattern.test(event.request.url) || this._regexps.urimPattern.test(event.request.referrer))\n    };\n\n    this.debug && console.log(`${this.NAME}:${this.VERSION} initialized:`, this);\n\n    this.fetchFailure = this.fetchFailure.bind(this)\n  }\n\n  /**\n   * Iterates over all the members of the exclusions object and returns true if any of the members return true, otherwise returns false.\n   * Logs the first matching exclusion for debugging, if any.\n   *\n   * @param  {FetchEvent} event - The fetch event\n   * @return {boolean}          - Should the request be rerouted?\n   */\n  shouldExclude(event) {\n    return Object.entries(this.exclusions).some(([exclusionName, exclusionFun]) => {\n      if (exclusionFun(event)) {\n        this.debug && console.log('Exclusion found:', exclusionName, event.request.url);\n        return true\n      }\n      return false\n    })\n  }\n\n  /**\n   * Creates a potential URI-M based on the requested URL and the referrer URL for request rerouting.\n   *\n   * @param  {FetchEvent} event - The fetch event\n   * @return {string}           - A potential URI-M\n   */\n  createUrim(event) {\n    // Extract datetime and the URI-R of the referrer.\n    let [datetime, refUrir] = this.extractDatetimeUrir(event.request.referrer);\n    let urir = new URL(event.request.url);\n    // This condition will match when the request was initiated from an absolute path and fail if it was an absolute URL.\n    if (urir.origin === self.location.origin) {\n      // If it was an absolute path then referrer's origin was used.\n      // We need to replace it with the origin of the referrer's URI-R instead.\n      // The RegExp used will capture the origin with the protocol, if any (http, https, or BLANK).\n      let refOrigin = refUrir.match(/^(https?:\\/\\/)?[^\\/]+/)[0];\n      urir = refOrigin + urir.pathname + urir.search;\n    } else {\n      urir = urir.href;\n    }\n    return this.urimPattern.replace('<datetime>', datetime).replace('<urir>', urir);\n  }\n\n  /**\n   * Extracts datetime and URI-R from a URI-M.\n   *\n   * @param  {string}   urim - A URI-M\n   * @return {string[]}      - An array of datetime and URI-R\n   */\n  extractDatetimeUrir(urim) {\n    let [, datetime, urir] = urim.match(this._regexps.urimPattern);\n    // Swap the two extracted values if the datetime pattern appeared after the URI-R.\n    // This is not a common practice, but possible if an archive uses query parameters instead of paths.\n    if (isNaN(datetime)) {\n      return [urir, datetime];\n    }\n    return [datetime, urir];\n  }\n\n  /**\n   * Creates a new request based on the original.\n   * Copies all the headers from the original request.\n   * Adds X-ServiceWorker header with the id of the module.\n   * Sets the redirect mode to manual to ensure proper origin boundaries.\n   *\n   * @param  {FetchEvent} event - The fetch event\n   * @return {Request}          - A new request object\n   */\n  createRequest(event) {\n    let headers = this.cloneHeaders(event.request.headers);\n    headers.set('X-ServiceWorker', this.id);\n    return new Request(event.request.url, {headers: headers, redirect: 'manual'});\n  }\n\n  /**\n   * Clones provided request or response headers.\n   *\n   * @param  {Headers} original - Original request or response headers\n   * @return {Headers}          - A clone of the supplied headers\n   */\n  cloneHeaders(original) {\n    let headers = new Headers();\n    for (const [k, v] of original.entries()) {\n      headers.append(k, v);\n    }\n    return headers;\n  }\n\n  /**\n   * Redirects a non-URI-M request to its potentially URI-M locally.\n   * The potential URI-M is generated using createUrim().\n   * This function only returns a synthetic redirection response.\n   *\n   * @param  {string}            urim - A potential URI-M\n   * @return {Promise<Response>}      - A 302 redirection response to the potential URI-M\n   */\n  localRedirect(urim) {\n    this.debug && console.log('Locally redirecting to:', urim);\n    return Promise.resolve(new Response(`<h1>Locally Redirecting</h1><p>${urim}</p>`, {\n      status: 302,\n      statusText: 'Found',\n      headers: new Headers({\n        'Location': urim,\n        'Access-Control-Allow-Origin': '*',\n        'Content-Type': 'text/html'\n      })\n    }));\n  }\n\n  /**\n   * The callback function on a successful fetch from the server.\n   * Calls the rewrite() function if the response code is 2xx.\n   * Logs the response for debugging.\n   * Resolves to a potentially modified response.\n   *\n   * @param  {Response}          response - Original response object\n   * @param  {FetchEvent}        event    - The fetch event\n   * @return {Promise<Response>}          - Potentially modified response\n   */\n  fetchSuccess(response, event) {\n    this.debug && console.log('Fetched from server:', response);\n    // Perform a potential rewrite only if the response code is 2xx.\n    if (response.ok) {\n      return this.rewrite(response, event);\n    }\n    return Promise.resolve(response);\n  }\n\n  /**\n   * The callback function on network failure of the server fetch.\n   * Logs the failure reason for debugging.\n   * Returns a synthetic 503 Service Unavailable response.\n   *\n   * @param  {Error}    error - The exception raised on fetching from the server\n   * @return {Response}       - A 503 Service Unavailable response\n   */\n  fetchFailure(error) {\n    this.debug && console.log(error);\n    return new Response('<h1>Service Unavailable</h1>', {\n      status: 503,\n      statusText: 'Service Unavailable',\n      headers: new Headers({\n        'Content-Type': 'text/html'\n      })\n    });\n  }\n\n  /**\n   * Rewrites the fetched response when necessary.\n   * Potential uses are to fix certain replay issues, adding an archival banner, or modifying hyperlinks.\n   * When the showBanner config is set to true, it tries to add a banner in navigational HTML pages.\n   * Resolves to a potentially modified response.\n   *\n   * @param  {Response}          response - Original response object\n   * @param  {FetchEvent}        event    - The fetch event\n   * @return {Promise<Response>}          - Potentially modified response\n   */\n  rewrite(response, event) {\n    // TODO: Make necessary changes in the response\n    if (/text\\/html/i.test(response.headers.get('Content-Type'))) {\n      let headers = this.cloneHeaders(response.headers);\n      let init = {\n        status: response.status,\n        statusText: response.statusText,\n        headers: headers\n      };\n      return response.text().then(body => {\n        const [datetime] = this.extractDatetimeUrir(response.url);\n        // Replace all absolute URLs in src and href attributes of <iframe> and <a> elements with corresponding URI-Ms to avoid replay and navigation issues.\n        body = body.replace(this._regexps.absoluteReference, `$1${this.urimPattern.replace('<datetime>', datetime).replace('<urir>', '$4')}$5`);\n        // Inject a banner only on navigational HTML pages when showBanner config is set to true.\n        if (this.showBanner && event.request.mode === 'navigate') {\n          const banner = this.createBanner(response, event);\n          // Try to inject the banner markup before closing </body> tag, fallback to </html>.\n          // If none of the two closing tags are found, append it to the body.\n          if (this._regexps.bodyEnd.test(body)) {\n            body = body.replace(this._regexps.bodyEnd, banner+'</$1>');\n          } else {\n            body += banner;\n          }\n        }\n        return new Response(body, init);\n      });\n    }\n    return Promise.resolve(response);\n  }\n\n  /**\n   * Creates a string representing an HTML block to be injected in the response's HTML body.\n   *\n   * @param  {Response}   response - Original response object\n   * @param  {FetchEvent} event    - The fetch event\n   * @return {string}              - The banner markup\n   */\n  createBanner(response, event) {\n    const [datetime, urir] = this.extractDatetimeUrir(response.url);\n    return `<script src=\"${this.bannerElementLocation}\"></script>\n            <reconstructive-banner urir=\"${urir}\" datetime=\"${datetime}\"></reconstructive-banner>`;\n  }\n\n  /**\n   * The callback function on the fetch event.\n   * Logs the fetch event for debugging.\n   * Checks for any rerouting exclusions.\n   * If the request URL is a URI-M then creates a new request with certain modifications in the original request and fetches it from the server.\n   * Otherwise, responds with a redirect to the potential URI-M.\n   * Both success and failure responses are dealt with appropriately.\n   *\n   * @param {FetchEvent} event - The fetch event\n   */\n  reroute(event) {\n    this.debug && console.log('Rerouting requested', event);\n    // Let the browser deal with the requests if it matches a rerouting exclusion.\n    if (this.shouldExclude(event)) return;\n    // This condition will match if the request URL is not a URI-M.\n    if (this._regexps.urimPattern.test(event.request.url)) {\n      let request = this.createRequest(event);\n      event.respondWith(\n        fetch(request)\n          .then(response => this.fetchSuccess(response, event))\n          .catch(this.fetchFailure)\n      );\n    } else {\n      let urim = this.createUrim(event);\n      event.respondWith(this.localRedirect(urim));\n    }\n  }\n\n}\n",
+    "content": "/**\n * [Reconstructive](https://github.com/oduwsdl/Reconstructive) is a [ServiceWorker](https://www.w3.org/TR/service-workers/) module for client-side reconstruction of composite mementos.\n * It reroutes embedded resource requests to their appropriate archival version without any URL rewriting.\n * It also provides functionality to add custom archival banners or rewrite hyperlinks on the client-side.\n * Use it in a ServiceWorker as illustrated below:\n *\n * ```js\n * importScripts('https://oduwsdl.github.io/Reconstructive/reconstructive.js');\n * const rc = new Reconstructive();\n * self.addEventListener('fetch', rc.reroute);\n * ```\n *\n * @overview  Reconstructive is a module to be used in a ServiceWorker of an archival replay.\n * @author    Sawood Alam <ibnesayeed@gmail.com>\n * @license   MIT\n * @copyright ODU Web Science / Digital Libraries Research Group 2017\n */\nclass Reconstructive {\n  /**\n   * Creates a new Reconstructive instance with optional configurations.\n   * \n   * @param {{id: string, urimPattern: string, bannerElementLocation: string, bannerLogoLocation: string, showBanner: boolean, debug: boolean}} [config] - Configuration options\n   */\n  constructor(config) {\n    /**\n     * Name of the module.\n     * Treated as a constant.\n     * \n     * @type {string}\n     */\n    this.NAME = 'Reconstructive';\n\n    /**\n     * Version of the module.\n     * Treated as a constant.\n     * \n     * @type {string}\n     */\n    this.VERSION = '0.6.0';\n\n    /**\n     * Identifier of the module, sent to the server as X-ServiceWorker header.\n     * Defaults to the name and version of the module.\n     *\n     * @type {string}\n     */\n    this.id = `${this.NAME}:${this.VERSION}`;\n\n    /**\n     * The format of URI-Ms (e.g., http://example.com/archive/<datetime>/<urir>).\n     *\n     * @type {string}\n     */\n    this.urimPattern = `${self.location.origin}/memento/<datetime>/<urir>`;\n\n    /**\n     * The URL or absolute path of the JS file that defines custom banner element.\n     * Only necessary if showBanner is set to true.\n     *\n     * @type {string}\n     */\n    this.bannerElementLocation = `${self.location.origin}/reconstructive-banner.js`;\n\n    /**\n     * The URL or absolute path of the logo image to appear in the banner.\n     * An empty value will render the default Reconstructive logo as inline SVG.\n     * Only necessary if showBanner is set to true.\n     *\n     * @type {string}\n     */\n    this.bannerLogoLocation = '';\n\n    /**\n     * Whether or not to show an archival banner.\n     * Defaults to false.\n     *\n     * @type {boolean}\n     */\n    this.showBanner = false;\n\n    /**\n     * Whether or not to show debug messages in the console.\n     * Defaults to false.\n     *\n     * @type {boolean}\n     */\n    this.debug = false;\n\n    // Iterate over the supplied configuration object to overwrite defaults and add new properties\n    if (config instanceof Object) {\n      for (const [k, v] of Object.entries(config)) {\n        /** @ignore **/\n        this[k] = v;\n      }\n    }\n\n    /**\n     * A private object with varius RegExp properties (possibly derived from other properties) for internal use.\n     * \n     * @private\n     * @type    {{urimPattern: RegExp, absoluteReference: RegExp, bodyEnd: RegExp}}\n     */\n    this._regexps = {\n      urimPattern: new RegExp(`^${this.urimPattern.replace('<datetime>', '(\\\\d{14})').replace('<urir>', '(.*)')}$`),\n      absoluteReference: new RegExp(`(<(iframe|a).*?\\\\s+(src|href)\\\\s*=\\\\s*[\"']?)(https?:\\/\\/[^'\"\\\\s]+)(.*?>)`, 'ig'),\n      bodyEnd: new RegExp('<\\/(body|html)>', 'i')\n    };\n\n    /**\n     * An object of functions to check whether the request should be excluded from being rerouted.\n     * Add more members to the object to add more exclusions or modify/delete existing ones.\n     * The property name can be anything descriptive of the particular exclusion, which will be shown in debug logs.\n     * Each member function is called with the fetch event as parameters.\n     * If any member returns true, the fetch event is excluded from being rerouted.\n     *\n     * @type {{notGet: function(event: FetchEvent): boolean, bannerElement: function(event: FetchEvent): boolean, bannerLogo: function(event: FetchEvent): boolean, localResource: function(event: FetchEvent): boolean}}\n     */\n    this.exclusions = {\n      notGet: event => event.request.method !== 'GET',\n      bannerElement: event => this.showBanner && event.request.url.endsWith(this.bannerElementLocation),\n      bannerLogo: event => this.showBanner && this.bannerLogoLocation && event.request.url.endsWith(this.bannerLogoLocation),\n      localResource: event => !(this._regexps.urimPattern.test(event.request.url) || this._regexps.urimPattern.test(event.request.referrer))\n    };\n\n    this.debug && console.log(`${this.NAME}:${this.VERSION} initialized:`, this);\n\n    this.fetchFailure = this.fetchFailure.bind(this)\n  }\n\n  /**\n   * Iterates over all the members of the exclusions object and returns true if any of the members return true, otherwise returns false.\n   * Logs the first matching exclusion for debugging, if any.\n   *\n   * @param  {FetchEvent} event - The fetch event\n   * @return {boolean}          - Should the request be rerouted?\n   */\n  shouldExclude(event) {\n    return Object.entries(this.exclusions).some(([exclusionName, exclusionFunc]) => {\n      if (exclusionFunc(event)) {\n        this.debug && console.log('Exclusion found:', exclusionName, event.request.url);\n        return true\n      }\n      return false\n    })\n  }\n\n  /**\n   * Creates a potential URI-M based on the requested URL and the referrer URL for request rerouting.\n   *\n   * @param  {FetchEvent} event - The fetch event\n   * @return {string}           - A potential URI-M\n   */\n  createUrim(event) {\n    // Extract datetime and the URI-R of the referrer.\n    let [datetime, refUrir] = this.extractDatetimeUrir(event.request.referrer);\n    let urir = new URL(event.request.url);\n    // This condition will match when the request was initiated from an absolute path and fail if it was an absolute URL.\n    if (urir.origin === self.location.origin) {\n      // If it was an absolute path then referrer's origin was used.\n      // We need to replace it with the origin of the referrer's URI-R instead.\n      // The RegExp used will capture the origin with the protocol, if any (http, https, or BLANK).\n      let refOrigin = refUrir.match(/^(https?:\\/\\/)?[^\\/]+/)[0];\n      urir = refOrigin + urir.pathname + urir.search;\n    } else {\n      urir = urir.href;\n    }\n    return this.urimPattern.replace('<datetime>', datetime).replace('<urir>', urir);\n  }\n\n  /**\n   * Extracts datetime and URI-R from a URI-M.\n   *\n   * @param  {string}   urim - A URI-M\n   * @return {string[]}      - An array of datetime and URI-R\n   */\n  extractDatetimeUrir(urim) {\n    let [, datetime, urir] = urim.match(this._regexps.urimPattern);\n    // Swap the two extracted values if the datetime pattern appeared after the URI-R.\n    // This is not a common practice, but possible if an archive uses query parameters instead of paths.\n    if (isNaN(datetime)) {\n      return [urir, datetime];\n    }\n    return [datetime, urir];\n  }\n\n  /**\n   * Creates a new request based on the original.\n   * Copies all the headers from the original request.\n   * Adds X-ServiceWorker header with the id of the module.\n   * Sets the redirect mode to manual to ensure proper origin boundaries.\n   *\n   * @param  {FetchEvent} event - The fetch event\n   * @return {Request}          - A new request object\n   */\n  createRequest(event) {\n    let headers = this.cloneHeaders(event.request.headers);\n    headers.set('X-ServiceWorker', this.id);\n    return new Request(event.request.url, {headers: headers, redirect: 'manual'});\n  }\n\n  /**\n   * Clones provided request or response headers.\n   *\n   * @param  {Headers} original - Original request or response headers\n   * @return {Headers}          - A clone of the supplied headers\n   */\n  cloneHeaders(original) {\n    let headers = new Headers();\n    for (const [k, v] of original.entries()) {\n      headers.append(k, v);\n    }\n    return headers;\n  }\n\n  /**\n   * Redirects a non-URI-M request to its potentially URI-M locally.\n   * The potential URI-M is generated using createUrim().\n   * This function only returns a synthetic redirection response.\n   *\n   * @param  {string}            urim - A potential URI-M\n   * @return {Promise<Response>}      - A 302 redirection response to the potential URI-M\n   */\n  localRedirect(urim) {\n    this.debug && console.log('Locally redirecting to:', urim);\n    return Promise.resolve(new Response(`<h1>Locally Redirecting</h1><p>${urim}</p>`, {\n      status: 302,\n      statusText: 'Found',\n      headers: new Headers({\n        'Location': urim,\n        'Access-Control-Allow-Origin': '*',\n        'Content-Type': 'text/html'\n      })\n    }));\n  }\n\n  /**\n   * The callback function on a successful fetch from the server.\n   * Calls the rewrite() function if the response code is 2xx.\n   * Logs the response for debugging.\n   * Resolves to a potentially modified response.\n   *\n   * @param  {Response}          response - Original response object\n   * @param  {FetchEvent}        event    - The fetch event\n   * @return {Promise<Response>}          - Potentially modified response\n   */\n  fetchSuccess(response, event) {\n    this.debug && console.log('Fetched from server:', response);\n    // Perform a potential rewrite only if the response code is 2xx.\n    if (response.ok) {\n      return this.rewrite(response, event);\n    }\n    return Promise.resolve(response);\n  }\n\n  /**\n   * The callback function on network failure of the server fetch.\n   * Logs the failure reason for debugging.\n   * Returns a synthetic 503 Service Unavailable response.\n   *\n   * @param  {Error}    error - The exception raised on fetching from the server\n   * @return {Response}       - A 503 Service Unavailable response\n   */\n  fetchFailure(error) {\n    this.debug && console.log(error);\n    return new Response('<h1>Service Unavailable</h1>', {\n      status: 503,\n      statusText: 'Service Unavailable',\n      headers: new Headers({\n        'Content-Type': 'text/html'\n      })\n    });\n  }\n\n  /**\n   * Rewrites the fetched response when necessary.\n   * Potential uses are to fix certain replay issues, adding an archival banner, or modifying hyperlinks.\n   * When the showBanner config is set to true, it tries to add a banner in navigational HTML pages.\n   * Resolves to a potentially modified response.\n   *\n   * @param  {Response}          response - Original response object\n   * @param  {FetchEvent}        event    - The fetch event\n   * @return {Promise<Response>}          - Potentially modified response\n   */\n  rewrite(response, event) {\n    // TODO: Make necessary changes in the response\n    if (/text\\/html/i.test(response.headers.get('Content-Type'))) {\n      let headers = this.cloneHeaders(response.headers);\n      let init = {\n        status: response.status,\n        statusText: response.statusText,\n        headers: headers\n      };\n      return response.text().then(body => {\n        const [datetime] = this.extractDatetimeUrir(response.url);\n        // Replace all absolute URLs in src and href attributes of <iframe> and <a> elements with corresponding URI-Ms to avoid replay and navigation issues.\n        body = body.replace(this._regexps.absoluteReference, `$1${this.urimPattern.replace('<datetime>', datetime).replace('<urir>', '$4')}$5`);\n        // Inject a banner only on navigational HTML pages when showBanner config is set to true.\n        if (this.showBanner && event.request.mode === 'navigate') {\n          const banner = this.createBanner(response, event);\n          // Try to inject the banner markup before closing </body> tag, fallback to </html>.\n          // If none of the two closing tags are found, append it to the body.\n          if (this._regexps.bodyEnd.test(body)) {\n            body = body.replace(this._regexps.bodyEnd, banner+'</$1>');\n          } else {\n            body += banner;\n          }\n        }\n        return new Response(body, init);\n      });\n    }\n    return Promise.resolve(response);\n  }\n\n  /**\n   * Creates a string representing an HTML block to be injected in the response's HTML body.\n   *\n   * @param  {Response}   response - Original response object\n   * @param  {FetchEvent} event    - The fetch event\n   * @return {string}              - The banner markup\n   */\n  createBanner(response, event) {\n    let mementoDatetime = response.headers.get('Memento-Datetime') || '';\n    const [datetime, urir] = this.extractDatetimeUrir(response.url);\n    if (!mementoDatetime) {\n      mementoDatetime = new Date(`${datetime.slice(0, 4)}-${datetime.slice(4, 6)}-${datetime.slice(6, 8)}T${datetime.slice(8, 10)}:${datetime.slice(10, 12)}:${datetime.slice(12, 14)}Z`).toUTCString()\n    }\n    // TODO: Parse Link header to populate navigational attributes\n    return `\n      <script src=\"${this.bannerElementLocation}\"></script>\n      <reconstructive-banner logo-src=\"${this.bannerLogoLocation}\"\n                             urir=\"${urir}\"\n                             memento-datetime=\"${mementoDatetime}\"\n                             first-urim=\"\"\n                             first-datetime=\"\"\n                             last-urim=\"\"\n                             last-datetime=\"\"\n                             prev-urim=\"\"\n                             prev-datetime=\"\"\n                             next-urim=\"\"\n                             next-datetime=\"\">\n      </reconstructive-banner>\n    `;\n  }\n\n  /**\n   * The callback function on the fetch event.\n   * Logs the fetch event for debugging.\n   * Checks for any rerouting exclusions.\n   * If the request URL is a URI-M then creates a new request with certain modifications in the original request and fetches it from the server.\n   * Otherwise, responds with a redirect to the potential URI-M.\n   * Both success and failure responses are dealt with appropriately.\n   *\n   * @param {FetchEvent} event - The fetch event\n   */\n  reroute(event) {\n    this.debug && console.log('Rerouting requested', event);\n    // Let the browser deal with the requests if it matches a rerouting exclusion.\n    if (this.shouldExclude(event)) return;\n    // This condition will match if the request URL is a URI-M.\n    if (this._regexps.urimPattern.test(event.request.url)) {\n      let request = this.createRequest(event);\n      event.respondWith(\n        fetch(request)\n          .then(response => this.fetchSuccess(response, event))\n          .catch(this.fetchFailure)\n      );\n    } else {\n      let urim = this.createUrim(event);\n      event.respondWith(this.localRedirect(urim));\n    }\n  }\n\n}\n",
     "static": true,
-    "longname": "/src/Reconstructive/reconstructive.js",
+    "longname": "/app/Reconstructive/reconstructive.js",
     "access": "public",
     "description": null,
     "lineNumber": 1
   },
   {
-    "__docId__": 66,
+    "__docId__": 76,
     "kind": "class",
     "name": "Reconstructive",
     "memberof": "Reconstructive/reconstructive.js",
@@ -809,9 +995,8 @@
     "export": false,
     "importPath": "Reconstructive/Reconstructive/reconstructive.js",
     "importStyle": null,
-    "description": "[Reconstructive](https://github.com/oduwsdl/reconstructive) is a ServiceWorker module for client-side reconstruction of composite mementos.\nIt reroutes embedded resource requests to their appropriate archival version without any URL rewriting.\nIt also provides functionality to add custom archival banners or rewrite hyperlinks on the client-side.",
-    "lineNumber": 12,
-    "version": "  0.5.0",
+    "description": "[Reconstructive](https://github.com/oduwsdl/Reconstructive) is a [ServiceWorker](https://www.w3.org/TR/service-workers/) module for client-side reconstruction of composite mementos.\nIt reroutes embedded resource requests to their appropriate archival version without any URL rewriting.\nIt also provides functionality to add custom archival banners or rewrite hyperlinks on the client-side.\nUse it in a ServiceWorker as illustrated below:\n\n```js\nimportScripts('https://oduwsdl.github.io/Reconstructive/reconstructive.js');\nconst rc = new Reconstructive();\nself.addEventListener('fetch', rc.reroute);\n```",
+    "lineNumber": 18,
     "unknown": [
       {
         "tagName": "@overview",
@@ -833,7 +1018,7 @@
     "interface": false
   },
   {
-    "__docId__": 67,
+    "__docId__": 77,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -843,12 +1028,12 @@
     "longname": "Reconstructive/reconstructive.js~Reconstructive#constructor",
     "access": "public",
     "description": "Creates a new Reconstructive instance with optional configurations.",
-    "lineNumber": 18,
+    "lineNumber": 24,
     "params": [
       {
         "nullable": null,
         "types": [
-          "{id: string, urimPattern: string, bannerElementLocation: string, showBanner: boolean, debug: boolean}"
+          "{id: string, urimPattern: string, bannerElementLocation: string, bannerLogoLocation: string, showBanner: boolean, debug: boolean}"
         ],
         "spread": false,
         "optional": true,
@@ -858,7 +1043,7 @@
     ]
   },
   {
-    "__docId__": 68,
+    "__docId__": 78,
     "kind": "member",
     "name": "NAME",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -866,7 +1051,7 @@
     "longname": "Reconstructive/reconstructive.js~Reconstructive#NAME",
     "access": "public",
     "description": "Name of the module.\nTreated as a constant.",
-    "lineNumber": 25,
+    "lineNumber": 31,
     "type": {
       "nullable": null,
       "types": [
@@ -877,7 +1062,7 @@
     }
   },
   {
-    "__docId__": 69,
+    "__docId__": 79,
     "kind": "member",
     "name": "VERSION",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -885,7 +1070,7 @@
     "longname": "Reconstructive/reconstructive.js~Reconstructive#VERSION",
     "access": "public",
     "description": "Version of the module.\nTreated as a constant.",
-    "lineNumber": 33,
+    "lineNumber": 39,
     "type": {
       "nullable": null,
       "types": [
@@ -896,7 +1081,7 @@
     }
   },
   {
-    "__docId__": 70,
+    "__docId__": 80,
     "kind": "member",
     "name": "id",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -904,7 +1089,7 @@
     "longname": "Reconstructive/reconstructive.js~Reconstructive#id",
     "access": "public",
     "description": "Identifier of the module, sent to the server as X-ServiceWorker header.\nDefaults to the name and version of the module.",
-    "lineNumber": 41,
+    "lineNumber": 47,
     "type": {
       "nullable": null,
       "types": [
@@ -915,7 +1100,7 @@
     }
   },
   {
-    "__docId__": 71,
+    "__docId__": 81,
     "kind": "member",
     "name": "urimPattern",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -923,7 +1108,7 @@
     "longname": "Reconstructive/reconstructive.js~Reconstructive#urimPattern",
     "access": "public",
     "description": "The format of URI-Ms (e.g., http://example.com/archive/<datetime>/<urir>).",
-    "lineNumber": 48,
+    "lineNumber": 54,
     "type": {
       "nullable": null,
       "types": [
@@ -934,7 +1119,7 @@
     }
   },
   {
-    "__docId__": 72,
+    "__docId__": 82,
     "kind": "member",
     "name": "bannerElementLocation",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -942,7 +1127,7 @@
     "longname": "Reconstructive/reconstructive.js~Reconstructive#bannerElementLocation",
     "access": "public",
     "description": "The URL or absolute path of the JS file that defines custom banner element.\nOnly necessary if showBanner is set to true.",
-    "lineNumber": 56,
+    "lineNumber": 62,
     "type": {
       "nullable": null,
       "types": [
@@ -953,7 +1138,26 @@
     }
   },
   {
-    "__docId__": 73,
+    "__docId__": 83,
+    "kind": "member",
+    "name": "bannerLogoLocation",
+    "memberof": "Reconstructive/reconstructive.js~Reconstructive",
+    "static": false,
+    "longname": "Reconstructive/reconstructive.js~Reconstructive#bannerLogoLocation",
+    "access": "public",
+    "description": "The URL or absolute path of the logo image to appear in the banner.\nAn empty value will render the default Reconstructive logo as inline SVG.\nOnly necessary if showBanner is set to true.",
+    "lineNumber": 71,
+    "type": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": null
+    }
+  },
+  {
+    "__docId__": 84,
     "kind": "member",
     "name": "showBanner",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -961,7 +1165,7 @@
     "longname": "Reconstructive/reconstructive.js~Reconstructive#showBanner",
     "access": "public",
     "description": "Whether or not to show an archival banner.\nDefaults to false.",
-    "lineNumber": 64,
+    "lineNumber": 79,
     "type": {
       "nullable": null,
       "types": [
@@ -972,7 +1176,7 @@
     }
   },
   {
-    "__docId__": 74,
+    "__docId__": 85,
     "kind": "member",
     "name": "debug",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -980,7 +1184,7 @@
     "longname": "Reconstructive/reconstructive.js~Reconstructive#debug",
     "access": "public",
     "description": "Whether or not to show debug messages in the console.\nDefaults to false.",
-    "lineNumber": 72,
+    "lineNumber": 87,
     "type": {
       "nullable": null,
       "types": [
@@ -991,7 +1195,7 @@
     }
   },
   {
-    "__docId__": 75,
+    "__docId__": 86,
     "kind": "member",
     "name": "[k]",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -999,7 +1203,7 @@
     "longname": "Reconstructive/reconstructive.js~Reconstructive#[k]",
     "access": "public",
     "description": null,
-    "lineNumber": 78,
+    "lineNumber": 93,
     "ignore": true,
     "type": {
       "types": [
@@ -1008,7 +1212,7 @@
     }
   },
   {
-    "__docId__": 76,
+    "__docId__": 87,
     "kind": "member",
     "name": "_regexps",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1016,7 +1220,7 @@
     "longname": "Reconstructive/reconstructive.js~Reconstructive#_regexps",
     "access": "private",
     "description": "A private object with varius RegExp properties (possibly derived from other properties) for internal use.",
-    "lineNumber": 88,
+    "lineNumber": 103,
     "type": {
       "nullable": null,
       "types": [
@@ -1027,7 +1231,7 @@
     }
   },
   {
-    "__docId__": 77,
+    "__docId__": 88,
     "kind": "member",
     "name": "exclusions",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1035,18 +1239,18 @@
     "longname": "Reconstructive/reconstructive.js~Reconstructive#exclusions",
     "access": "public",
     "description": "An object of functions to check whether the request should be excluded from being rerouted.\nAdd more members to the object to add more exclusions or modify/delete existing ones.\nThe property name can be anything descriptive of the particular exclusion, which will be shown in debug logs.\nEach member function is called with the fetch event as parameters.\nIf any member returns true, the fetch event is excluded from being rerouted.",
-    "lineNumber": 103,
+    "lineNumber": 118,
     "type": {
       "nullable": null,
       "types": [
-        "{notGet: function(event: FetchEvent): boolean, bannerElement: function(event: FetchEvent): boolean, localResource: function(event: FetchEvent): boolean}"
+        "{notGet: function(event: FetchEvent): boolean, bannerElement: function(event: FetchEvent): boolean, bannerLogo: function(event: FetchEvent): boolean, localResource: function(event: FetchEvent): boolean}"
       ],
       "spread": false,
       "description": null
     }
   },
   {
-    "__docId__": 80,
+    "__docId__": 91,
     "kind": "method",
     "name": "shouldExclude",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1056,7 +1260,7 @@
     "longname": "Reconstructive/reconstructive.js~Reconstructive#shouldExclude",
     "access": "public",
     "description": "Iterates over all the members of the exclusions object and returns true if any of the members return true, otherwise returns false.\nLogs the first matching exclusion for debugging, if any.",
-    "lineNumber": 121,
+    "lineNumber": 137,
     "params": [
       {
         "nullable": null,
@@ -1079,7 +1283,7 @@
     }
   },
   {
-    "__docId__": 82,
+    "__docId__": 93,
     "kind": "method",
     "name": "createUrim",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1089,7 +1293,7 @@
     "longname": "Reconstructive/reconstructive.js~Reconstructive#createUrim",
     "access": "public",
     "description": "Creates a potential URI-M based on the requested URL and the referrer URL for request rerouting.",
-    "lineNumber": 137,
+    "lineNumber": 153,
     "params": [
       {
         "nullable": null,
@@ -1112,7 +1316,7 @@
     }
   },
   {
-    "__docId__": 83,
+    "__docId__": 94,
     "kind": "method",
     "name": "extractDatetimeUrir",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1122,7 +1326,7 @@
     "longname": "Reconstructive/reconstructive.js~Reconstructive#extractDatetimeUrir",
     "access": "public",
     "description": "Extracts datetime and URI-R from a URI-M.",
-    "lineNumber": 160,
+    "lineNumber": 176,
     "params": [
       {
         "nullable": null,
@@ -1145,7 +1349,7 @@
     }
   },
   {
-    "__docId__": 84,
+    "__docId__": 95,
     "kind": "method",
     "name": "createRequest",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1155,7 +1359,7 @@
     "longname": "Reconstructive/reconstructive.js~Reconstructive#createRequest",
     "access": "public",
     "description": "Creates a new request based on the original.\nCopies all the headers from the original request.\nAdds X-ServiceWorker header with the id of the module.\nSets the redirect mode to manual to ensure proper origin boundaries.",
-    "lineNumber": 179,
+    "lineNumber": 195,
     "params": [
       {
         "nullable": null,
@@ -1178,7 +1382,7 @@
     }
   },
   {
-    "__docId__": 85,
+    "__docId__": 96,
     "kind": "method",
     "name": "cloneHeaders",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1188,7 +1392,7 @@
     "longname": "Reconstructive/reconstructive.js~Reconstructive#cloneHeaders",
     "access": "public",
     "description": "Clones provided request or response headers.",
-    "lineNumber": 191,
+    "lineNumber": 207,
     "params": [
       {
         "nullable": null,
@@ -1211,7 +1415,7 @@
     }
   },
   {
-    "__docId__": 86,
+    "__docId__": 97,
     "kind": "method",
     "name": "localRedirect",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1221,7 +1425,7 @@
     "longname": "Reconstructive/reconstructive.js~Reconstructive#localRedirect",
     "access": "public",
     "description": "Redirects a non-URI-M request to its potentially URI-M locally.\nThe potential URI-M is generated using createUrim().\nThis function only returns a synthetic redirection response.",
-    "lineNumber": 207,
+    "lineNumber": 223,
     "params": [
       {
         "nullable": null,
@@ -1244,7 +1448,7 @@
     }
   },
   {
-    "__docId__": 88,
+    "__docId__": 99,
     "kind": "method",
     "name": "fetchSuccess",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1254,7 +1458,7 @@
     "longname": "Reconstructive/reconstructive.js~Reconstructive#fetchSuccess",
     "access": "public",
     "description": "The callback function on a successful fetch from the server.\nCalls the rewrite() function if the response code is 2xx.\nLogs the response for debugging.\nResolves to a potentially modified response.",
-    "lineNumber": 230,
+    "lineNumber": 246,
     "params": [
       {
         "nullable": null,
@@ -1287,7 +1491,7 @@
     }
   },
   {
-    "__docId__": 90,
+    "__docId__": 101,
     "kind": "method",
     "name": "fetchFailure",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1297,7 +1501,7 @@
     "longname": "Reconstructive/reconstructive.js~Reconstructive#fetchFailure",
     "access": "public",
     "description": "The callback function on network failure of the server fetch.\nLogs the failure reason for debugging.\nReturns a synthetic 503 Service Unavailable response.",
-    "lineNumber": 247,
+    "lineNumber": 263,
     "params": [
       {
         "nullable": null,
@@ -1320,7 +1524,7 @@
     }
   },
   {
-    "__docId__": 92,
+    "__docId__": 103,
     "kind": "method",
     "name": "rewrite",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1330,7 +1534,7 @@
     "longname": "Reconstructive/reconstructive.js~Reconstructive#rewrite",
     "access": "public",
     "description": "Rewrites the fetched response when necessary.\nPotential uses are to fix certain replay issues, adding an archival banner, or modifying hyperlinks.\nWhen the showBanner config is set to true, it tries to add a banner in navigational HTML pages.\nResolves to a potentially modified response.",
-    "lineNumber": 268,
+    "lineNumber": 284,
     "params": [
       {
         "nullable": null,
@@ -1363,7 +1567,7 @@
     }
   },
   {
-    "__docId__": 93,
+    "__docId__": 104,
     "kind": "method",
     "name": "createBanner",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1373,7 +1577,7 @@
     "longname": "Reconstructive/reconstructive.js~Reconstructive#createBanner",
     "access": "public",
     "description": "Creates a string representing an HTML block to be injected in the response's HTML body.",
-    "lineNumber": 305,
+    "lineNumber": 321,
     "params": [
       {
         "nullable": null,
@@ -1406,7 +1610,7 @@
     }
   },
   {
-    "__docId__": 94,
+    "__docId__": 105,
     "kind": "method",
     "name": "reroute",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1416,7 +1620,7 @@
     "longname": "Reconstructive/reconstructive.js~Reconstructive#reroute",
     "access": "public",
     "description": "The callback function on the fetch event.\nLogs the fetch event for debugging.\nChecks for any rerouting exclusions.\nIf the request URL is a URI-M then creates a new request with certain modifications in the original request and fetches it from the server.\nOtherwise, responds with a redirect to the potential URI-M.\nBoth success and failure responses are dealt with appropriately.",
-    "lineNumber": 321,
+    "lineNumber": 355,
     "params": [
       {
         "nullable": null,
@@ -1433,16 +1637,16 @@
   },
   {
     "kind": "index",
-    "content": "# Reconstructive\n\nTraditionally, web archival replay systems rewrite link and resource references in HTML/CSS/JavaScript responses so that they resolve to their corresponding archival version.\nFailure to do so would result in a broken rendering of archived pages (composite mementos) as the embedded resource references might resolve to their live version or an invalid location.\nWith the growing use of JavaScript in web applications, often resources are injected dynamically, hence rewriting such references is not possible from the server side.\nTo mitigate this issue, some JavaScript is injected in the page that overrides the global namespace to modify the DOM and monitor every network activity.\nWe proposed a ServiceWorker-based solution to this issue that requires no server-side rewriting, but catches every network request, even those that were initiated due to dynamic resource injection.\n\nReconstructive is a [ServiceWorker](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API) module for client-side reconstruction of composite [mementos](https://tools.ietf.org/html/rfc7089) by rerouting resource requests to corresponding archived copies.\nThis is an implementation of a [published research paper](http://www.cs.odu.edu/~mln/pubs/jcdl-2017/jcdl-2017-alam-service-worker.pdf).\nThis can be used in archival replay systems such as [IPWB](https://github.com/oduwsdl/ipwb) or in the UI of memento aggregators such as [MemGator](https://github.com/oduwsdl/memgator).\n\nThe following figure illustrates an example where an external image reference in an archived web page would have leaked to the live-web, but due to the presence of Reconstructive, it was successfully rerouted to the corresponding archived copy instead.\n\n![Reconstructive Example](resources/reconstructive-example.png)\n\nRead our introductory blog post [Introducing Reconstructive - An Archival Replay ServiceWorker Module](http://ws-dl.blogspot.com/2018/01/2018-01-08-introducing-reconstructive.html) for more details.\n\n## Getting Started\n\nAssuming that your ServiceWorker script (e.g., `serviceworker.js`) is already registered, add the following lines in that script.\n\n```js\nimportScripts('https://oduwsdl.github.io/Reconstructive/reconstructive.js');\nconst rc = new Reconstructive();\nself.addEventListener('fetch', rc.reroute);\n```\n\nThis will start monitoring every request originated from its scope and reroute them to their appropriate mementos at `/memento/<datetime>/<urir>` as necessary.\nHowever, the default rerouting might not work for every archival replay system.\nSo, Reconstructive allows customization to fit to different needs.\n\n## Configuration and Customization\n\nWhen the script is imported, it provides a class named `Reconstructive`.\nAn instance from this class can be created with various configuration options.\nThe instance has following public members:\n\n* `exclusions`   - Object of rerouting exclusion functions.\n* `reroute`      - Callback function to be bound on fetch event.\n* `rewrite`      - Function to rewrite response to fix any replay issues and add an archival banner.\n* `createBanner` - Function to return the banner markup to the `rewrite` function.\n\n### Update Configurations\n\nThe `constructor` method of the `Reconstructive` class accepts an object that allows overwriting default configuration options and adding new members as necessary.\nFollowing are the default options:\n\n```js\n{\n  id: `${NAME}:${VERSION}`,\n  urimPattern: `${self.location.origin}/memento/<datetime>/<urir>`,\n  bannerElementLocation: `${self.location.origin}/reconstructive-banner.js`,\n  showBanner: false,\n  debug: false\n}\n```\n\nTo instantiate an object `rc` with custom configurations, initialize as following:\n\n```js\nconst rc = new Reconstructive({\n  urimPattern: `${self.location.origin}/archived/<datetime>/<urir>`,\n  bannerElementLocation: 'https://oduwsdl.github.io/Reconstructive/reconstructive-banner.js',\n  showBanner: true,\n  debug: true,\n  customColor: '#0C383B'\n});\n```\n\nWe have updated four existing options and added a new one, `customColor`, which we can use later in our custom logic.\n\n### Adding Exclusions\n\nThe `exclusions` property of the class is an object of functions.\nEach member of this object checks for certain criteria and returns a boolean to express whether or not the fetch event should be excluded from being rerouted.\nFollowing is the default exclusions object.\n\n```js\n{\n  notGet: event => event.request.method !== 'GET',\n  bannerElement: event => this.showBanner && event.request.url.endsWith(this.bannerElementLocation),\n  localResource: event => !(this._regexps.urimPattern.test(event.request.url) || this._regexps.urimPattern.test(event.request.referrer))\n}\n```\n\nAdd more members to the object to add more exclusions or modify/delete existing ones.\n\n```js\nrc.exclusions.bannerLogo = event => event.request.url.endsWith('replay-banner-logo.png');\n```\n\nWe have added a new exclusion named `bannerLogo` which will return `true` if the requested URL ends with `replay-banner-logo.png`.\nThis exclusion will ensure that the request will not be routed to an archived version of the logo.\nIn a practical application such exclusion rules should be kept very tight to avoid any false positives.\n\n### Custom Rerouting\n\nReconstructive does not register itself as a ServiceWorker, instead it is added as a module to an existing ServiceWorker for archival replay rerouting logic.\nHence, it is possible to have some custom ServiceWorker logic in place while selectively calling `reroute()` function on some requests.\n\n```js\nself.addEventListener('fetch', function(event) {\n  if (event.requests.url.startsWith('https://example.com/api/')) {\n    event.respondWith(fetch(event.request, {\n      mode: 'cors'\n    }));\n  } else {\n    rc.reroute(event);\n  }\n});\n```\n\n### Custom Rewriting\n\nReconstructive has a `rewrite()` method that tries to make necessary changes in the HTML pages to fix some common replay issues and changes hyperlinks to their archival context.\nHowever, there might be times when you need some custom rewriting logic in your archival replay system.\nTo accomplish this either override the `rewrite()` method of the instance or extend the `Reconstructive` class with an updated `rewrite()` method.\nThe method is called with original `response` and `event` objects and returns a `Promise` that resolves to a `Response` object.\nWe are illustrating the first approach below.\n\n```js\nconst customRewrite = (response, event) => {\n  let customResponse = new Response();\n  // Do something with the original response to create a custom response.\n  return customResponse;\n};\nrc.rewrite = customRewrite;\n```\n\n**Note:** When overriding a method of a class instance the context of `this` inside the custom function could be different (use the instance name e.g., `rc` in place of `this` instead).\n\n### Custom Banner\n\nReconstructive has a `createBanner()` method that creates a banner markup using [Web Components](https://www.webcomponents.org/).\nThis markup is then injected into navigational HTML pages by the `rewrite()` method if the `showBanner` configuration option is set to `true`.\nHowever, the default banner might not be suitable for every archival replay system.\nThis can be updated by overriding the `createBanner()` method the same way as described above for the `rewrite()` method.\nNote that the banner is included by the built-in `rewrite()` method, which if overriden, may not include the banner unless `createBanner()` is called by the `customRewrite()` too.\n\n```js\nconst customCreateBanner = (response, event) => {\n  return `<custom-replay-banner background=\"${rc.customColor}\"></custom-replay-banner>`;\n};\nrc.createBanner = customCreateBanner;\n```\n\nAs an aside, we used `rc.customColor` here that was an additional configuration option we supplied at the instance initialization.\n\n## How it Works?\n\nIn order to reroute requests to the URI of a potential archived copy (also known as Memento URI or URI-M) Reconstructive needs the request URL and the referrer URL, of which the latter must be a URI-M.\nIt extracts the datetime and the original URI (or URI-R) of the referrer then combines them with the request URL as necessary to construct a potential URI-M for the request to be rerouted to.\nIf the request URL is already a URI-M, it simply adds a custom request header `X-ServiceWorker` and fetches the response from the server.\nWhen necessary, the response is rewritten on the client-side to fix some quirks to make sure that the replay works as expected or to optionally add an archival banner.\nThe following flowchart diagram shows what happens in every request/response cycle of a fetch event in Reconstructive.\n\n![Reconstructive Flowchart](resources/reconstructive-flowchart.png)\n",
-    "longname": "/src/README.md",
+    "content": "# Reconstructive\n\nTraditionally, web archival replay systems rewrite link and resource references in HTML/CSS/JavaScript responses so that they resolve to their corresponding archival version.\nFailure to do so would result in a broken rendering of archived pages (composite mementos) as the embedded resource references might resolve to their live version or an invalid location.\nWith the growing use of JavaScript in web applications, often resources are injected dynamically, hence rewriting such references is not possible from the server side.\nTo mitigate this issue, some JavaScript is injected in the page that overrides the global namespace to modify the DOM and monitor every network activity.\nWe proposed a ServiceWorker-based solution to this issue that requires no server-side rewriting, but catches every network request, even those that were initiated due to dynamic resource injection.\n\nReconstructive is a [ServiceWorker](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API) module for client-side reconstruction of composite [mementos](https://tools.ietf.org/html/rfc7089) by rerouting resource requests to corresponding archived copies.\nThis is an implementation of a [published research paper](http://www.cs.odu.edu/~mln/pubs/jcdl-2017/jcdl-2017-alam-service-worker.pdf).\nThis can be used in archival replay systems such as [IPWB](https://github.com/oduwsdl/ipwb) or in the UI of memento aggregators such as [MemGator](https://github.com/oduwsdl/memgator).\n\nThe following figure illustrates an example where an external image reference in an archived web page would have leaked to the live-web, but due to the presence of Reconstructive, it was successfully rerouted to the corresponding archived copy instead.\n\n![Reconstructive Example](resources/reconstructive-example.png)\n\nRead our introductory blog post [Introducing Reconstructive - An Archival Replay ServiceWorker Module](http://ws-dl.blogspot.com/2018/01/2018-01-08-introducing-reconstructive.html) for more details.\n\n## Getting Started\n\nAssuming that your ServiceWorker script (e.g., `serviceworker.js`) is already registered, add the following lines in that script.\n\n```js\nimportScripts('https://oduwsdl.github.io/Reconstructive/reconstructive.js');\nconst rc = new Reconstructive();\nself.addEventListener('fetch', rc.reroute);\n```\n\nThis will start monitoring every request originated from its scope and reroute them to their appropriate mementos at `/memento/<datetime>/<urir>` as necessary.\nHowever, the default rerouting might not work for every archival replay system.\nSo, Reconstructive allows customization to fit to different needs.\n\n## Configuration and Customization\n\nWhen the script is imported, it provides a class named `Reconstructive`.\nAn instance from this class can be created with various configuration options.\nThe instance has following public members:\n\n* `exclusions`   - Object of rerouting exclusion functions.\n* `reroute`      - Callback function to be bound on fetch event.\n* `rewrite`      - Function to rewrite response to fix any replay issues and add an archival banner.\n* `createBanner` - Function to return the banner markup to the `rewrite` function.\n\n### Update Configurations\n\nThe `constructor` method of the `Reconstructive` class accepts an object that allows overwriting default configuration options and adding new members as necessary.\nFollowing are the default options:\n\n```js\n{\n  id: `${NAME}:${VERSION}`,\n  urimPattern: `${self.location.origin}/memento/<datetime>/<urir>`,\n  bannerElementLocation: `${self.location.origin}/reconstructive-banner.js`,\n  bannerLogoLocation: '',\n  showBanner: false,\n  debug: false\n}\n```\n\nTo instantiate an object `rc` with custom configurations, initialize as following:\n\n```js\nconst rc = new Reconstructive({\n  urimPattern: `${self.location.origin}/archived/<datetime>/<urir>`,\n  bannerElementLocation: 'https://oduwsdl.github.io/Reconstructive/reconstructive-banner.js',\n  bannerLogoLocation: 'https://oduwsdl.github.io/Reconstructive/resources/reconstructive-logo.svg',\n  showBanner: true,\n  debug: true,\n  customColor: '#0C383B'\n});\n```\n\nWe have updated four existing options and added a new one, `customColor`, which we can use later in our custom logic.\n\n### Adding Exclusions\n\nThe `exclusions` property of the class is an object of functions.\nEach member of this object checks for certain criteria and returns a boolean to express whether or not the fetch event should be excluded from being rerouted.\nFollowing is the default exclusions object.\n\n```js\n{\n  notGet: event => event.request.method !== 'GET',\n  bannerElement: event => this.showBanner && event.request.url.endsWith(this.bannerElementLocation),\n  bannerLogo: event => this.showBanner && this.bannerLogoLocation && event.request.url.endsWith(this.bannerLogoLocation),\n  localResource: event => !(this._regexps.urimPattern.test(event.request.url) || this._regexps.urimPattern.test(event.request.referrer))\n}\n```\n\nAdd more members to the object to add more exclusions or modify/delete existing ones.\n\n```js\nrc.exclusions.analytics = event => event.request.url.endsWith('custom-analytics.js');\n```\n\nWe have added a new exclusion named `analytics` which will return `true` if the requested URL ends with `custom-analytics.js`.\nThis exclusion will ensure that the request will not be routed to an archived version of the file.\nIn a practical application such exclusion rules should be kept very tight to avoid any false positives.\n\n### Custom Rerouting\n\nReconstructive does not register itself as a ServiceWorker, instead it is added as a module to an existing ServiceWorker for archival replay rerouting logic.\nHence, it is possible to have some custom ServiceWorker logic in place while selectively calling `reroute()` function on some requests.\n\n```js\nself.addEventListener('fetch', function(event) {\n  if (event.requests.url.startsWith('https://example.com/api/')) {\n    event.respondWith(fetch(event.request, {\n      mode: 'cors'\n    }));\n  } else {\n    rc.reroute(event);\n  }\n});\n```\n\n### Custom Rewriting\n\nReconstructive has a `rewrite()` method that tries to make necessary changes in the HTML pages to fix some common replay issues and changes hyperlinks to their archival context.\nHowever, there might be times when you need some custom rewriting logic in your archival replay system.\nTo accomplish this either override the `rewrite()` method of the instance or extend the `Reconstructive` class with an updated `rewrite()` method.\nThe method is called with original `response` and `event` objects and returns a `Promise` that resolves to a `Response` object.\nWe are illustrating the first approach below.\n\n```js\nconst customRewrite = (response, event) => {\n  let customResponse = new Response();\n  // Do something with the original response to create a custom response.\n  return customResponse;\n};\nrc.rewrite = customRewrite;\n```\n\n**Note:** When overriding a method of a class instance the context of `this` inside the custom function could be different (use the instance name e.g., `rc` in place of `this` instead).\n\n### Custom Banner\n\nReconstructive has a `createBanner()` method that creates a banner markup using [Web Components](https://www.webcomponents.org/).\nThis markup is then injected into navigational HTML pages by the `rewrite()` method if the `showBanner` configuration option is set to `true`.\nHowever, the default banner might not be suitable for every archival replay system.\nThis can be updated by overriding the `createBanner()` method the same way as described above for the `rewrite()` method.\nNote that the banner is included by the built-in `rewrite()` method, which if overriden, may not include the banner unless `createBanner()` is called by the `customRewrite()` too.\n\n```js\nconst customCreateBanner = (response, event) => {\n  return `<custom-replay-banner background=\"${rc.customColor}\"></custom-replay-banner>`;\n};\nrc.createBanner = customCreateBanner;\n```\n\nAs an aside, we used `rc.customColor` here that was an additional configuration option we supplied at the instance initialization.\n\n## How it Works?\n\nIn order to reroute requests to the URI of a potential archived copy (also known as Memento URI or URI-M) Reconstructive needs the request URL and the referrer URL, of which the latter must be a URI-M.\nIt extracts the datetime and the original URI (or URI-R) of the referrer then combines them with the request URL as necessary to construct a potential URI-M for the request to be rerouted to.\nIf the request URL is already a URI-M, it simply adds a custom request header `X-ServiceWorker` and fetches the response from the server.\nWhen necessary, the response is rewritten on the client-side to fix some quirks to make sure that the replay works as expected or to optionally add an archival banner.\nThe following flowchart diagram shows what happens in every request/response cycle of a fetch event in Reconstructive.\n\n![Reconstructive Flowchart](resources/reconstructive-flowchart.png)\n",
+    "longname": "/app/README.md",
     "name": "./README.md",
     "static": true,
     "access": "public"
   },
   {
     "kind": "packageJSON",
-    "content": "{\n  \"name\": \"Reconstructive\",\n  \"version\": \"0.5.0\",\n  \"repository\": \"https://github.com/oduwsdl/Reconstructive\",\n  \"author\": \"Sawood Alam <ibnesayeed@gmail.com>\",\n  \"contributors\": [\n    \"John Berlin <n0tan3rd@gmail.com>\"\n  ],\n  \"license\": \"MIT\",\n  \"devDependencies\": {\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-external-ecmascript-plugin\": \"^1.0.0\",\n    \"esdoc-external-webapi-plugin\": \"^1.0.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"serve\": \"^9.2.0\"\n  },\n  \"scripts\": {\n    \"docs\": \"mkdir -p Reconstructive && cp reconstructive.js reconstructive-banner.js Reconstructive && esdoc && rm -rf Reconstructive && cp -r resources docs/\",\n    \"dev\": \"serve .\"\n  }\n}\n",
-    "longname": "/src/package.json",
+    "content": "{\n  \"name\": \"Reconstructive\",\n  \"version\": \"0.6.0\",\n  \"repository\": \"https://github.com/oduwsdl/Reconstructive\",\n  \"author\": \"Sawood Alam <ibnesayeed@gmail.com>\",\n  \"contributors\": [\n    \"John Berlin <n0tan3rd@gmail.com>\"\n  ],\n  \"license\": \"MIT\",\n  \"devDependencies\": {\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-external-ecmascript-plugin\": \"^1.0.0\",\n    \"esdoc-external-webapi-plugin\": \"^1.0.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"serve\": \"^9.4.0\"\n  },\n  \"scripts\": {\n    \"docs\": \"mkdir -p Reconstructive && cp reconstructive.js reconstructive-banner.js Reconstructive && esdoc && rm -rf Reconstructive && cp -r resources docs/\",\n    \"dev\": \"serve .\"\n  }\n}\n",
+    "longname": "/app/package.json",
     "name": "package.json",
     "static": true,
     "access": "public"

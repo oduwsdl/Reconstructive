@@ -69,6 +69,7 @@ Following are the default options:</p>
   id: `${NAME}:${VERSION}`,
   urimPattern: `${self.location.origin}/memento/&lt;datetime&gt;/&lt;urir&gt;`,
   bannerElementLocation: `${self.location.origin}/reconstructive-banner.js`,
+  bannerLogoLocation: &apos;&apos;,
   showBanner: false,
   debug: false
 }</code>
@@ -77,6 +78,7 @@ Following are the default options:</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">const rc = new Reconstructive({
   urimPattern: `${self.location.origin}/archived/&lt;datetime&gt;/&lt;urir&gt;`,
   bannerElementLocation: &apos;https://oduwsdl.github.io/Reconstructive/reconstructive-banner.js&apos;,
+  bannerLogoLocation: &apos;https://oduwsdl.github.io/Reconstructive/resources/reconstructive-logo.svg&apos;,
   showBanner: true,
   debug: true,
   customColor: &apos;#0C383B&apos;
@@ -89,14 +91,15 @@ Following is the default exclusions object.</p>
 <pre><code class="lang-js"><code class="source-code prettyprint">{
   notGet: event =&gt; event.request.method !== &apos;GET&apos;,
   bannerElement: event =&gt; this.showBanner &amp;&amp; event.request.url.endsWith(this.bannerElementLocation),
+  bannerLogo: event =&gt; this.showBanner &amp;&amp; this.bannerLogoLocation &amp;&amp; event.request.url.endsWith(this.bannerLogoLocation),
   localResource: event =&gt; !(this._regexps.urimPattern.test(event.request.url) || this._regexps.urimPattern.test(event.request.referrer))
 }</code>
 </code></pre>
 <p>Add more members to the object to add more exclusions or modify/delete existing ones.</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">rc.exclusions.bannerLogo = event =&gt; event.request.url.endsWith(&apos;replay-banner-logo.png&apos;);</code>
+<pre><code class="lang-js"><code class="source-code prettyprint">rc.exclusions.analytics = event =&gt; event.request.url.endsWith(&apos;custom-analytics.js&apos;);</code>
 </code></pre>
-<p>We have added a new exclusion named <code>bannerLogo</code> which will return <code>true</code> if the requested URL ends with <code>replay-banner-logo.png</code>.
-This exclusion will ensure that the request will not be routed to an archived version of the logo.
+<p>We have added a new exclusion named <code>analytics</code> which will return <code>true</code> if the requested URL ends with <code>custom-analytics.js</code>.
+This exclusion will ensure that the request will not be routed to an archived version of the file.
 In a practical application such exclusion rules should be kept very tight to avoid any false positives.</p>
 <h3 id="custom-rerouting">Custom Rerouting</h3><p>Reconstructive does not register itself as a ServiceWorker, instead it is added as a module to an existing ServiceWorker for archival replay rerouting logic.
 Hence, it is possible to have some custom ServiceWorker logic in place while selectively calling <code>reroute()</code> function on some requests.</p>

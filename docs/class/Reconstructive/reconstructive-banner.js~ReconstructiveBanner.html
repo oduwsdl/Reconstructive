@@ -42,7 +42,7 @@
   
   
   
-  <span data-ice="source">| <span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber1">source</a></span></span>
+  <span data-ice="source">| <span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber27">source</a></span></span>
 </div>
 
 <div class="self-detail detail">
@@ -62,7 +62,24 @@
 
   
   
-  
+  <div class="description" data-ice="description"><p><a href="https://oduwsdl.github.io/Reconstructive/reconstructive-banner.js">ReconstructiveBanner</a> implements <code>&lt;reconstructive-banner&gt;</code> <a href="https://html.spec.whatwg.org/multipage/custom-elements.html#custom-elements">Custom Element</a>.
+It is an unobtrusive archival replay banner to make <a href="http://mementoweb.org/about/">mementos</a> interactive and surface on-demand metadata about the archived resource.
+Use it in an HTML page as illustrated below:</p>
+<pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;reconstructive-banner.js&quot;&gt;&lt;/script&gt;
+&lt;reconstructive-banner logo-src=&quot;&quot;
+                       urir=&quot;https://example.com/&quot;
+                       memento-datetime=&quot;Mon, 06 Feb 2017 00:23:37 GMT&quot;
+                       first-urim=&quot;https://archive.host/memento/20170206002337/https://example.com/&quot;
+                       first-datetime=&quot;Mon, 06 Feb 2017 00:23:37 GMT&quot;
+                       last-urim=&quot;https://archive.host/memento/20170206002337/https://example.com/&quot;
+                       last-datetime=&quot;Mon, 06 Feb 2017 00:23:37 GMT&quot;
+                       prev-urim=&quot;&quot;
+                       prev-datetime=&quot;&quot;
+                       next-urim=&quot;&quot;
+                       next-datetime=&quot;&quot;&gt;
+&lt;/reconstructive-banner&gt;</code>
+</code></pre>
+</div>
   
 
   
@@ -100,7 +117,8 @@
       <div>
         
         
-        
+        <div data-ice="description"><p>Creates a new ReconstructiveBanner instance and attaches a Shadow DOM.</p>
+</div>
       </div>
     </td>
     <td>
@@ -129,7 +147,35 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-datetime">datetime</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-firstDatetime">firstDatetime</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-firstUrim">firstUrim</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
         </p>
       </div>
       <div>
@@ -185,7 +231,259 @@
           
           
           
+          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-lastDatetime">lastDatetime</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-lastUrim">lastUrim</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-logoSrc">logoSrc</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-mementoDatetime">mementoDatetime</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-nextDatetime">nextDatetime</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-nextUrim">nextUrim</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-prevDatetime">prevDatetime</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-prevUrim">prevUrim</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
           <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-shadow">shadow</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-timeDiff">timeDiff</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
         </p>
       </div>
       <div>
@@ -284,7 +582,54 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber2">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber31">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>Creates a new ReconstructiveBanner instance and attaches a Shadow DOM.</p>
+</div>
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+</div>
+<div data-ice="memberDetails"><h2 data-ice="title">Public Members</h2>
+
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-member-firstDatetime">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">firstDatetime</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber41">source</a></span></span>
     </span>
   </h3>
 
@@ -315,22 +660,19 @@
   
   
 </div>
-</div>
-<div data-ice="memberDetails"><h2 data-ice="title">Public Members</h2>
-
 <div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-member-datetime">
+  <h3 data-ice="anchor" id="instance-member-firstUrim">
     <span class="access" data-ice="access">public</span>
     
     
     
     
     
-    <span class="code" data-ice="name">datetime</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">firstUrim</span><span class="code" data-ice="signature">: <span>*</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber9">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber40">source</a></span></span>
     </span>
   </h3>
 
@@ -373,7 +715,351 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber65">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber240">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-member-lastDatetime">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">lastDatetime</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber43">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-member-lastUrim">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">lastUrim</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber42">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-member-logoSrc">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">logoSrc</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber37">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-member-mementoDatetime">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">mementoDatetime</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber39">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-member-nextDatetime">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">nextDatetime</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber47">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-member-nextUrim">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">nextUrim</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber46">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-member-prevDatetime">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">prevDatetime</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber45">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-member-prevUrim">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">prevUrim</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber44">source</a></span></span>
     </span>
   </h3>
 
@@ -416,7 +1102,50 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber4">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber33">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-member-timeDiff">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">timeDiff</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber49">source</a></span></span>
     </span>
   </h3>
 
@@ -459,7 +1188,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber8">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber38">source</a></span></span>
     </span>
   </h3>
 
@@ -505,7 +1234,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber7">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber36">source</a></span></span>
     </span>
   </h3>
 

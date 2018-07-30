@@ -36,79 +36,253 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">Reconstructive/reconstructive-banner.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">class ReconstructiveBanner extends HTMLElement {
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/**
+ * [ReconstructiveBanner](https://oduwsdl.github.io/Reconstructive/reconstructive-banner.js) implements `&lt;reconstructive-banner&gt;` [Custom Element](https://html.spec.whatwg.org/multipage/custom-elements.html#custom-elements).
+ * It is an unobtrusive archival replay banner to make [mementos](http://mementoweb.org/about/) interactive and surface on-demand metadata about the archived resource.
+ * Use it in an HTML page as illustrated below:
+ * 
+ * ```html
+ * &lt;script src=&quot;reconstructive-banner.js&quot;&gt;&lt;/script&gt;
+ * &lt;reconstructive-banner logo-src=&quot;&quot;
+ *                        urir=&quot;https://example.com/&quot;
+ *                        memento-datetime=&quot;Mon, 06 Feb 2017 00:23:37 GMT&quot;
+ *                        first-urim=&quot;https://archive.host/memento/20170206002337/https://example.com/&quot;
+ *                        first-datetime=&quot;Mon, 06 Feb 2017 00:23:37 GMT&quot;
+ *                        last-urim=&quot;https://archive.host/memento/20170206002337/https://example.com/&quot;
+ *                        last-datetime=&quot;Mon, 06 Feb 2017 00:23:37 GMT&quot;
+ *                        prev-urim=&quot;&quot;
+ *                        prev-datetime=&quot;&quot;
+ *                        next-urim=&quot;&quot;
+ *                        next-datetime=&quot;&quot;&gt;
+ * &lt;/reconstructive-banner&gt;
+ * ```
+ *
+ * @overview  ReconstructiveBanner implements &lt;reconstructive-banner&gt; Custom Element for archival replay banners.
+ * @author    Sawood Alam &lt;ibnesayeed@gmail.com&gt;
+ * @license   MIT
+ * @copyright ODU Web Science / Digital Libraries Research Group 2017
+ */
+class ReconstructiveBanner extends HTMLElement {
+  /**
+   * Creates a new ReconstructiveBanner instance and attaches a Shadow DOM.
+   */
   constructor() {
     super();
     this.shadow = this.attachShadow({mode: &apos;closed&apos;});
   }
 
   connectedCallback() {
-    this.urir = this.getAttribute(&apos;urir&apos;);
-    this.datetime = this.getAttribute(&apos;datetime&apos;);
-    console.log(this.urir);
-    let template = `
+    this.logoSrc = this.getAttribute(&apos;logo-src&apos;) || &apos;data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+PHBhdGggZD0iTTAgMyBhMyAzIDAgMCAxIDMtMyBoMiBsMyAzIGgtMyBhMiAyIDAgMCAwLTIgMiB2NiBhMiAyIDAgMCAwIDIgMiBoMSBsMyAzIGgtNiBhMyAzIDAgMCAxLTMtMyBaIiBmaWxsPSIjMUI0ODY5IiAvPjxwYXRoIGQ9Ik0xNiAxNiBoLTQgbC05LTkgaDYgYTIgMiAwIDAgMCAwLTQgaC0xIGwtMy0zIGg2IGEzIDMgMCAwIDEgMyAzIHY0IGEzIDMgMCAwIDEtMyAzIGgtMSBaIiBmaWxsPSIjRjI0NzM4IiAvPjwvc3ZnPg==&apos;;
+    this.urir = this.getAttribute(&apos;urir&apos;) || &apos;&apos;;
+    this.mementoDatetime = this.getAttribute(&apos;memento-datetime&apos;) || &apos;&apos;;
+    this.firstUrim = this.getAttribute(&apos;first-urim&apos;) || &apos;&apos;;
+    this.firstDatetime = this.getAttribute(&apos;first-datetime&apos;) || &apos;&apos;;
+    this.lastUrim = this.getAttribute(&apos;last-urim&apos;) || &apos;&apos;;
+    this.lastDatetime = this.getAttribute(&apos;last-datetime&apos;) || &apos;&apos;;
+    this.prevUrim = this.getAttribute(&apos;prev-urim&apos;) || &apos;&apos;;
+    this.prevDatetime = this.getAttribute(&apos;prev-datetime&apos;) || &apos;&apos;;
+    this.nextUrim = this.getAttribute(&apos;next-urim&apos;) || &apos;&apos;;
+    this.nextDatetime = this.getAttribute(&apos;next-datetime&apos;) || &apos;&apos;;
+
+    this.timeDiff = (() =&gt; {
+      const diff = Date.now() - new Date(this.mementoDatetime);
+      if (isNaN(diff)) {
+        return &apos;&apos;;
+      }
+      if (diff &lt; 0) {
+        return &apos;Capture from the future!&apos;;
+      }
+      if (diff &gt;= 31622400000) {
+        return `Captured ${Math.round(diff / 31622400000)} year(s) ago`;
+      }
+      if (diff &gt;= 2629746000) {
+        return `Captured ${Math.round(diff / 2629746000)} month(s) ago`;
+      }
+      if (diff &gt;= 86400000) {
+        return `Captured ${Math.round(diff / 86400000)} day(s) ago`;
+      }
+      if (diff &gt;= 3600000) {
+        return `Captured ${Math.round(diff / 3600000)} hour(s) ago`;
+      }
+      return `Captured ${Math.round(diff / 60000)} minute(s) ago`;
+    })();
+
+    const template = `
       &lt;style&gt;
-        div#reconstructive-banner-aligner {
-          width: 100%;
-          position: fixed;
-          bottom: 0;
-          transition: opacity 0.5s ease-in;
+        a[href=&apos;&apos;] {
+          pointer-events: none;
         }
-        div.hidden {
+        #wrapper {
+          z-index: 99999999;
+          padding: 10px;
+          box-sizing: border-box;
+        }
+        #wrapper.fab {
+          position: fixed;
+          bottom: 10px;
+          right: 10px;
+          transition: all 0.5s ease-in;
+        }
+        #wrapper.expanded {
+          position: fixed;
+          top: 0;
+          left: 0;
+          margin: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(100, 100, 100, 0.6);
+          transition: all 0.5s ease-out;
+        }
+        #wrapper.hidden {
           opacity: 0;
           transition: opacity 0.5s ease-in;
         }
-        div#reconstructive-banner-container {
-          max-width: 500px;
-          height: 60px;
-          border: 2px solid #FF8B00;
+        #wrapper.closed {
+          display: none;
+        }
+        #container {
+          border: 2px solid #451212;
           background-color: #F2FFE3;
-          border-radius: 5px;
+          border-radius: 10px;
           color: #1B4869;
-          margin: 10px auto;
+          max-width: 600px;
+          margin: auto;
           padding: 5px;
+          box-shadow: 0 0 20px;
           display: grid;
-          grid-gap: 5px;
-          box-shadow: 0 0 10px;
+          grid-template-columns: 42px 20px 20px 1fr 20px 20px 20px;
+          grid-template-rows: 20px 20px 1fr;
+          grid-gap: 2px 10px;
+          box-sizing: border-box;
+          min-height: 50px;
+          transition: all 0.5s ease-in;
+        }
+        .expanded #container {
+          height: calc(100vh - 20px);
+          box-shadow: none;
+          transition: all 0.5s ease-out;
+        }
+        .fab #collapse, .fab #meta, .expanded #expand {
+          display: none;
+        }
+        form {
+          display: contents;
         }
         input {
-          padding: 3px;
-          box-sizing:border-box;
+          padding: 0 5px;
+          box-sizing: border-box;
         }
-        input.urir {
-          grid-column: 1 / 3;
+        .branding {
+          width: 42px;
+        }
+        .icon {
+          width: 20px;
+        }
+        #logo {
+          grid-column: 1;
+          grid-row: 1 / 3;
+        }
+        #urir {
+          grid-column: 2 / 7;
           grid-row: 1;
         }
-        p.label {
-          grid-column: 1;
-          grid-row: 2;
-          margin: 0;
-        }
-        input.datetime {
+        #first {
           grid-column: 2;
           grid-row: 2;
         }
+        #prev {
+          grid-column: 3;
+          grid-row: 2;
+        }
+        #current {
+          grid-column: 4;
+          grid-row: 2;
+          margin: 0 5px;
+          font-size: 16px;
+          line-height: 22px;
+          color: #323B40;
+          text-align: center;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        #next {
+          grid-column: 5;
+          grid-row: 2;
+        }
+        #last {
+          grid-column: 6;
+          grid-row: 2;
+        }
+        #close {
+          grid-column: 7;
+          grid-row: 1;
+        }
+        #expand {
+          grid-column: 7;
+          grid-row: 2;
+        }
+        #collapse {
+          grid-column: 7;
+          grid-row: 2;
+        }
+        #meta {
+          grid-column: 1 / 8;
+          grid-row: 3;
+          overflow: auto;
+          padding: 10px;
+          display: grid;
+          grid-template-columns: 1fr 1fr 1fr;
+          grid-template-rows: auto auto auto 130px 1fr;
+        }
       &lt;/style&gt;
-      &lt;div id=&quot;reconstructive-banner-aligner&quot; class=&quot;&quot;&gt;
-        &lt;div id=&quot;reconstructive-banner-container&quot;&gt;
-          &lt;input class=&quot;urir&quot; value=&quot;${this.urir}&quot;&gt;
-          &lt;p class=&quot;label&quot;&gt;Archived at:&lt;/p&gt;
-          &lt;input class=&quot;datetime&quot; value=&quot;${this.datetime}&quot;&gt;
+      &lt;div id=&quot;wrapper&quot; class=&quot;fab&quot;&gt;
+        &lt;div id=&quot;container&quot;&gt;
+          &lt;img id=&quot;logo&quot; class=&quot;branding&quot; src=&quot;${this.logoSrc}&quot; alt=&quot;Reconstructive Banner Logo&quot;&gt;
+          &lt;form id=&quot;lookup&quot;&gt;
+            &lt;input id=&quot;urir&quot; class=&quot;url&quot; value=&quot;${this.urir}&quot;&gt;
+          &lt;form&gt;
+          &lt;a id=&quot;first&quot; class=&quot;icon&quot; title=&quot;${this.firstDatetime}&quot; href=&quot;${this.firstUrim}&quot;&gt;
+            &lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 32 32&quot;&gt;&lt;path d=&quot;M4 28v-24h4v11l10-10v10l10-10v22l-10-10v10l-10-10v11z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;
+          &lt;/a&gt;
+          &lt;a id=&quot;prev&quot; class=&quot;icon&quot; title=&quot;${this.prevDatetime}&quot; href=&quot;${this.prevUrim}&quot;&gt;
+            &lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 32 32&quot;&gt;&lt;path d=&quot;M8 28v-24h4v11l10-10v22l-10-10v11z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;
+          &lt;/a&gt;
+          &lt;p id=&quot;current&quot; class=&quot;time&quot; title=&quot;${this.mementoDatetime}&quot;&gt;${this.timeDiff}&lt;/p&gt;
+          &lt;a id=&quot;next&quot; class=&quot;icon&quot; title=&quot;${this.nextDatetime}&quot; href=&quot;${this.nextUrim}&quot;&gt;
+            &lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 32 32&quot;&gt;&lt;path d=&quot;M24 4v24h-4v-11l-10 10v-22l10 10v-11z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;
+          &lt;/a&gt;
+          &lt;a id=&quot;last&quot; class=&quot;icon&quot; title=&quot;${this.lastDatetime}&quot; href=&quot;${this.lastUrim}&quot;&gt;
+            &lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 32 32&quot;&gt;&lt;path d=&quot;M28 4v24h-4v-11l-10 10v-10l-10 10v-22l10 10v-10l10 10v-11z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;
+          &lt;/a&gt;
+          &lt;a id=&quot;close&quot; class=&quot;icon&quot; href=&quot;#&quot;&gt;
+            &lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 32 32&quot;&gt;&lt;path d=&quot;M31.708 25.708c-0-0-0-0-0-0l-9.708-9.708 9.708-9.708c0-0 0-0 0-0 0.105-0.105 0.18-0.227 0.229-0.357 0.133-0.356 0.057-0.771-0.229-1.057l-4.586-4.586c-0.286-0.286-0.702-0.361-1.057-0.229-0.13 0.048-0.252 0.124-0.357 0.228 0 0-0 0-0 0l-9.708 9.708-9.708-9.708c-0-0-0-0-0-0-0.105-0.104-0.227-0.18-0.357-0.228-0.356-0.133-0.771-0.057-1.057 0.229l-4.586 4.586c-0.286 0.286-0.361 0.702-0.229 1.057 0.049 0.13 0.124 0.252 0.229 0.357 0 0 0 0 0 0l9.708 9.708-9.708 9.708c-0 0-0 0-0 0-0.104 0.105-0.18 0.227-0.229 0.357-0.133 0.355-0.057 0.771 0.229 1.057l4.586 4.586c0.286 0.286 0.702 0.361 1.057 0.229 0.13-0.049 0.252-0.124 0.357-0.229 0-0 0-0 0-0l9.708-9.708 9.708 9.708c0 0 0 0 0 0 0.105 0.105 0.227 0.18 0.357 0.229 0.356 0.133 0.771 0.057 1.057-0.229l4.586-4.586c0.286-0.286 0.362-0.702 0.229-1.057-0.049-0.13-0.124-0.252-0.229-0.357z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;
+          &lt;/a&gt;
+          &lt;a id=&quot;expand&quot; class=&quot;icon&quot; href=&quot;#&quot;&gt;
+            &lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 32 32&quot;&gt;&lt;path d=&quot;M32 0h-13l5 5-6 6 3 3 6-6 5 5z&quot;&gt;&lt;/path&gt;&lt;path d=&quot;M32 32v-13l-5 5-6-6-3 3 6 6-5 5z&quot;&gt;&lt;/path&gt;&lt;path d=&quot;M0 32h13l-5-5 6-6-3-3-6 6-5-5z&quot;&gt;&lt;/path&gt;&lt;path d=&quot;M0 0v13l5-5 6 6 3-3-6-6 5-5z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;
+          &lt;/a&gt;
+          &lt;a id=&quot;collapse&quot; class=&quot;icon&quot; href=&quot;#&quot;&gt;
+            &lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 32 32&quot;&gt;&lt;path d=&quot;M18 14h13l-5-5 6-6-3-3-6 6-5-5z&quot;&gt;&lt;/path&gt;&lt;path d=&quot;M18 18v13l5-5 6 6 3-3-6-6 5-5z&quot;&gt;&lt;/path&gt;&lt;path d=&quot;M14 18h-13l5 5-6 6 3 3 6-6 5 5z&quot;&gt;&lt;/path&gt;&lt;path d=&quot;M14 14v-13l-5 5-6-6-3 3 6 6-5 5z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;
+          &lt;/a&gt;
+          &lt;div id=&quot;meta&quot;&gt;
+            &lt;!-- TODO: Add provenance infomration, metadata, and interactive visualizations here... --&gt;
+          &lt;/div&gt;
         &lt;/div&gt;
       &lt;/div&gt;
     `;
     this.shadow.innerHTML = template;
 
-    let container = this.shadow.getElementById(&apos;reconstructive-banner-container&apos;);
+    const container = this.shadow.getElementById(&apos;container&apos;);
+    const wrapper = this.shadow.getElementById(&apos;wrapper&apos;);
+
     this.focused = false;
     container.onmouseover = () =&gt; this.focused = true;
     container.onmouseout = () =&gt; this.focused = false;
-    let aligner = this.shadow.getElementById(&apos;reconstructive-banner-aligner&apos;);
-    let t;
-    let resetTimer = () =&gt; {
-      aligner.classList.remove(&apos;hidden&apos;);
-      clearTimeout(t);
-      t = setTimeout(() =&gt; !this.focused &amp;&amp; aligner.classList.add(&apos;hidden&apos;), 2000);
+    let focusTimer;
+    const resetTimer = () =&gt; {
+      wrapper.classList.remove(&apos;hidden&apos;);
+      clearTimeout(focusTimer);
+      focusTimer = setTimeout(() =&gt; !this.focused &amp;&amp; wrapper.classList.contains(&apos;fab&apos;) &amp;&amp; wrapper.classList.add(&apos;hidden&apos;), 2000);
     }
     window.addEventListener(&apos;load&apos;, resetTimer);
     window.addEventListener(&apos;mousemove&apos;, resetTimer);
@@ -116,6 +290,33 @@
     window.addEventListener(&apos;click&apos;, resetTimer);
     window.addEventListener(&apos;scroll&apos;, resetTimer);
     window.addEventListener(&apos;keypress&apos;, resetTimer);
+
+    this.shadow.getElementById(&apos;close&apos;).onclick = e =&gt; {
+      e.preventDefault();
+      wrapper.classList.remove(&apos;fab&apos;, &apos;expanded&apos;);
+      wrapper.classList.add(&apos;closed&apos;);
+    };
+    this.shadow.getElementById(&apos;collapse&apos;).onclick = e =&gt; {
+      e.preventDefault();
+      wrapper.classList.replace(&apos;expanded&apos;, &apos;fab&apos;);
+    };
+    this.shadow.getElementById(&apos;expand&apos;).onclick = e =&gt; {
+      e.preventDefault();
+      wrapper.classList.replace(&apos;fab&apos;, &apos;expanded&apos;);
+    };
+    wrapper.onclick = e =&gt; {
+      if (e.target == wrapper) {
+        wrapper.classList.replace(&apos;expanded&apos;, &apos;fab&apos;);
+      }
+    };
+
+    this.shadow.getElementById(&apos;lookup&apos;).onsubmit = e =&gt; {
+      e.preventDefault();
+      const urir = this.shadow.getElementById(&apos;urir&apos;).value;
+      if (urir) {
+        window.location = window.location.href.replace(this.urir, urir)
+      }
+    };
   }
 }
 
