@@ -51,6 +51,7 @@ Following are the default options:
   id: `${NAME}:${VERSION}`,
   urimPattern: `${self.location.origin}/memento/<datetime>/<urir>`,
   bannerElementLocation: `${self.location.origin}/reconstructive-banner.js`,
+  bannerLogoLocation: '',
   showBanner: false,
   debug: false
 }
@@ -62,6 +63,7 @@ To instantiate an object `rc` with custom configurations, initialize as followin
 const rc = new Reconstructive({
   urimPattern: `${self.location.origin}/archived/<datetime>/<urir>`,
   bannerElementLocation: 'https://oduwsdl.github.io/Reconstructive/reconstructive-banner.js',
+  bannerLogoLocation: 'https://oduwsdl.github.io/Reconstructive/resources/reconstructive-logo.svg',
   showBanner: true,
   debug: true,
   customColor: '#0C383B'
@@ -80,6 +82,7 @@ Following is the default exclusions object.
 {
   notGet: event => event.request.method !== 'GET',
   bannerElement: event => this.showBanner && event.request.url.endsWith(this.bannerElementLocation),
+  bannerLogo: event => this.showBanner && this.bannerLogoLocation && event.request.url.endsWith(this.bannerLogoLocation),
   localResource: event => !(this._regexps.urimPattern.test(event.request.url) || this._regexps.urimPattern.test(event.request.referrer))
 }
 ```
@@ -87,11 +90,11 @@ Following is the default exclusions object.
 Add more members to the object to add more exclusions or modify/delete existing ones.
 
 ```js
-rc.exclusions.bannerLogo = event => event.request.url.endsWith('replay-banner-logo.png');
+rc.exclusions.analytics = event => event.request.url.endsWith('custom-analytics.js');
 ```
 
-We have added a new exclusion named `bannerLogo` which will return `true` if the requested URL ends with `replay-banner-logo.png`.
-This exclusion will ensure that the request will not be routed to an archived version of the logo.
+We have added a new exclusion named `analytics` which will return `true` if the requested URL ends with `custom-analytics.js`.
+This exclusion will ensure that the request will not be routed to an archived version of the file.
 In a practical application such exclusion rules should be kept very tight to avoid any false positives.
 
 ### Custom Rerouting
