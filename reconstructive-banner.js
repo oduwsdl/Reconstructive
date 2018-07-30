@@ -110,6 +110,9 @@ class ReconstructiveBanner extends HTMLElement {
         .fab #collapse, .fab #meta, .expanded #expand {
           display: none;
         }
+        form {
+          display: contents;
+        }
         input {
           padding: 0 5px;
           box-sizing: border-box;
@@ -181,7 +184,9 @@ class ReconstructiveBanner extends HTMLElement {
       <div id="wrapper" class="fab">
         <div id="container">
           <img id="logo" class="branding" src="${this.logoSrc}" alt="Reconstructive Banner Logo">
-          <input id="urir" class="url" value="${this.urir}">
+          <form id="lookup">
+            <input id="urir" class="url" value="${this.urir}">
+          <form>
           <a id="first" class="icon" title="${this.firstDatetime}" href="${this.firstUrim}">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M4 28v-24h4v11l10-10v10l10-10v22l-10-10v10l-10-10v11z"></path></svg>
           </a>
@@ -214,9 +219,6 @@ class ReconstructiveBanner extends HTMLElement {
 
     const container = this.shadow.getElementById('container');
     const wrapper = this.shadow.getElementById('wrapper');
-    const closer = this.shadow.getElementById('close');
-    const collapser = this.shadow.getElementById('collapse');
-    const expander = this.shadow.getElementById('expand');
 
     this.focused = false;
     container.onmouseover = () => this.focused = true;
@@ -234,22 +236,30 @@ class ReconstructiveBanner extends HTMLElement {
     window.addEventListener('scroll', resetTimer);
     window.addEventListener('keypress', resetTimer);
 
-    closer.onclick = e => {
+    this.shadow.getElementById('close').onclick = e => {
       e.preventDefault();
       wrapper.classList.remove('fab', 'expanded');
       wrapper.classList.add('closed');
     };
-    collapser.onclick = e => {
+    this.shadow.getElementById('collapse').onclick = e => {
       e.preventDefault();
       wrapper.classList.replace('expanded', 'fab');
     };
-    expander.onclick = e => {
+    this.shadow.getElementById('expand').onclick = e => {
       e.preventDefault();
       wrapper.classList.replace('fab', 'expanded');
     };
     wrapper.onclick = e => {
       if (e.target == wrapper) {
         wrapper.classList.replace('expanded', 'fab');
+      }
+    };
+
+    this.shadow.getElementById('lookup').onsubmit = e => {
+      e.preventDefault();
+      const urir = this.shadow.getElementById('urir').value;
+      if (urir) {
+        window.location = window.location.href.replace(this.urir, urir)
       }
     };
   }
