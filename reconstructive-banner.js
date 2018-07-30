@@ -6,6 +6,7 @@
  * ```html
  * <script src="reconstructive-banner.js"></script>
  * <reconstructive-banner logo-src=""
+ *                        home-href="/"
  *                        urir="https://example.com/"
  *                        memento-datetime="Mon, 06 Feb 2017 00:23:37 GMT"
  *                        first-urim="https://archive.host/memento/20170206002337/https://example.com/"
@@ -34,6 +35,7 @@ class ReconstructiveBanner extends HTMLElement {
   }
 
   connectedCallback() {
+    this.homeHref = this.getAttribute('home-href') || '/';
     this.logoSrc = this.getAttribute('logo-src') || 'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+PHBhdGggZD0iTTAgMyBhMyAzIDAgMCAxIDMtMyBoMiBsMyAzIGgtMyBhMiAyIDAgMCAwLTIgMiB2NiBhMiAyIDAgMCAwIDIgMiBoMSBsMyAzIGgtNiBhMyAzIDAgMCAxLTMtMyBaIiBmaWxsPSIjMUI0ODY5IiAvPjxwYXRoIGQ9Ik0xNiAxNiBoLTQgbC05LTkgaDYgYTIgMiAwIDAgMCAwLTQgaC0xIGwtMy0zIGg2IGEzIDMgMCAwIDEgMyAzIHY0IGEzIDMgMCAwIDEtMyAzIGgtMSBaIiBmaWxsPSIjRjI0NzM4IiAvPjwvc3ZnPg==';
     this.urir = this.getAttribute('urir') || '';
     this.mementoDatetime = this.getAttribute('memento-datetime') || '';
@@ -214,7 +216,9 @@ class ReconstructiveBanner extends HTMLElement {
       </style>
       <div id="wrapper" class="fab">
         <div id="container">
-          <img id="logo" class="branding" src="${this.logoSrc}" alt="Reconstructive Banner Logo">
+          <a id="home" title="Go to home" href="${this.homeHref}">
+            <img id="logo" class="branding" src="${this.logoSrc}" alt="Reconstructive Banner Logo">
+          </a>
           <form id="lookup">
             <input id="urir" class="url" value="${this.urir}">
           <form>
