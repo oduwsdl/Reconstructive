@@ -27,6 +27,7 @@ const rc = new Reconstructive({
 // <   notGet: function(FetchEvent) => boolean,
 // <   bannerElement: function(FetchEvent) => boolean,
 // <   bannerLogo: function(FetchEvent) => boolean,
+// <   homePage: function(FetchEvent) => boolean,
 // <   localResource: function(FetchEvent) => boolean
 // < }
 
