@@ -84,6 +84,7 @@ class ReconstructiveBanner extends HTMLElement {
       <style>
         a[href=''] {
           pointer-events: none;
+          opacity: 0.4;
         }
         #wrapper {
           z-index: 99999999;
