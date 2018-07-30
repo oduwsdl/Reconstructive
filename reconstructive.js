@@ -2,6 +2,13 @@
  * [Reconstructive](https://github.com/oduwsdl/Reconstructive) is a [ServiceWorker](https://www.w3.org/TR/service-workers/) module for client-side reconstruction of composite mementos.
  * It reroutes embedded resource requests to their appropriate archival version without any URL rewriting.
  * It also provides functionality to add custom archival banners or rewrite hyperlinks on the client-side.
+ * Use it in a ServiceWorker as illustrated below:
+ *
+ * ```js
+ * importScripts('https://oduwsdl.github.io/Reconstructive/reconstructive.js');
+ * const rc = new Reconstructive();
+ * self.addEventListener('fetch', rc.reroute);
+ * ```
  *
  * @overview  Reconstructive is a module to be used in a ServiceWorker of an archival replay.
  * @author    Sawood Alam <ibnesayeed@gmail.com>
