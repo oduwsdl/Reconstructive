@@ -8,7 +8,7 @@ importScripts('reconstructive.js');
 //   id: `${NAME}:${VERSION}`,
 //   urimPattern: `${self.location.origin}/memento/<datetime>/<urir>`,
 //   bannerElementLocation: `${self.location.origin}/reconstructive-banner.js`,
-//   bannerLogoLocation: `${self.location.origin}/resources/reconstructive-logo.svg`,
+//   bannerLogoLocation: '',
 //   showBanner: false,
 //   debug: false
 // });
@@ -17,7 +17,6 @@ const rc = new Reconstructive({
   debug: true,
   showBanner: true,
   bannerElementLocation: `${currentPath}/reconstructive-banner.js`,
-  bannerLogoLocation: `${currentPath}/resources/reconstructive-logo.svg`,
   urimPattern: `${currentPath}/tests/<datetime>/<urir>`
 });
 
@@ -26,6 +25,7 @@ const rc = new Reconstructive({
 // < {
 // <   notGet: function(FetchEvent) => boolean,
 // <   bannerElement: function(FetchEvent) => boolean,
+// <   bannerLogo: function(FetchEvent) => boolean,
 // <   localResource: function(FetchEvent) => boolean
 // < }
 

@@ -56,11 +56,12 @@ class Reconstructive {
 
     /**
      * The URL or absolute path of the logo image to appear in the banner.
+     * An empty value will render the default Reconstructive logo as inline SVG.
      * Only necessary if showBanner is set to true.
      *
      * @type {string}
      */
-    this.bannerLogoLocation = `${self.location.origin}/resources/reconstructive-logo.svg`;
+    this.bannerLogoLocation = '';
 
     /**
      * Whether or not to show an archival banner.
@@ -110,7 +111,7 @@ class Reconstructive {
     this.exclusions = {
       notGet: event => event.request.method !== 'GET',
       bannerElement: event => this.showBanner && event.request.url.endsWith(this.bannerElementLocation),
-      bannerLogo: event => this.showBanner && event.request.url.endsWith(this.bannerLogoLocation),
+      bannerLogo: event => this.showBanner && this.bannerLogoLocation && event.request.url.endsWith(this.bannerLogoLocation),
       localResource: event => !(this._regexps.urimPattern.test(event.request.url) || this._regexps.urimPattern.test(event.request.referrer))
     };
 
