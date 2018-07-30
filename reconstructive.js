@@ -311,12 +311,16 @@ class Reconstructive {
    * @return {string}              - The banner markup
    */
   createBanner(response, event) {
+    let mementoDatetime = response.headers.get('Memento-Datetime') || '';
     const [datetime, urir] = this.extractDatetimeUrir(response.url);
+    if (!mementoDatetime) {
+      mementoDatetime = new Date(`${datetime.slice(0, 4)}-${datetime.slice(4, 6)}-${datetime.slice(6, 8)}T${datetime.slice(8, 10)}:${datetime.slice(10, 12)}:${datetime.slice(12, 14)}Z`).toUTCString()
+    }
     return `
       <script src="${this.bannerElementLocation}"></script>
       <reconstructive-banner logo-src="${this.bannerLogoLocation}"
                              urir="${urir}"
-                             memento-datetime="${datetime}"
+                             memento-datetime="${mementoDatetime}"
                              first-urim=""
                              first-datetime=""
                              last-urim=""
