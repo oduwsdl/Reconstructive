@@ -54,22 +54,27 @@ class ReconstructiveBanner extends HTMLElement {
       if (diff < 0) {
         return 'Capture from the future!';
       }
+      const minuteMilliseconds = 60000,
+            hourMilliseconds = 3600000,
+            dayMilliseconds = 86400000,
+            monthMilliseconds = 2629746000,
+            yearMilliseconds = 31622400000;
       let unit, quotient;
-      if (diff >= 31622400000) {
+      if (diff >= yearMilliseconds) {
         unit = 'year';
-        quotient = Math.round(diff / 31622400000);
-      } else if (diff >= 2629746000) {
+        quotient = Math.round(diff / yearMilliseconds);
+      } else if (diff >= monthMilliseconds) {
         unit = 'month';
-        quotient = Math.round(diff / 2629746000);
-      } else if (diff >= 86400000) {
+        quotient = Math.round(diff / monthMilliseconds);
+      } else if (diff >= dayMilliseconds) {
         unit = 'day';
-        quotient = Math.round(diff / 86400000);
-      } else if (diff >= 3600000) {
+        quotient = Math.round(diff / dayMilliseconds);
+      } else if (diff >= hourMilliseconds) {
         unit = 'hour';
-        quotient = Math.round(diff / 3600000);
+        quotient = Math.round(diff / hourMilliseconds);
       } else {
         unit = 'minute';
-        quotient = Math.round(diff / 60000);
+        quotient = Math.round(diff / minuteMilliseconds);
       }
       const diffStr = quotient == 1 ? `one ${unit}` : `${quotient} ${unit}s`;
       return `Captured ${diffStr} ago`;
