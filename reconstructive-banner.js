@@ -126,7 +126,7 @@ class ReconstructiveBanner extends HTMLElement {
           padding: 5px;
           box-shadow: 0 0 20px;
           display: grid;
-          grid-template-columns: 42px 20px 20px 1fr 20px 20px 20px;
+          grid-template-columns: fit-content(300px) 20px 20px 1fr 20px 20px 20px;
           grid-template-rows: 20px 20px 1fr;
           grid-gap: 2px 10px;
           box-sizing: border-box;
@@ -149,7 +149,8 @@ class ReconstructiveBanner extends HTMLElement {
           box-sizing: border-box;
         }
         .branding {
-          width: 42px;
+          height: 42px;
+          max-width: 300px;
         }
         .icon {
           width: 20px;
