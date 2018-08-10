@@ -342,7 +342,7 @@ class Reconstructive {
            .replace(/^\W+|\W+$/g, '')
            .split(/\W+</)
            .forEach(l => {
-             let segs = l.split(/\W*;\W*/);
+             let segs = l.split(/[>\s'"]*;\W*/);
              let href = segs.shift();
              let attributes = {};
              segs.forEach(s => {
