@@ -166,7 +166,6 @@ class Reconstructive {
       notGet: event =&gt; event.request.method !== &apos;GET&apos;,
       bannerElement: event =&gt; this.showBanner &amp;&amp; event.request.url.endsWith(this.bannerElementLocation),
       bannerLogo: event =&gt; this.showBanner &amp;&amp; this.bannerLogoLocation &amp;&amp; event.request.url.endsWith(this.bannerLogoLocation),
-      homePage: event =&gt; this.showBanner &amp;&amp; this.bannerLogoHref &amp;&amp; event.request.url === this.bannerLogoHref,
       localResource: event =&gt; !(this._regexps.urimPattern.test(event.request.url) || this._regexps.urimPattern.test(event.request.referrer))
     };
 
@@ -380,7 +379,7 @@ class Reconstructive {
            .replace(/^\W+|\W+$/g, &apos;&apos;)
            .split(/\W+&lt;/)
            .forEach(l =&gt; {
-             let segs = l.split(/\W*;\W*/);
+             let segs = l.split(/[&gt;\s&apos;&quot;]*;\W*/);
              let href = segs.shift();
              let attributes = {};
              segs.forEach(s =&gt; {
