@@ -128,7 +128,6 @@ class Reconstructive {
       notGet: event => event.request.method !== 'GET',
       bannerElement: event => this.showBanner && event.request.url.endsWith(this.bannerElementLocation),
       bannerLogo: event => this.showBanner && this.bannerLogoLocation && event.request.url.endsWith(this.bannerLogoLocation),
-      homePage: event => this.showBanner && this.bannerLogoHref && event.request.url === this.bannerLogoHref,
       localResource: event => !(this._regexps.urimPattern.test(event.request.url) || this._regexps.urimPattern.test(event.request.referrer))
     };
 

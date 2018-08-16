@@ -217,7 +217,7 @@ class ReconstructiveBanner extends HTMLElement {
       </style>
       <div id="wrapper" class="fab">
         <div id="container">
-          <a id="home" title="Go to home" href="${this.homeHref}">
+          <a id="home" title="Go to home" href="${this.homeHref}" rel="noreferrer">
             <img id="logo" class="branding" src="${this.logoSrc}" alt="Reconstructive Banner Logo">
           </a>
           <form id="lookup">
