@@ -5,7 +5,7 @@
  * Use it in a ServiceWorker as illustrated below:
  *
  * ```js
- * importScripts('https://oduwsdl.github.io/Reconstructive/reconstructive.js');
+ * importScripts('reconstructive.js');
  * const rc = new Reconstructive();
  * self.addEventListener('fetch', rc.reroute);
  * ```
