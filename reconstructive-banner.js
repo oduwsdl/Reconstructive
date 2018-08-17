@@ -205,10 +205,9 @@ class ReconstructiveBanner extends HTMLElement {
         [primaryQuotient, secondaryQuotient] = datetimeParts.slice(i, i+2);
         break;
       }
-      let diffStr = primaryQuotient == 1 ? `one ${primaryUnit}` : `${primaryQuotient} ${primaryUnit}s`;
+      let diffStr = `${primaryQuotient} ${primaryUnit}${primaryQuotient != 1 ? 's' : ''}`;
       if (secondaryQuotient > 0) {
-        diffStr += ' and '
-        diffStr += secondaryQuotient == 1 ? `one ${secondaryUnit}` : `${secondaryQuotient} ${secondaryUnit}s`;
+        diffStr += ` and ${secondaryQuotient} ${secondaryUnit}${secondaryQuotient != 1 ? 's' : ''}`;
       }
       datetime.relative = `Captured ${diffStr} ago`;
       return datetime;
