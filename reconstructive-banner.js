@@ -186,7 +186,8 @@ class ReconstructiveBanner extends HTMLElement {
       if (isNaN(diff)) {
         return datetime;
       }
-      datetime.absolute = `Captured on ${mementoDatetimeObj.toLocaleDateString()} at ${mementoDatetimeObj.toLocaleTimeString()}`;
+      let [mementoDate, mementoTime] = mementoDatetimeObj.toISOString().split(/[T\.]/);
+      datetime.absolute = `Captured on ${mementoDate} at ${mementoTime} UTC`;
       if (diff < 0) {
         datetime.relative = 'Capture from the future!';
         return datetime;
