@@ -407,7 +407,7 @@ class ReconstructiveBanner extends HTMLElement {
       wrapper.classList.remove('hidden');
       clearTimeout(focusTimer);
       focusTimer = setTimeout(() => !this.focused && wrapper.classList.contains('fab') && wrapper.classList.add('hidden'), this.autoHideDelay);
-    }
+    };
     window.addEventListener('load', resetTimer);
     window.addEventListener('mousemove', resetTimer);
     window.addEventListener('mousedown', resetTimer);
