@@ -213,6 +213,35 @@ Use it in an HTML page as illustrated below:</p>
           
           
           
+          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-displayDatetime">displayDatetime</a></span></span><span class="code" data-ice="signature">: <span><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">function</a></span><span>()</span>: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>A function to provide human readable dispaly datetime strings for the current memento in both relative and absolute terms.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
           <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-firstDatetime">firstDatetime</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
         </p>
       </div>
@@ -590,35 +619,6 @@ Use it in an HTML page as illustrated below:</p>
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-timeDiff">timeDiff</a></span></span><span class="code" data-ice="signature">: <span><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">function</a></span><span>()</span>: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span></span>
-        </p>
-      </div>
-      <div>
-        
-        
-        <div data-ice="description"><p>A function to calculate the time difference between now and the moment when the current memento was captured.</p>
-</div>
-      </div>
-    </td>
-    <td>
-      
-      
-    </td>
-  </tr>
-<tr data-ice="target">
-    <td>
-      <span class="access" data-ice="access">public</span>
-      
-      
-      
-      <span class="override" data-ice="override"></span>
-    </td>
-    <td>
-      <div>
-        <p>
-          
-          
-          
           <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-urir">urir</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
         </p>
       </div>
@@ -793,6 +793,52 @@ Used as the default banner logo if a custom logoSrc is not specified.</p>
   
   <div data-ice="description"><p>Duration of inactivity after which the banner in FAB mode should auto-hide if not in focus.
 The default value is set to 2000 milliseconds (2 seconds).</p>
+</div>
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-member-displayDatetime">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">displayDatetime</span><span class="code" data-ice="signature">: <span><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">function</a></span><span>()</span>: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object">object</a></span></span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber182">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>A function to provide human readable dispaly datetime strings for the current memento in both relative and absolute terms.
+Relative datetime is a non-precise natural language phrase (e.g., &quot;Captured 5 days ago&quot;).
+Absolute datetime is a precise natural language phrase in user&apos;s locace (e.g., &quot;Captured on 8/13/2018 at 7:23:37 PM&quot;).</p>
 </div>
 
   
@@ -1378,51 +1424,6 @@ Read from the prev-urim attribute.</p>
   
   
   <div data-ice="description"><p>ShadoRoot for the isolated Shadow DOM of the banner.</p>
-</div>
-
-  
-
-  <div data-ice="properties">
-</div>
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-  
-</div>
-<div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-member-timeDiff">
-    <span class="access" data-ice="access">public</span>
-    
-    
-    
-    
-    
-    <span class="code" data-ice="name">timeDiff</span><span class="code" data-ice="signature">: <span><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">function</a></span><span>()</span>: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span></span>
-    <span class="right-info">
-      
-      
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber181">source</a></span></span>
-    </span>
-  </h3>
-
-  
-  
-  
-  <div data-ice="description"><p>A function to calculate the time difference between now and the moment when the current memento was captured.
-It returns a non-precise natural language phrase (e.g., &quot;Captured 5 days ago&quot;).</p>
 </div>
 
   

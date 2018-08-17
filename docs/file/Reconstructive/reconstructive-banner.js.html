@@ -211,18 +211,23 @@ class ReconstructiveBanner extends HTMLElement {
     this.autoHideDelay = 2000;
 
     /**
-     * A function to calculate the time difference between now and the moment when the current memento was captured.
-     * It returns a non-precise natural language phrase (e.g., &quot;Captured 5 days ago&quot;).
+     * A function to provide human readable dispaly datetime strings for the current memento in both relative and absolute terms.
+     * Relative datetime is a non-precise natural language phrase (e.g., &quot;Captured 5 days ago&quot;).
+     * Absolute datetime is a precise natural language phrase in user&apos;s locace (e.g., &quot;Captured on 8/13/2018 at 7:23:37 PM&quot;).
      *
-     * @type {function(): string}
+     * @type {function(): object}
      */
-    this.timeDiff = (() =&gt; {
-      const diff = Date.now() - new Date(this.mementoDatetime);
+    this.displayDatetime = (() =&gt; {
+      let datetime = {relative: this.mementoDatetime, absolute: this.mementoDatetime};
+      const mementoDatetimeObj = new Date(this.mementoDatetime);
+      const diff = Date.now() - mementoDatetimeObj;
       if (isNaN(diff)) {
-        return &apos;&apos;;
+        return datetime;
       }
+      datetime.absolute = `Captured on ${mementoDatetimeObj.toLocaleDateString()} at ${mementoDatetimeObj.toLocaleTimeString()}`;
       if (diff &lt; 0) {
-        return &apos;Capture from the future!&apos;;
+        datetime.relative = &apos;Capture from the future!&apos;;
+        return datetime;
       }
       const minuteMilliseconds = 60000,
             hourMilliseconds = 3600000,
@@ -247,7 +252,8 @@ class ReconstructiveBanner extends HTMLElement {
         quotient = Math.round(diff / minuteMilliseconds);
       }
       const diffStr = quotient == 1 ? `one ${unit}` : `${quotient} ${unit}s`;
-      return `Captured ${diffStr} ago`;
+      datetime.relative = `Captured ${diffStr} ago`;
+      return datetime;
     })();
 
     const template = `
@@ -353,6 +359,15 @@ class ReconstructiveBanner extends HTMLElement {
           cursor: default;
           user-select: none;
         }
+        .relative {
+          cursor: help;
+        }
+        .precision .relative, .absolute {
+          display: none;
+        }
+        .precision .absolute {
+          display: initial;
+        }
         #next {
           grid-column: 5;
           grid-row: 2;
@@ -397,7 +412,10 @@ class ReconstructiveBanner extends HTMLElement {
           &lt;a id=&quot;prev&quot; class=&quot;icon&quot; title=&quot;${this.prevDatetime}&quot; href=&quot;${this.prevUrim}&quot;&gt;
             &lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 32 32&quot;&gt;&lt;path d=&quot;M8 28v-24h4v11l10-10v22l-10-10v11z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;
           &lt;/a&gt;
-          &lt;p id=&quot;current&quot; class=&quot;time&quot; title=&quot;${this.mementoDatetime}&quot;&gt;${this.timeDiff}&lt;/p&gt;
+          &lt;p id=&quot;current&quot; class=&quot;datetime&quot; title=&quot;${this.mementoDatetime}&quot;&gt;
+            &lt;span class=&quot;relative&quot;&gt;${this.displayDatetime.relative}&lt;/span&gt;
+            &lt;span class=&quot;absolute&quot;&gt;${this.displayDatetime.absolute}&lt;/span&gt;
+          &lt;/p&gt;
           &lt;a id=&quot;next&quot; class=&quot;icon&quot; title=&quot;${this.nextDatetime}&quot; href=&quot;${this.nextUrim}&quot;&gt;
             &lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 32 32&quot;&gt;&lt;path d=&quot;M24 4v24h-4v-11l-10 10v-22l10 10v-11z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;
           &lt;/a&gt;
@@ -456,6 +474,11 @@ class ReconstructiveBanner extends HTMLElement {
       if (e.target == wrapper) {
         wrapper.classList.replace(&apos;expanded&apos;, &apos;fab&apos;);
       }
+    };
+
+    const datetimeDisplay = this.shadow.getElementById(&apos;current&apos;);
+    datetimeDisplay.onclick = e =&gt; {
+      datetimeDisplay.classList.toggle(&apos;precision&apos;);
     };
 
     this.shadow.getElementById(&apos;lookup&apos;).onsubmit = e =&gt; {

@@ -372,6 +372,12 @@ window.esdocSearchIndex = [
     "method"
   ],
   [
+    "reconstructive/reconstructive-banner.js~reconstructivebanner#displaydatetime",
+    "class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-displayDatetime",
+    "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#displayDatetime",
+    "member"
+  ],
+  [
     "reconstructive/reconstructive-banner.js~reconstructivebanner#firstdatetime",
     "class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-firstDatetime",
     "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#firstDatetime",
@@ -447,12 +453,6 @@ window.esdocSearchIndex = [
     "reconstructive/reconstructive-banner.js~reconstructivebanner#shadow",
     "class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-shadow",
     "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#shadow",
-    "member"
-  ],
-  [
-    "reconstructive/reconstructive-banner.js~reconstructivebanner#timediff",
-    "class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-timeDiff",
-    "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#timeDiff",
     "member"
   ],
   [

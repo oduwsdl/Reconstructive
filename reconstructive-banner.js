@@ -177,7 +177,7 @@ class ReconstructiveBanner extends HTMLElement {
      * Relative datetime is a non-precise natural language phrase (e.g., "Captured 5 days ago").
      * Absolute datetime is a precise natural language phrase in user's locace (e.g., "Captured on 8/13/2018 at 7:23:37 PM").
      *
-     * @type {function(): {relative: string, absolute: string}}
+     * @type {function(): object}
      */
     this.displayDatetime = (() => {
       let datetime = {relative: this.mementoDatetime, absolute: this.mementoDatetime};
