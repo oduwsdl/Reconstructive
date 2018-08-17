@@ -31,16 +31,16 @@ const rc = new Reconstructive({
 // < }
 
 // This is not necessary, but can be useful for debugging or in future
-self.addEventListener('install', (event) => {
+self.addEventListener('install', event => {
   console.log('ServiceWorker installed');
 });
 
 // This is not necessary, but can be useful for debugging or in future
-self.addEventListener('activate', (event) => {
+self.addEventListener('activate', event => {
   console.log('ServiceWorker Activated');
 });
 
-self.addEventListener('fetch', (event) => {
+self.addEventListener('fetch', event => {
   // Add any custom logic here to conditionally call the reroute method
   rc.reroute(event);
 });
