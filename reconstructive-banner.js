@@ -1,6 +1,13 @@
 /**
  * [ReconstructiveBanner](https://oduwsdl.github.io/Reconstructive/reconstructive-banner.js) implements `<reconstructive-banner>` [Custom Element](https://html.spec.whatwg.org/multipage/custom-elements.html#custom-elements).
  * It is an unobtrusive archival replay banner to make [mementos](http://mementoweb.org/about/) interactive and surface on-demand metadata about the archived resource.
+ * The banner houses a customizable branding logo that links to the replay home.
+ * It provides a pre-populated text input to navigate the replay to a different URI-R.
+ * A brief phrase describes the age of the current memento.
+ * Navigational links to the first, last, previous, and next mementos are also provided when present.
+ * In its default floating action bar (FAB) mode it auto-hides after a set duration of inactivity if the banner is not in focus and reappears on any user activity on the page such as scroll, mousemove, or keypress.
+ * It provides controls to expand, collapse, or completely close the banner.
+ * The expanded mode has much more real estate available to house detailed archival metadata and visualizations.
  * Use it in an HTML page as illustrated below:
  *
  * ```html
@@ -27,28 +34,150 @@
  */
 class ReconstructiveBanner extends HTMLElement {
   /**
-   * Creates a new ReconstructiveBanner instance and attaches a Shadow DOM.
+   * Create a new ReconstructiveBanner instance and attach a Shadow DOM.
    */
   constructor() {
     super();
+
+    /**
+     * ShadoRoot for the isolated Shadow DOM of the banner.
+     *
+     * @type {ShadowRoot}
+     */
     this.shadow = this.attachShadow({mode: 'closed'});
   }
 
+  /**
+   * Read various attributes of the element and initialize the rendition and behavious of the banner when this custom element is added to the DOM.
+   */
   connectedCallback() {
-    this.reconstructiveLogo = 'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+PHBhdGggZD0iTTAgMyBhMyAzIDAgMCAxIDMtMyBoMiBsMyAzIGgtMyBhMiAyIDAgMCAwLTIgMiB2NiBhMiAyIDAgMCAwIDIgMiBoMSBsMyAzIGgtNiBhMyAzIDAgMCAxLTMtMyBaIiBmaWxsPSIjMUI0ODY5IiAvPjxwYXRoIGQ9Ik0xNiAxNiBoLTQgbC05LTkgaDYgYTIgMiAwIDAgMCAwLTQgaC0xIGwtMy0zIGg2IGEzIDMgMCAwIDEgMyAzIHY0IGEzIDMgMCAwIDEtMyAzIGgtMSBaIiBmaWxsPSIjRjI0NzM4IiAvPjwvc3ZnPg==';
-    this.logoSrc = this.getAttribute('logo-src') || this.reconstructiveLogo;
+    /**
+     * A base64-encoded data URI of the SVG Reconstructive Logo.
+     * Used as the default banner logo if a custom logoSrc is not specified.
+     *
+     * @type {string}
+     */
+    this.LOGO = 'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+PHBhdGggZD0iTTAgMyBhMyAzIDAgMCAxIDMtMyBoMiBsMyAzIGgtMyBhMiAyIDAgMCAwLTIgMiB2NiBhMiAyIDAgMCAwIDIgMiBoMSBsMyAzIGgtNiBhMyAzIDAgMCAxLTMtMyBaIiBmaWxsPSIjMUI0ODY5IiAvPjxwYXRoIGQ9Ik0xNiAxNiBoLTQgbC05LTkgaDYgYTIgMiAwIDAgMCAwLTQgaC0xIGwtMy0zIGg2IGEzIDMgMCAwIDEgMyAzIHY0IGEzIDMgMCAwIDEtMyAzIGgtMSBaIiBmaWxsPSIjRjI0NzM4IiAvPjwvc3ZnPg==';
+
+    /**
+     * Source (URL or path) of the banner logo.
+     * Defaults to the inline Reconstructive Logo.
+     *
+     * @type {string}
+     */
+    this.logoSrc = this.getAttribute('logo-src') || this.LOGO;
+
+    /**
+     * Hyperlink (URL or path) of the homepage to be linked from the banner logo.
+     * Read from the home-href attribute.
+     * Defaults to the domain root "/".
+     *
+     * @type {string}
+     */
     this.homeHref = this.getAttribute('home-href') || '/';
+
+    /**
+     * Original resource URI (URI-R).
+     * Read from the urir attribute.
+     *
+     * @type {string}
+     */
     this.urir = this.getAttribute('urir') || '';
+
+    /**
+     * Datetime (in the RFC2822 format) when the current memento was captured.
+     * Read from the memento-datetime attribute.
+     *
+     * @type {string}
+     */
     this.mementoDatetime = this.getAttribute('memento-datetime') || '';
+
+    /**
+     * URI of the first memento.
+     * Read from the first-urim attribute.
+     *
+     * @type {string}
+     */
     this.firstUrim = this.getAttribute('first-urim') || '';
+
+    /**
+     * Datetime (in the RFC2822 format) when the first memento was captured.
+     * Read from the first-datetime attribute.
+     *
+     * @type {string}
+     */
     this.firstDatetime = this.getAttribute('first-datetime') || '';
+
+    /**
+     * URI of the last memento.
+     * Read from the last-urim attribute.
+     *
+     * @type {string}
+     */
     this.lastUrim = this.getAttribute('last-urim') || '';
+
+    /**
+     * Datetime (in the RFC2822 format) when the last memento was captured.
+     * Read from the last-datetime attribute.
+     *
+     * @type {string}
+     */
     this.lastDatetime = this.getAttribute('last-datetime') || '';
+
+    /**
+     * URI of the previous memento.
+     * Read from the prev-urim attribute.
+     *
+     * @type {string}
+     */
     this.prevUrim = this.getAttribute('prev-urim') || '';
+
+    /**
+     * Datetime (in the RFC2822 format) when the previous memento was captured.
+     * Read from the prev-datetime attribute.
+     *
+     * @type {string}
+     */
     this.prevDatetime = this.getAttribute('prev-datetime') || '';
+
+    /**
+     * URI of the next memento.
+     * Read from the next-urim attribute.
+     *
+     * @type {string}
+     */
     this.nextUrim = this.getAttribute('next-urim') || '';
+
+    /**
+     * Datetime (in the RFC2822 format) when the next memento was captured.
+     * Read from the next-datetime attribute.
+     *
+     * @type {string}
+     */
     this.nextDatetime = this.getAttribute('next-datetime') || '';
 
+    /**
+     * Determine whether the banner in the FAB mode should auto-hide after a set duration of inactivity.
+     * Prevent from hiding the FAB when the banner is focused (such as the cursor is placed on it).
+     *
+     * @type {boolean}
+     */
+    this.focused = false;
+
+    /**
+     * Duration of inactivity after which the banner in FAB mode should auto-hide if not in focus.
+     * The default value is set to 2000 milliseconds (2 seconds).
+     *
+     * @type {number}
+     */
+    this.autoHideDelay = 2000;
+
+    /**
+     * A function to calculate the time difference between now and the moment when the current memento was captured.
+     * It returns a non-precise natural language phrase (e.g., "Captured 5 days ago").
+     *
+     * @type {function(): string}
+     */
     this.timeDiff = (() => {
       const diff = Date.now() - new Date(this.mementoDatetime);
       if (isNaN(diff)) {
@@ -257,14 +386,13 @@ class ReconstructiveBanner extends HTMLElement {
     const container = this.shadow.getElementById('container');
     const wrapper = this.shadow.getElementById('wrapper');
 
-    this.focused = false;
     container.onmouseover = () => this.focused = true;
     container.onmouseout = () => this.focused = false;
     let focusTimer;
     const resetTimer = () => {
       wrapper.classList.remove('hidden');
       clearTimeout(focusTimer);
-      focusTimer = setTimeout(() => !this.focused && wrapper.classList.contains('fab') && wrapper.classList.add('hidden'), 2000);
+      focusTimer = setTimeout(() => !this.focused && wrapper.classList.contains('fab') && wrapper.classList.add('hidden'), this.autoHideDelay);
     }
     window.addEventListener('load', resetTimer);
     window.addEventListener('mousemove', resetTimer);
