@@ -198,12 +198,12 @@ class ReconstructiveBanner extends HTMLElement {
       datetimeParts[1] -= 1;
       datetimeParts[2] -= 1;
       let primaryUnit, secondaryUnit, primaryQuotient, secondaryQuotient;
-      for (let i=0; i<datetimeUnits.length-1; i++) {
+      for (let i = 0; i < datetimeUnits.length - 1; i++) {
         if (datetimeParts[i] == 0) {
           continue;
         }
-        [primaryUnit, secondaryUnit] = datetimeUnits.slice(i, i+2);
-        [primaryQuotient, secondaryQuotient] = datetimeParts.slice(i, i+2);
+        [primaryUnit, secondaryUnit] = datetimeUnits.slice(i, i + 2);
+        [primaryQuotient, secondaryQuotient] = datetimeParts.slice(i, i + 2);
         break;
       }
       let diffStr = `${primaryQuotient} ${primaryUnit}${primaryQuotient != 1 ? 's' : ''}`;
@@ -443,7 +443,7 @@ class ReconstructiveBanner extends HTMLElement {
       e.preventDefault();
       const urir = this.shadow.getElementById('urir').value;
       if (urir) {
-        window.location = window.location.href.replace(this.urir, urir)
+        window.location = window.location.href.replace(this.urir, urir);
       }
     };
   }
