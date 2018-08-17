@@ -171,7 +171,7 @@ class Reconstructive {
 
     this.debug &amp;&amp; console.log(`${this.NAME}:${this.VERSION} initialized:`, this);
 
-    this.fetchFailure = this.fetchFailure.bind(this)
+    this.fetchFailure = this.fetchFailure.bind(this);
   }
 
   /**
@@ -185,10 +185,10 @@ class Reconstructive {
     return Object.entries(this.exclusions).some(([exclusionName, exclusionFunc]) =&gt; {
       if (exclusionFunc(event)) {
         this.debug &amp;&amp; console.log(&apos;Exclusion found:&apos;, exclusionName, event.request.url);
-        return true
+        return true;
       }
-      return false
-    })
+      return false;
+    });
   }
 
   /**
@@ -347,7 +347,7 @@ class Reconstructive {
           // Try to inject the banner markup before closing &lt;/body&gt; tag, fallback to &lt;/html&gt;.
           // If none of the two closing tags are found, append it to the body.
           if (this._regexps.bodyEnd.test(body)) {
-            body = body.replace(this._regexps.bodyEnd, banner+&apos;&lt;/$1&gt;&apos;);
+            body = body.replace(this._regexps.bodyEnd, banner + &apos;&lt;/$1&gt;&apos;);
           } else {
             body += banner;
           }
@@ -369,7 +369,7 @@ class Reconstructive {
     let mementoDatetime = response.headers.get(&apos;Memento-Datetime&apos;) || &apos;&apos;;
     const [datetime, urir] = this.extractDatetimeUrir(response.url);
     if (!mementoDatetime) {
-      mementoDatetime = new Date(`${datetime.slice(0, 4)}-${datetime.slice(4, 6)}-${datetime.slice(6, 8)}T${datetime.slice(8, 10)}:${datetime.slice(10, 12)}:${datetime.slice(12, 14)}Z`).toUTCString()
+      mementoDatetime = new Date(`${datetime.slice(0, 4)}-${datetime.slice(4, 6)}-${datetime.slice(6, 8)}T${datetime.slice(8, 10)}:${datetime.slice(10, 12)}:${datetime.slice(12, 14)}Z`).toUTCString();
     }
     // TODO: Extract link parser in a method
     let rels = {};
