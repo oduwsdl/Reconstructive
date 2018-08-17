@@ -224,7 +224,8 @@ class ReconstructiveBanner extends HTMLElement {
       if (isNaN(diff)) {
         return datetime;
       }
-      datetime.absolute = `Captured on ${mementoDatetimeObj.toLocaleDateString()} at ${mementoDatetimeObj.toLocaleTimeString()}`;
+      let [mementoDate, mementoTime] = mementoDatetimeObj.toISOString().split(/[T\.]/);
+      datetime.absolute = `Captured on ${mementoDate} at ${mementoTime} UTC`;
       if (diff &lt; 0) {
         datetime.relative = &apos;Capture from the future!&apos;;
         return datetime;
@@ -243,10 +244,9 @@ class ReconstructiveBanner extends HTMLElement {
         [primaryQuotient, secondaryQuotient] = datetimeParts.slice(i, i+2);
         break;
       }
-      let diffStr = primaryQuotient == 1 ? `one ${primaryUnit}` : `${primaryQuotient} ${primaryUnit}s`;
+      let diffStr = `${primaryQuotient} ${primaryUnit}${primaryQuotient != 1 ? &apos;s&apos; : &apos;&apos;}`;
       if (secondaryQuotient &gt; 0) {
-        diffStr += &apos; and &apos;
-        diffStr += secondaryQuotient == 1 ? `one ${secondaryUnit}` : `${secondaryQuotient} ${secondaryUnit}s`;
+        diffStr += ` and ${secondaryQuotient} ${secondaryUnit}${secondaryQuotient != 1 ? &apos;s&apos; : &apos;&apos;}`;
       }
       datetime.relative = `Captured ${diffStr} ago`;
       return datetime;
