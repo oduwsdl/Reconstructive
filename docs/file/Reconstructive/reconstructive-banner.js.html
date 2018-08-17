@@ -212,7 +212,7 @@ class ReconstructiveBanner extends HTMLElement {
 
     /**
      * A function to provide human readable dispaly datetime strings for the current memento in both relative and absolute terms.
-     * Relative datetime is a non-precise natural language phrase (e.g., &quot;Captured 5 days ago&quot;).
+     * Relative datetime is a non-precise natural language phrase (e.g., &quot;Captured one day and 3 hours ago&quot;).
      * Absolute datetime is a precise natural language phrase in user&apos;s locace (e.g., &quot;Captured on 8/13/2018 at 7:23:37 PM&quot;).
      *
      * @type {function(): object}
@@ -229,29 +229,25 @@ class ReconstructiveBanner extends HTMLElement {
         datetime.relative = &apos;Capture from the future!&apos;;
         return datetime;
       }
-      const minuteMilliseconds = 60000,
-            hourMilliseconds = 3600000,
-            dayMilliseconds = 86400000,
-            monthMilliseconds = 2629746000,
-            yearMilliseconds = 31622400000;
-      let unit, quotient;
-      if (diff &gt;= yearMilliseconds) {
-        unit = &apos;year&apos;;
-        quotient = Math.round(diff / yearMilliseconds);
-      } else if (diff &gt;= monthMilliseconds) {
-        unit = &apos;month&apos;;
-        quotient = Math.round(diff / monthMilliseconds);
-      } else if (diff &gt;= dayMilliseconds) {
-        unit = &apos;day&apos;;
-        quotient = Math.round(diff / dayMilliseconds);
-      } else if (diff &gt;= hourMilliseconds) {
-        unit = &apos;hour&apos;;
-        quotient = Math.round(diff / hourMilliseconds);
-      } else {
-        unit = &apos;minute&apos;;
-        quotient = Math.round(diff / minuteMilliseconds);
+      const datetimeUnits = [&apos;year&apos;, &apos;month&apos;, &apos;day&apos;, &apos;hour&apos;, &apos;minute&apos;, &apos;second&apos;, &apos;millisecond&apos;];
+      let datetimeParts = new Date(diff).toISOString().split(/\D/).map(x =&gt; parseInt(x));
+      datetimeParts[0] -= 1970;
+      datetimeParts[1] -= 1;
+      datetimeParts[2] -= 1;
+      let primaryUnit, secondaryUnit, primaryQuotient, secondaryQuotient;
+      for (let i=0; i&lt;datetimeUnits.length-1; i++) {
+        if (datetimeParts[i] == 0) {
+          continue;
+        }
+        [primaryUnit, secondaryUnit] = datetimeUnits.slice(i, i+2);
+        [primaryQuotient, secondaryQuotient] = datetimeParts.slice(i, i+2);
+        break;
       }
-      const diffStr = quotient == 1 ? `one ${unit}` : `${quotient} ${unit}s`;
+      let diffStr = primaryQuotient == 1 ? `one ${primaryUnit}` : `${primaryQuotient} ${primaryUnit}s`;
+      if (secondaryQuotient &gt; 0) {
+        diffStr += &apos; and &apos;
+        diffStr += secondaryQuotient == 1 ? `one ${secondaryUnit}` : `${secondaryQuotient} ${secondaryUnit}s`;
+      }
       datetime.relative = `Captured ${diffStr} ago`;
       return datetime;
     })();
