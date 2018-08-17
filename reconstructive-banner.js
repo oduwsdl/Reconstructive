@@ -173,18 +173,23 @@ class ReconstructiveBanner extends HTMLElement {
     this.autoHideDelay = 2000;
 
     /**
-     * A function to calculate the time difference between now and the moment when the current memento was captured.
-     * It returns a non-precise natural language phrase (e.g., "Captured 5 days ago").
+     * A function to provide human readable dispaly datetime strings for the current memento in both relative and absolute terms.
+     * Relative datetime is a non-precise natural language phrase (e.g., "Captured 5 days ago").
+     * Absolute datetime is a precise natural language phrase in user's locace (e.g., "Captured on 8/13/2018 at 7:23:37 PM").
      *
-     * @type {function(): string}
+     * @type {function(): {relative: string, absolute: string}}
      */
-    this.timeDiff = (() => {
-      const diff = Date.now() - new Date(this.mementoDatetime);
+    this.displayDatetime = (() => {
+      let datetime = {relative: this.mementoDatetime, absolute: this.mementoDatetime};
+      const mementoDatetimeObj = new Date(this.mementoDatetime);
+      const diff = Date.now() - mementoDatetimeObj;
       if (isNaN(diff)) {
-        return '';
+        return datetime;
       }
+      datetime.absolute = `Captured on ${mementoDatetimeObj.toLocaleDateString()} at ${mementoDatetimeObj.toLocaleTimeString()}`;
       if (diff < 0) {
-        return 'Capture from the future!';
+        datetime.relative = 'Capture from the future!';
+        return datetime;
       }
       const minuteMilliseconds = 60000,
             hourMilliseconds = 3600000,
@@ -209,7 +214,8 @@ class ReconstructiveBanner extends HTMLElement {
         quotient = Math.round(diff / minuteMilliseconds);
       }
       const diffStr = quotient == 1 ? `one ${unit}` : `${quotient} ${unit}s`;
-      return `Captured ${diffStr} ago`;
+      datetime.relative = `Captured ${diffStr} ago`;
+      return datetime;
     })();
 
     const template = `
@@ -315,6 +321,15 @@ class ReconstructiveBanner extends HTMLElement {
           cursor: default;
           user-select: none;
         }
+        .relative {
+          cursor: help;
+        }
+        .precision .relative, .absolute {
+          display: none;
+        }
+        .precision .absolute {
+          display: initial;
+        }
         #next {
           grid-column: 5;
           grid-row: 2;
@@ -359,7 +374,10 @@ class ReconstructiveBanner extends HTMLElement {
           <a id="prev" class="icon" title="${this.prevDatetime}" href="${this.prevUrim}">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M8 28v-24h4v11l10-10v22l-10-10v11z"></path></svg>
           </a>
-          <p id="current" class="time" title="${this.mementoDatetime}">${this.timeDiff}</p>
+          <p id="current" class="datetime" title="${this.mementoDatetime}">
+            <span class="relative">${this.displayDatetime.relative}</span>
+            <span class="absolute">${this.displayDatetime.absolute}</span>
+          </p>
           <a id="next" class="icon" title="${this.nextDatetime}" href="${this.nextUrim}">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M24 4v24h-4v-11l-10 10v-22l10 10v-11z"></path></svg>
           </a>
@@ -418,6 +436,11 @@ class ReconstructiveBanner extends HTMLElement {
       if (e.target == wrapper) {
         wrapper.classList.replace('expanded', 'fab');
       }
+    };
+
+    const datetimeDisplay = this.shadow.getElementById('current');
+    datetimeDisplay.onclick = e => {
+      datetimeDisplay.classList.toggle('precision');
     };
 
     this.shadow.getElementById('lookup').onsubmit = e => {
