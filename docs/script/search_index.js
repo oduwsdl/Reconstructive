@@ -348,6 +348,18 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
+    "reconstructive/reconstructive-banner.js~reconstructivebanner#logo",
+    "class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-LOGO",
+    "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#LOGO",
+    "member"
+  ],
+  [
+    "reconstructive/reconstructive-banner.js~reconstructivebanner#autohidedelay",
+    "class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-autoHideDelay",
+    "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#autoHideDelay",
+    "member"
+  ],
+  [
     "reconstructive/reconstructive-banner.js~reconstructivebanner#connectedcallback",
     "class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-method-connectedCallback",
     "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#connectedCallback",

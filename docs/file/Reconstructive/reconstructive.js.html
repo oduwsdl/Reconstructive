@@ -43,7 +43,7 @@
  * Use it in a ServiceWorker as illustrated below:
  *
  * ```js
- * importScripts(&apos;https://oduwsdl.github.io/Reconstructive/reconstructive.js&apos;);
+ * importScripts(&apos;reconstructive.js&apos;);
  * const rc = new Reconstructive();
  * self.addEventListener(&apos;fetch&apos;, rc.reroute);
  * ```
@@ -74,7 +74,7 @@ class Reconstructive {
      *
      * @type {string}
      */
-    this.VERSION = &apos;0.6.0&apos;;
+    this.VERSION = &apos;0.6.1&apos;;
 
     /**
      * Identifier of the module, sent to the server as X-ServiceWorker header.

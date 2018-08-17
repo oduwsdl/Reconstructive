@@ -66,7 +66,7 @@
 It reroutes embedded resource requests to their appropriate archival version without any URL rewriting.
 It also provides functionality to add custom archival banners or rewrite hyperlinks on the client-side.
 Use it in a ServiceWorker as illustrated below:</p>
-<pre><code class="lang-js"><code class="source-code prettyprint">importScripts(&apos;https://oduwsdl.github.io/Reconstructive/reconstructive.js&apos;);
+<pre><code class="lang-js"><code class="source-code prettyprint">importScripts(&apos;reconstructive.js&apos;);
 const rc = new Reconstructive();
 self.addEventListener(&apos;fetch&apos;, rc.reroute);</code>
 </code></pre>

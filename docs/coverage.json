@@ -1,29 +1,12 @@
 {
-  "coverage": "62.79%",
-  "expectCount": 43,
-  "actualCount": 27,
+  "coverage": "100%",
+  "expectCount": 45,
+  "actualCount": 45,
   "files": {
     "Reconstructive/reconstructive-banner.js": {
-      "expectCount": 18,
-      "actualCount": 2,
-      "undocumentLines": [
-        34,
-        37,
-        38,
-        39,
-        40,
-        41,
-        42,
-        43,
-        44,
-        45,
-        46,
-        47,
-        48,
-        49,
-        51,
-        259
-      ]
+      "expectCount": 20,
+      "actualCount": 20,
+      "undocumentLines": []
     },
     "Reconstructive/reconstructive.js": {
       "expectCount": 25,

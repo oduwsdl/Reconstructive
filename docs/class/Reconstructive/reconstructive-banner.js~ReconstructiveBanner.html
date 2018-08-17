@@ -42,7 +42,7 @@
   
   
   
-  <span data-ice="source">| <span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber28">source</a></span></span>
+  <span data-ice="source">| <span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber35">source</a></span></span>
 </div>
 
 <div class="self-detail detail">
@@ -64,6 +64,13 @@
   
   <div class="description" data-ice="description"><p><a href="https://oduwsdl.github.io/Reconstructive/reconstructive-banner.js">ReconstructiveBanner</a> implements <code>&lt;reconstructive-banner&gt;</code> <a href="https://html.spec.whatwg.org/multipage/custom-elements.html#custom-elements">Custom Element</a>.
 It is an unobtrusive archival replay banner to make <a href="http://mementoweb.org/about/">mementos</a> interactive and surface on-demand metadata about the archived resource.
+The banner houses a customizable branding logo that links to the replay home.
+It provides a pre-populated text input to navigate the replay to a different URI-R.
+A brief phrase describes the age of the current memento.
+Navigational links to the first, last, previous, and next mementos are also provided when present.
+In its default floating action bar (FAB) mode it auto-hides after a set duration of inactivity if the banner is not in focus and reappears on any user activity on the page such as scroll, mousemove, or keypress.
+It provides controls to expand, collapse, or completely close the banner.
+The expanded mode has much more real estate available to house detailed archival metadata and visualizations.
 Use it in an HTML page as illustrated below:</p>
 <pre><code class="lang-html"><code class="source-code prettyprint">&lt;script src=&quot;reconstructive-banner.js&quot;&gt;&lt;/script&gt;
 &lt;reconstructive-banner logo-src=&quot;&quot;
@@ -118,7 +125,7 @@ Use it in an HTML page as illustrated below:</p>
       <div>
         
         
-        <div data-ice="description"><p>Creates a new ReconstructiveBanner instance and attaches a Shadow DOM.</p>
+        <div data-ice="description"><p>Create a new ReconstructiveBanner instance and attach a Shadow DOM.</p>
 </div>
       </div>
     </td>
@@ -148,13 +155,14 @@ Use it in an HTML page as illustrated below:</p>
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-firstDatetime">firstDatetime</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-LOGO">LOGO</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>A base64-encoded data URI of the SVG Reconstructive Logo.</p>
+</div>
       </div>
     </td>
     <td>
@@ -176,13 +184,72 @@ Use it in an HTML page as illustrated below:</p>
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-firstUrim">firstUrim</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-autoHideDelay">autoHideDelay</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></span>
         </p>
       </div>
       <div>
         
         
+        <div data-ice="description"><p>Duration of inactivity after which the banner in FAB mode should auto-hide if not in focus.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-firstDatetime">firstDatetime</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+        </p>
+      </div>
+      <div>
         
+        
+        <div data-ice="description"><p>Datetime (in the RFC2822 format) when the first memento was captured.</p>
+</div>
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-firstUrim">firstUrim</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        <div data-ice="description"><p>URI of the first memento.</p>
+</div>
       </div>
     </td>
     <td>
@@ -210,7 +277,8 @@ Use it in an HTML page as illustrated below:</p>
       <div>
         
         
-        
+        <div data-ice="description"><p>Determine whether the banner in the FAB mode should auto-hide after a set duration of inactivity.</p>
+</div>
       </div>
     </td>
     <td>
@@ -232,13 +300,14 @@ Use it in an HTML page as illustrated below:</p>
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-homeHref">homeHref</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-homeHref">homeHref</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Hyperlink (URL or path) of the homepage to be linked from the banner logo.</p>
+</div>
       </div>
     </td>
     <td>
@@ -260,13 +329,14 @@ Use it in an HTML page as illustrated below:</p>
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-lastDatetime">lastDatetime</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-lastDatetime">lastDatetime</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Datetime (in the RFC2822 format) when the last memento was captured.</p>
+</div>
       </div>
     </td>
     <td>
@@ -288,13 +358,14 @@ Use it in an HTML page as illustrated below:</p>
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-lastUrim">lastUrim</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-lastUrim">lastUrim</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>URI of the last memento.</p>
+</div>
       </div>
     </td>
     <td>
@@ -316,13 +387,14 @@ Use it in an HTML page as illustrated below:</p>
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-logoSrc">logoSrc</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-logoSrc">logoSrc</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Source (URL or path) of the banner logo.</p>
+</div>
       </div>
     </td>
     <td>
@@ -344,13 +416,14 @@ Use it in an HTML page as illustrated below:</p>
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-mementoDatetime">mementoDatetime</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-mementoDatetime">mementoDatetime</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Datetime (in the RFC2822 format) when the current memento was captured.</p>
+</div>
       </div>
     </td>
     <td>
@@ -372,13 +445,14 @@ Use it in an HTML page as illustrated below:</p>
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-nextDatetime">nextDatetime</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-nextDatetime">nextDatetime</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Datetime (in the RFC2822 format) when the next memento was captured.</p>
+</div>
       </div>
     </td>
     <td>
@@ -400,13 +474,14 @@ Use it in an HTML page as illustrated below:</p>
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-nextUrim">nextUrim</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-nextUrim">nextUrim</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>URI of the next memento.</p>
+</div>
       </div>
     </td>
     <td>
@@ -428,13 +503,14 @@ Use it in an HTML page as illustrated below:</p>
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-prevDatetime">prevDatetime</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-prevDatetime">prevDatetime</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Datetime (in the RFC2822 format) when the previous memento was captured.</p>
+</div>
       </div>
     </td>
     <td>
@@ -456,13 +532,14 @@ Use it in an HTML page as illustrated below:</p>
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-prevUrim">prevUrim</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-prevUrim">prevUrim</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>URI of the previous memento.</p>
+</div>
       </div>
     </td>
     <td>
@@ -484,13 +561,14 @@ Use it in an HTML page as illustrated below:</p>
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-shadow">shadow</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-shadow">shadow</a></span></span><span class="code" data-ice="signature">: <span>ShadowRoot</span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>ShadoRoot for the isolated Shadow DOM of the banner.</p>
+</div>
       </div>
     </td>
     <td>
@@ -512,13 +590,14 @@ Use it in an HTML page as illustrated below:</p>
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-timeDiff">timeDiff</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-timeDiff">timeDiff</a></span></span><span class="code" data-ice="signature">: <span><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">function</a></span><span>()</span>: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>A function to calculate the time difference between now and the moment when the current memento was captured.</p>
+</div>
       </div>
     </td>
     <td>
@@ -540,13 +619,14 @@ Use it in an HTML page as illustrated below:</p>
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-urir">urir</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-urir">urir</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Original resource URI (URI-R).</p>
+</div>
       </div>
     </td>
     <td>
@@ -581,7 +661,8 @@ Use it in an HTML page as illustrated below:</p>
       <div>
         
         
-        
+        <div data-ice="description"><p>Read various attributes of the element and initialize the rendition and behavious of the banner when this custom element is added to the DOM.</p>
+</div>
       </div>
     </td>
     <td>
@@ -611,14 +692,14 @@ Use it in an HTML page as illustrated below:</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber32">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber39">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  <div data-ice="description"><p>Creates a new ReconstructiveBanner instance and attaches a Shadow DOM.</p>
+  <div data-ice="description"><p>Create a new ReconstructiveBanner instance and attach a Shadow DOM.</p>
 </div>
 
   
@@ -647,6 +728,96 @@ Use it in an HTML page as illustrated below:</p>
 <div data-ice="memberDetails"><h2 data-ice="title">Public Members</h2>
 
 <div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-member-LOGO">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">LOGO</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber60">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>A base64-encoded data URI of the SVG Reconstructive Logo.
+Used as the default banner logo if a custom logoSrc is not specified.</p>
+</div>
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-member-autoHideDelay">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    
+    <span class="code" data-ice="name">autoHideDelay</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber173">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  <div data-ice="description"><p>Duration of inactivity after which the banner in FAB mode should auto-hide if not in focus.
+The default value is set to 2000 milliseconds (2 seconds).</p>
+</div>
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
   <h3 data-ice="anchor" id="instance-member-firstDatetime">
     <span class="access" data-ice="access">public</span>
     
@@ -654,18 +825,20 @@ Use it in an HTML page as illustrated below:</p>
     
     
     
-    <span class="code" data-ice="name">firstDatetime</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">firstDatetime</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber43">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber109">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Datetime (in the RFC2822 format) when the first memento was captured.
+Read from the first-datetime attribute.</p>
+</div>
 
   
 
@@ -697,18 +870,20 @@ Use it in an HTML page as illustrated below:</p>
     
     
     
-    <span class="code" data-ice="name">firstUrim</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">firstUrim</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber42">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber101">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>URI of the first memento.
+Read from the first-urim attribute.</p>
+</div>
 
   
 
@@ -744,14 +919,16 @@ Use it in an HTML page as illustrated below:</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber259">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber165">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Determine whether the banner in the FAB mode should auto-hide after a set duration of inactivity.
+Prevent from hiding the FAB when the banner is focused (such as the cursor is placed on it).</p>
+</div>
 
   
 
@@ -783,18 +960,21 @@ Use it in an HTML page as illustrated below:</p>
     
     
     
-    <span class="code" data-ice="name">homeHref</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">homeHref</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber38">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber77">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Hyperlink (URL or path) of the homepage to be linked from the banner logo.
+Read from the home-href attribute.
+Defaults to the domain root &quot;/&quot;.</p>
+</div>
 
   
 
@@ -826,18 +1006,20 @@ Use it in an HTML page as illustrated below:</p>
     
     
     
-    <span class="code" data-ice="name">lastDatetime</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">lastDatetime</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber45">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber125">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Datetime (in the RFC2822 format) when the last memento was captured.
+Read from the last-datetime attribute.</p>
+</div>
 
   
 
@@ -869,18 +1051,20 @@ Use it in an HTML page as illustrated below:</p>
     
     
     
-    <span class="code" data-ice="name">lastUrim</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">lastUrim</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber44">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber117">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>URI of the last memento.
+Read from the last-urim attribute.</p>
+</div>
 
   
 
@@ -912,18 +1096,20 @@ Use it in an HTML page as illustrated below:</p>
     
     
     
-    <span class="code" data-ice="name">logoSrc</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">logoSrc</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber39">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber68">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Source (URL or path) of the banner logo.
+Defaults to the inline Reconstructive Logo.</p>
+</div>
 
   
 
@@ -955,18 +1141,20 @@ Use it in an HTML page as illustrated below:</p>
     
     
     
-    <span class="code" data-ice="name">mementoDatetime</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">mementoDatetime</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber41">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber93">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Datetime (in the RFC2822 format) when the current memento was captured.
+Read from the memento-datetime attribute.</p>
+</div>
 
   
 
@@ -998,18 +1186,20 @@ Use it in an HTML page as illustrated below:</p>
     
     
     
-    <span class="code" data-ice="name">nextDatetime</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">nextDatetime</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber49">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber157">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Datetime (in the RFC2822 format) when the next memento was captured.
+Read from the next-datetime attribute.</p>
+</div>
 
   
 
@@ -1041,18 +1231,20 @@ Use it in an HTML page as illustrated below:</p>
     
     
     
-    <span class="code" data-ice="name">nextUrim</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">nextUrim</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber48">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber149">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>URI of the next memento.
+Read from the next-urim attribute.</p>
+</div>
 
   
 
@@ -1084,18 +1276,20 @@ Use it in an HTML page as illustrated below:</p>
     
     
     
-    <span class="code" data-ice="name">prevDatetime</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">prevDatetime</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber47">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber141">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Datetime (in the RFC2822 format) when the previous memento was captured.
+Read from the prev-datetime attribute.</p>
+</div>
 
   
 
@@ -1127,18 +1321,20 @@ Use it in an HTML page as illustrated below:</p>
     
     
     
-    <span class="code" data-ice="name">prevUrim</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">prevUrim</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber46">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber133">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>URI of the previous memento.
+Read from the prev-urim attribute.</p>
+</div>
 
   
 
@@ -1170,18 +1366,19 @@ Use it in an HTML page as illustrated below:</p>
     
     
     
-    <span class="code" data-ice="name">shadow</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">shadow</span><span class="code" data-ice="signature">: <span>ShadowRoot</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber34">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber47">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>ShadoRoot for the isolated Shadow DOM of the banner.</p>
+</div>
 
   
 
@@ -1213,18 +1410,20 @@ Use it in an HTML page as illustrated below:</p>
     
     
     
-    <span class="code" data-ice="name">timeDiff</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">timeDiff</span><span class="code" data-ice="signature">: <span><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function">function</a></span><span>()</span>: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber51">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber181">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>A function to calculate the time difference between now and the moment when the current memento was captured.
+It returns a non-precise natural language phrase (e.g., &quot;Captured 5 days ago&quot;).</p>
+</div>
 
   
 
@@ -1256,18 +1455,20 @@ Use it in an HTML page as illustrated below:</p>
     
     
     
-    <span class="code" data-ice="name">urir</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">urir</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber40">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber85">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Original resource URI (URI-R).
+Read from the urir attribute.</p>
+</div>
 
   
 
@@ -1306,14 +1507,15 @@ Use it in an HTML page as illustrated below:</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber37">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber53">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Read various attributes of the element and initialize the rendition and behavious of the banner when this custom element is added to the DOM.</p>
+</div>
 
   
 
