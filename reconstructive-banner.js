@@ -46,7 +46,7 @@ class ReconstructiveBanner extends HTMLElement {
      *
      * @type {ShadowRoot}
      */
-    this.shadow = this.attachShadow({mode: 'closed'});
+    this.shadow = this.attachShadow({ mode: 'closed' });
   }
 
   /**
@@ -174,7 +174,7 @@ class ReconstructiveBanner extends HTMLElement {
      * @type {function(): object}
      */
     this.displayDatetime = (() => {
-      let datetime = {relative: this.mementoDatetime, absolute: this.mementoDatetime};
+      let datetime = { relative: this.mementoDatetime, absolute: this.mementoDatetime };
       const mementoDatetimeObj = new Date(this.mementoDatetime);
       const diff = Date.now() - mementoDatetimeObj;
       if (isNaN(diff)) {
@@ -455,7 +455,7 @@ class ReconstructiveBanner extends HTMLElement {
 
     // Banner drag repositioning logic
     let draggable = false;
-    let offset = {x: 0, y: 0}
+    let offset = { x: 0, y: 0 };
     this.shadow.getElementById('drag').onmousedown = e => {
       if (wrapper.classList.contains('fab')) {
         draggable = true;
@@ -474,8 +474,8 @@ class ReconstructiveBanner extends HTMLElement {
     window.addEventListener('mousemove', e => {
       e.preventDefault();
       if (draggable && wrapper.classList.contains('fab')) {
-        wrapper.style.left = (e.clientX + offset.x) + 'px';
-        wrapper.style.top = (e.clientY + offset.y) + 'px';
+        wrapper.style.left = e.clientX + offset.x + 'px';
+        wrapper.style.top = e.clientY + offset.y + 'px';
       }
     });
 

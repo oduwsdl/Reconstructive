@@ -204,7 +204,7 @@ class Reconstructive {
   createRequest(event) {
     let headers = this.cloneHeaders(event.request.headers);
     headers.set('X-ServiceWorker', this.id);
-    return new Request(event.request.url, {headers: headers, redirect: 'manual'});
+    return new Request(event.request.url, { headers: headers, redirect: 'manual' });
   }
 
   /**
@@ -337,22 +337,18 @@ class Reconstructive {
     let rels = {};
     const links = response.headers.get('Link');
     if (links) {
-      links.replace(/[\r\n]+/g, ' ')
-           .replace(/^\W+|\W+$/g, '')
-           .split(/\W+</)
-           .forEach(l => {
-             let segs = l.split(/[>\s'"]*;\W*/);
-             let href = segs.shift();
-             let attributes = {};
-             segs.forEach(s => {
-               let [k, v] = s.split(/\W*=\W*/);
-               attributes[k] = v;
-             });
-             attributes['rel'].split(/\s+/)
-                              .forEach(r => {
-                                rels[r] = {href: href, datetime: attributes['datetime']};
-                              });
-           });
+      links.replace(/[\r\n]+/g, ' ').replace(/^\W+|\W+$/g, '').split(/\W+</).forEach(l => {
+        let segs = l.split(/[>\s'"]*;\W*/);
+        let href = segs.shift();
+        let attributes = {};
+        segs.forEach(s => {
+          let [k, v] = s.split(/\W*=\W*/);
+          attributes[k] = v;
+        });
+        attributes['rel'].split(/\s+/).forEach(r => {
+          rels[r] = { href: href, datetime: attributes['datetime'] };
+        });
+      });
     }
     return `
       <script src="${this.bannerElementLocation}"></script>
@@ -389,11 +385,7 @@ class Reconstructive {
     // This condition will match if the request URL is a URI-M.
     if (this._regexps.urimPattern.test(event.request.url)) {
       let request = this.createRequest(event);
-      event.respondWith(
-        fetch(request)
-          .then(response => this.fetchSuccess(response, event))
-          .catch(this.fetchFailure)
-      );
+      event.respondWith(fetch(request).then(response => this.fetchSuccess(response, event)).catch(this.fetchFailure));
     } else {
       let urim = this.createUrim(event);
       event.respondWith(this.localRedirect(urim));
