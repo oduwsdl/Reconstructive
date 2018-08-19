@@ -663,7 +663,7 @@
     "__docId__": 57,
     "kind": "file",
     "name": "Reconstructive/reconstructive-banner.js",
-    "content": "/**\n * [ReconstructiveBanner](https://oduwsdl.github.io/Reconstructive/reconstructive-banner.js) implements `<reconstructive-banner>` [Custom Element](https://html.spec.whatwg.org/multipage/custom-elements.html#custom-elements).\n * It is an unobtrusive archival replay banner to make [mementos](http://mementoweb.org/about/) interactive and surface on-demand metadata about the archived resource.\n * The banner houses a customizable branding logo that links to the replay home.\n * It provides a pre-populated text input to navigate the replay to a different URI-R.\n * A brief phrase describes the age of the current memento.\n * Navigational links to the first, last, previous, and next mementos are also provided when present.\n * In its default floating action bar (FAB) mode it auto-hides after a set duration of inactivity if the banner is not in focus and reappears on any user activity on the page such as scroll, mousemove, or keypress.\n * It provides controls to expand, collapse, or completely close the banner.\n * The expanded mode has much more real estate available to house detailed archival metadata and visualizations.\n * Use it in an HTML page as illustrated below:\n *\n * ```html\n * <script src=\"reconstructive-banner.js\"></script>\n * <reconstructive-banner logo-src=\"\"\n *                        home-href=\"/\"\n *                        urir=\"https://example.com/\"\n *                        memento-datetime=\"Mon, 06 Feb 2017 00:23:37 GMT\"\n *                        first-urim=\"https://archive.host/memento/20170206002337/https://example.com/\"\n *                        first-datetime=\"Mon, 06 Feb 2017 00:23:37 GMT\"\n *                        last-urim=\"https://archive.host/memento/20170206002337/https://example.com/\"\n *                        last-datetime=\"Mon, 06 Feb 2017 00:23:37 GMT\"\n *                        prev-urim=\"\"\n *                        prev-datetime=\"\"\n *                        next-urim=\"\"\n *                        next-datetime=\"\">\n * </reconstructive-banner>\n * ```\n *\n * @overview  ReconstructiveBanner implements <reconstructive-banner> Custom Element for archival replay banners.\n * @author    Sawood Alam <ibnesayeed@gmail.com>\n * @license   MIT\n * @copyright ODU Web Science / Digital Libraries Research Group 2017\n */\nclass ReconstructiveBanner extends HTMLElement {\n  /**\n   * Create a new ReconstructiveBanner instance and attach a Shadow DOM.\n   */\n  constructor() {\n    super();\n\n    /**\n     * ShadoRoot for the isolated Shadow DOM of the banner.\n     *\n     * @type {ShadowRoot}\n     */\n    this.shadow = this.attachShadow({mode: 'closed'});\n  }\n\n  /**\n   * Read various attributes of the element and initialize the rendition and behavious of the banner when this custom element is added to the DOM.\n   */\n  connectedCallback() {\n    /**\n     * A base64-encoded data URI of the SVG Reconstructive Logo.\n     * Used as the default banner logo if a custom logoSrc is not specified.\n     *\n     * @type {string}\n     */\n    this.LOGO = 'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+PHBhdGggZD0iTTAgMyBhMyAzIDAgMCAxIDMtMyBoMiBsMyAzIGgtMyBhMiAyIDAgMCAwLTIgMiB2NiBhMiAyIDAgMCAwIDIgMiBoMSBsMyAzIGgtNiBhMyAzIDAgMCAxLTMtMyBaIiBmaWxsPSIjMUI0ODY5IiAvPjxwYXRoIGQ9Ik0xNiAxNiBoLTQgbC05LTkgaDYgYTIgMiAwIDAgMCAwLTQgaC0xIGwtMy0zIGg2IGEzIDMgMCAwIDEgMyAzIHY0IGEzIDMgMCAwIDEtMyAzIGgtMSBaIiBmaWxsPSIjRjI0NzM4IiAvPjwvc3ZnPg==';\n\n    /**\n     * Source (URL or path) of the banner logo.\n     * Defaults to the inline Reconstructive Logo.\n     *\n     * @type {string}\n     */\n    this.logoSrc = this.getAttribute('logo-src') || this.LOGO;\n\n    /**\n     * Hyperlink (URL or path) of the homepage to be linked from the banner logo.\n     * Read from the home-href attribute.\n     * Defaults to the domain root \"/\".\n     *\n     * @type {string}\n     */\n    this.homeHref = this.getAttribute('home-href') || '/';\n\n    /**\n     * Original resource URI (URI-R).\n     * Read from the urir attribute.\n     *\n     * @type {string}\n     */\n    this.urir = this.getAttribute('urir') || '';\n\n    /**\n     * Datetime (in the RFC2822 format) when the current memento was captured.\n     * Read from the memento-datetime attribute.\n     *\n     * @type {string}\n     */\n    this.mementoDatetime = this.getAttribute('memento-datetime') || '';\n\n    /**\n     * URI of the first memento.\n     * Read from the first-urim attribute.\n     *\n     * @type {string}\n     */\n    this.firstUrim = this.getAttribute('first-urim') || '';\n\n    /**\n     * Datetime (in the RFC2822 format) when the first memento was captured.\n     * Read from the first-datetime attribute.\n     *\n     * @type {string}\n     */\n    this.firstDatetime = this.getAttribute('first-datetime') || '';\n\n    /**\n     * URI of the last memento.\n     * Read from the last-urim attribute.\n     *\n     * @type {string}\n     */\n    this.lastUrim = this.getAttribute('last-urim') || '';\n\n    /**\n     * Datetime (in the RFC2822 format) when the last memento was captured.\n     * Read from the last-datetime attribute.\n     *\n     * @type {string}\n     */\n    this.lastDatetime = this.getAttribute('last-datetime') || '';\n\n    /**\n     * URI of the previous memento.\n     * Read from the prev-urim attribute.\n     *\n     * @type {string}\n     */\n    this.prevUrim = this.getAttribute('prev-urim') || '';\n\n    /**\n     * Datetime (in the RFC2822 format) when the previous memento was captured.\n     * Read from the prev-datetime attribute.\n     *\n     * @type {string}\n     */\n    this.prevDatetime = this.getAttribute('prev-datetime') || '';\n\n    /**\n     * URI of the next memento.\n     * Read from the next-urim attribute.\n     *\n     * @type {string}\n     */\n    this.nextUrim = this.getAttribute('next-urim') || '';\n\n    /**\n     * Datetime (in the RFC2822 format) when the next memento was captured.\n     * Read from the next-datetime attribute.\n     *\n     * @type {string}\n     */\n    this.nextDatetime = this.getAttribute('next-datetime') || '';\n\n    /**\n     * Determine whether the banner in the FAB mode should auto-hide after a set duration of inactivity.\n     * Prevent from hiding the FAB when the banner is focused (such as the cursor is placed on it).\n     *\n     * @type {boolean}\n     */\n    this.focused = false;\n\n    /**\n     * Duration of inactivity after which the banner in FAB mode should auto-hide if not in focus.\n     * The default value is set to 2000 milliseconds (2 seconds).\n     *\n     * @type {number}\n     */\n    this.autoHideDelay = 2000;\n\n    /**\n     * A function to provide human readable dispaly datetime strings for the current memento in both relative and absolute terms.\n     * Relative datetime is a non-precise natural language phrase (e.g., \"Captured one day and 3 hours ago\").\n     * Absolute datetime is a precise natural language phrase in user's locace (e.g., \"Captured on 8/13/2018 at 7:23:37 PM\").\n     *\n     * @type {function(): object}\n     */\n    this.displayDatetime = (() => {\n      let datetime = {relative: this.mementoDatetime, absolute: this.mementoDatetime};\n      const mementoDatetimeObj = new Date(this.mementoDatetime);\n      const diff = Date.now() - mementoDatetimeObj;\n      if (isNaN(diff)) {\n        return datetime;\n      }\n      let [mementoDate, mementoTime] = mementoDatetimeObj.toISOString().split(/[T\\.]/);\n      datetime.absolute = `Captured on ${mementoDate} at ${mementoTime} UTC`;\n      if (diff < 0) {\n        datetime.relative = 'Capture from the future!';\n        return datetime;\n      }\n      const datetimeUnits = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'];\n      let datetimeParts = new Date(diff).toISOString().split(/\\D/).map(x => parseInt(x));\n      datetimeParts[0] -= 1970;\n      datetimeParts[1] -= 1;\n      datetimeParts[2] -= 1;\n      let primaryUnit, secondaryUnit, primaryQuotient, secondaryQuotient;\n      for (let i = 0; i < datetimeUnits.length - 1; i++) {\n        if (datetimeParts[i] == 0) {\n          continue;\n        }\n        [primaryUnit, secondaryUnit] = datetimeUnits.slice(i, i + 2);\n        [primaryQuotient, secondaryQuotient] = datetimeParts.slice(i, i + 2);\n        break;\n      }\n      let diffStr = `${primaryQuotient} ${primaryUnit}${primaryQuotient != 1 ? 's' : ''}`;\n      if (secondaryQuotient > 0) {\n        diffStr += ` and ${secondaryQuotient} ${secondaryUnit}${secondaryQuotient != 1 ? 's' : ''}`;\n      }\n      datetime.relative = `Captured ${diffStr} ago`;\n      return datetime;\n    })();\n\n    const template = `\n      <style>\n        a[href=''] {\n          pointer-events: none;\n          opacity: 0.4;\n        }\n        #wrapper {\n          z-index: 99999999;\n          padding: 10px;\n          box-sizing: border-box;\n        }\n        #wrapper.fab {\n          position: fixed;\n          bottom: 10px;\n          right: 10px;\n          transition: all 0.5s ease-in;\n        }\n        #wrapper.expanded {\n          position: fixed;\n          top: 0;\n          left: 0;\n          margin: 0;\n          width: 100%;\n          height: 100%;\n          background: rgba(100, 100, 100, 0.6);\n          transition: all 0.5s ease-out;\n        }\n        #wrapper.hidden {\n          opacity: 0;\n          transition: opacity 0.5s ease-in;\n        }\n        #wrapper.closed {\n          display: none;\n        }\n        #container {\n          border: 2px solid #451212;\n          background-color: #F2FFE3;\n          border-radius: 10px;\n          color: #1B4869;\n          max-width: 600px;\n          margin: auto;\n          padding: 5px;\n          box-shadow: 0 0 20px;\n          display: grid;\n          grid-template-columns: fit-content(300px) 20px 20px 1fr 20px 20px 20px;\n          grid-template-rows: 20px 20px 1fr;\n          grid-gap: 2px 10px;\n          box-sizing: border-box;\n          min-height: 50px;\n          transition: all 0.5s ease-in;\n        }\n        .expanded #container {\n          height: calc(100vh - 20px);\n          box-shadow: none;\n          transition: all 0.5s ease-out;\n        }\n        .fab #collapse, .fab #meta, .expanded #expand {\n          display: none;\n        }\n        form {\n          display: contents;\n        }\n        input {\n          padding: 0 5px;\n          box-sizing: border-box;\n        }\n        .branding {\n          height: 42px;\n          max-width: 300px;\n        }\n        .icon {\n          width: 20px;\n        }\n        #logo {\n          grid-column: 1;\n          grid-row: 1 / 3;\n        }\n        #urir {\n          grid-column: 2 / 7;\n          grid-row: 1;\n        }\n        #first {\n          grid-column: 2;\n          grid-row: 2;\n        }\n        #prev {\n          grid-column: 3;\n          grid-row: 2;\n        }\n        #current {\n          grid-column: 4;\n          grid-row: 2;\n          margin: 0 5px;\n          font-size: 16px;\n          line-height: 22px;\n          color: #323B40;\n          text-align: center;\n          white-space: nowrap;\n          overflow: hidden;\n          text-overflow: ellipsis;\n          cursor: default;\n          user-select: none;\n        }\n        .relative {\n          cursor: help;\n        }\n        .precision .relative, .absolute {\n          display: none;\n        }\n        .precision .absolute {\n          display: initial;\n        }\n        #next {\n          grid-column: 5;\n          grid-row: 2;\n        }\n        #last {\n          grid-column: 6;\n          grid-row: 2;\n        }\n        #close {\n          grid-column: 7;\n          grid-row: 1;\n        }\n        #expand {\n          grid-column: 7;\n          grid-row: 2;\n        }\n        #collapse {\n          grid-column: 7;\n          grid-row: 2;\n        }\n        #meta {\n          grid-column: 1 / 8;\n          grid-row: 3;\n          overflow: auto;\n          padding: 10px;\n          display: grid;\n          grid-template-columns: 1fr 1fr 1fr;\n          grid-template-rows: auto auto auto 130px 1fr;\n        }\n      </style>\n      <div id=\"wrapper\" class=\"fab\">\n        <div id=\"container\">\n          <a id=\"home\" title=\"Go to home\" href=\"${this.homeHref}\" rel=\"noreferrer\">\n            <img id=\"logo\" class=\"branding\" src=\"${this.logoSrc}\" alt=\"Reconstructive Banner Logo\">\n          </a>\n          <form id=\"lookup\">\n            <input id=\"urir\" class=\"url\" value=\"${this.urir}\">\n          <form>\n          <a id=\"first\" class=\"icon\" title=\"${this.firstDatetime}\" href=\"${this.firstUrim}\">\n            <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M4 28v-24h4v11l10-10v10l10-10v22l-10-10v10l-10-10v11z\"></path></svg>\n          </a>\n          <a id=\"prev\" class=\"icon\" title=\"${this.prevDatetime}\" href=\"${this.prevUrim}\">\n            <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M8 28v-24h4v11l10-10v22l-10-10v11z\"></path></svg>\n          </a>\n          <p id=\"current\" class=\"datetime\" title=\"${this.mementoDatetime}\">\n            <span class=\"relative\">${this.displayDatetime.relative}</span>\n            <span class=\"absolute\">${this.displayDatetime.absolute}</span>\n          </p>\n          <a id=\"next\" class=\"icon\" title=\"${this.nextDatetime}\" href=\"${this.nextUrim}\">\n            <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M24 4v24h-4v-11l-10 10v-22l10 10v-11z\"></path></svg>\n          </a>\n          <a id=\"last\" class=\"icon\" title=\"${this.lastDatetime}\" href=\"${this.lastUrim}\">\n            <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M28 4v24h-4v-11l-10 10v-10l-10 10v-22l10 10v-10l10 10v-11z\"></path></svg>\n          </a>\n          <a id=\"close\" class=\"icon\" href=\"#\">\n            <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M31.708 25.708c-0-0-0-0-0-0l-9.708-9.708 9.708-9.708c0-0 0-0 0-0 0.105-0.105 0.18-0.227 0.229-0.357 0.133-0.356 0.057-0.771-0.229-1.057l-4.586-4.586c-0.286-0.286-0.702-0.361-1.057-0.229-0.13 0.048-0.252 0.124-0.357 0.228 0 0-0 0-0 0l-9.708 9.708-9.708-9.708c-0-0-0-0-0-0-0.105-0.104-0.227-0.18-0.357-0.228-0.356-0.133-0.771-0.057-1.057 0.229l-4.586 4.586c-0.286 0.286-0.361 0.702-0.229 1.057 0.049 0.13 0.124 0.252 0.229 0.357 0 0 0 0 0 0l9.708 9.708-9.708 9.708c-0 0-0 0-0 0-0.104 0.105-0.18 0.227-0.229 0.357-0.133 0.355-0.057 0.771 0.229 1.057l4.586 4.586c0.286 0.286 0.702 0.361 1.057 0.229 0.13-0.049 0.252-0.124 0.357-0.229 0-0 0-0 0-0l9.708-9.708 9.708 9.708c0 0 0 0 0 0 0.105 0.105 0.227 0.18 0.357 0.229 0.356 0.133 0.771 0.057 1.057-0.229l4.586-4.586c0.286-0.286 0.362-0.702 0.229-1.057-0.049-0.13-0.124-0.252-0.229-0.357z\"></path></svg>\n          </a>\n          <a id=\"expand\" class=\"icon\" href=\"#\">\n            <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M32 0h-13l5 5-6 6 3 3 6-6 5 5z\"></path><path d=\"M32 32v-13l-5 5-6-6-3 3 6 6-5 5z\"></path><path d=\"M0 32h13l-5-5 6-6-3-3-6 6-5-5z\"></path><path d=\"M0 0v13l5-5 6 6 3-3-6-6 5-5z\"></path></svg>\n          </a>\n          <a id=\"collapse\" class=\"icon\" href=\"#\">\n            <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M18 14h13l-5-5 6-6-3-3-6 6-5-5z\"></path><path d=\"M18 18v13l5-5 6 6 3-3-6-6 5-5z\"></path><path d=\"M14 18h-13l5 5-6 6 3 3 6-6 5 5z\"></path><path d=\"M14 14v-13l-5 5-6-6-3 3 6 6-5 5z\"></path></svg>\n          </a>\n          <div id=\"meta\">\n            <!-- TODO: Add provenance infomration, metadata, and interactive visualizations here... -->\n          </div>\n        </div>\n      </div>\n    `;\n    this.shadow.innerHTML = template;\n\n    const container = this.shadow.getElementById('container');\n    const wrapper = this.shadow.getElementById('wrapper');\n\n    container.onmouseover = () => this.focused = true;\n    container.onmouseout = () => this.focused = false;\n    let focusTimer;\n    const resetTimer = () => {\n      wrapper.classList.remove('hidden');\n      clearTimeout(focusTimer);\n      focusTimer = setTimeout(() => !this.focused && wrapper.classList.contains('fab') && wrapper.classList.add('hidden'), this.autoHideDelay);\n    };\n    window.addEventListener('load', resetTimer);\n    window.addEventListener('mousemove', resetTimer);\n    window.addEventListener('mousedown', resetTimer);\n    window.addEventListener('click', resetTimer);\n    window.addEventListener('scroll', resetTimer);\n    window.addEventListener('keypress', resetTimer);\n\n    this.shadow.getElementById('close').onclick = e => {\n      e.preventDefault();\n      wrapper.classList.remove('fab', 'expanded');\n      wrapper.classList.add('closed');\n    };\n    this.shadow.getElementById('collapse').onclick = e => {\n      e.preventDefault();\n      wrapper.classList.replace('expanded', 'fab');\n    };\n    this.shadow.getElementById('expand').onclick = e => {\n      e.preventDefault();\n      wrapper.classList.replace('fab', 'expanded');\n    };\n    wrapper.onclick = e => {\n      if (e.target == wrapper) {\n        wrapper.classList.replace('expanded', 'fab');\n      }\n    };\n\n    const datetimeDisplay = this.shadow.getElementById('current');\n    datetimeDisplay.onclick = e => {\n      datetimeDisplay.classList.toggle('precision');\n    };\n\n    this.shadow.getElementById('lookup').onsubmit = e => {\n      e.preventDefault();\n      const urir = this.shadow.getElementById('urir').value;\n      if (urir) {\n        window.location = window.location.href.replace(this.urir, urir);\n      }\n    };\n  }\n}\n\ncustomElements.define('reconstructive-banner', ReconstructiveBanner);\n",
+    "content": "/**\n * [ReconstructiveBanner](https://oduwsdl.github.io/Reconstructive/reconstructive-banner.js) implements `<reconstructive-banner>` [Custom Element](https://html.spec.whatwg.org/multipage/custom-elements.html#custom-elements).\n * It is an unobtrusive archival replay banner to make [mementos](http://mementoweb.org/about/) interactive and surface on-demand metadata about the archived resource.\n * The banner houses a customizable branding logo that links to the replay home.\n * It provides a pre-populated text input to navigate the replay to a different URI-R.\n * A brief phrase describes the rough age of the current memento, but can be toggled with the absolute date and time of capture by repeatedly clicking on it.\n * User's preference on absolute or relative datetime display persists across the session.\n * Navigational links to the first, last, previous, and next mementos are also provided when present.\n * In its default floating action bar (FAB) mode it auto-hides after a set duration of inactivity if the banner is not in focus and reappears on any user activity on the page such as scroll, mousemove, or keypress.\n * The FAB can be dragged to repostion it on the page, which then persists across the session unless relocated again.\n * It provides controls to expand, collapse, or completely close the banner.\n * The expanded mode has much more real estate available to house detailed archival metadata and visualizations.\n * Use it in an HTML page as illustrated below:\n *\n * ```html\n * <script src=\"reconstructive-banner.js\"></script>\n * <reconstructive-banner logo-src=\"\"\n *                        home-href=\"/\"\n *                        urir=\"https://example.com/\"\n *                        memento-datetime=\"Mon, 06 Feb 2017 00:23:37 GMT\"\n *                        first-urim=\"https://archive.host/memento/20170206002337/https://example.com/\"\n *                        first-datetime=\"Mon, 06 Feb 2017 00:23:37 GMT\"\n *                        last-urim=\"https://archive.host/memento/20170206002337/https://example.com/\"\n *                        last-datetime=\"Mon, 06 Feb 2017 00:23:37 GMT\"\n *                        prev-urim=\"\"\n *                        prev-datetime=\"\"\n *                        next-urim=\"\"\n *                        next-datetime=\"\">\n * </reconstructive-banner>\n * ```\n *\n * @overview  ReconstructiveBanner implements <reconstructive-banner> Custom Element for archival replay banners.\n * @author    Sawood Alam <ibnesayeed@gmail.com>\n * @license   MIT\n * @copyright ODU Web Science / Digital Libraries Research Group 2017\n */\nclass ReconstructiveBanner extends HTMLElement {\n  /**\n   * Create a new ReconstructiveBanner instance and attach a Shadow DOM.\n   */\n  constructor() {\n    super();\n\n    /**\n     * ShadoRoot for the isolated Shadow DOM of the banner.\n     *\n     * @type {ShadowRoot}\n     */\n    this.shadow = this.attachShadow({ mode: 'closed' });\n  }\n\n  /**\n   * Read various attributes of the element and initialize the rendition and behavious of the banner when this custom element is added to the DOM.\n   */\n  connectedCallback() {\n    /**\n     * A base64-encoded data URI of the SVG Reconstructive Logo.\n     * Used as the default banner logo if a custom logoSrc is not specified.\n     *\n     * @type {string}\n     */\n    this.LOGO = 'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+PHBhdGggZD0iTTAgMyBhMyAzIDAgMCAxIDMtMyBoMiBsMyAzIGgtMyBhMiAyIDAgMCAwLTIgMiB2NiBhMiAyIDAgMCAwIDIgMiBoMSBsMyAzIGgtNiBhMyAzIDAgMCAxLTMtMyBaIiBmaWxsPSIjMUI0ODY5IiAvPjxwYXRoIGQ9Ik0xNiAxNiBoLTQgbC05LTkgaDYgYTIgMiAwIDAgMCAwLTQgaC0xIGwtMy0zIGg2IGEzIDMgMCAwIDEgMyAzIHY0IGEzIDMgMCAwIDEtMyAzIGgtMSBaIiBmaWxsPSIjRjI0NzM4IiAvPjwvc3ZnPg==';\n\n    /**\n     * Source (URL or path) of the banner logo.\n     * Defaults to the inline Reconstructive Logo.\n     *\n     * @type {string}\n     */\n    this.logoSrc = this.getAttribute('logo-src') || this.LOGO;\n\n    /**\n     * Hyperlink (URL or path) of the homepage to be linked from the banner logo.\n     * Read from the home-href attribute.\n     * Defaults to the domain root \"/\".\n     *\n     * @type {string}\n     */\n    this.homeHref = this.getAttribute('home-href') || '/';\n\n    /**\n     * Original resource URI (URI-R).\n     * Read from the urir attribute.\n     *\n     * @type {string}\n     */\n    this.urir = this.getAttribute('urir') || '';\n\n    /**\n     * Datetime (in the RFC2822 format) when the current memento was captured.\n     * Read from the memento-datetime attribute.\n     *\n     * @type {string}\n     */\n    this.mementoDatetime = this.getAttribute('memento-datetime') || '';\n\n    /**\n     * URI of the first memento.\n     * Read from the first-urim attribute.\n     *\n     * @type {string}\n     */\n    this.firstUrim = this.getAttribute('first-urim') || '';\n\n    /**\n     * Datetime (in the RFC2822 format) when the first memento was captured.\n     * Read from the first-datetime attribute.\n     *\n     * @type {string}\n     */\n    this.firstDatetime = this.getAttribute('first-datetime') || '';\n\n    /**\n     * URI of the last memento.\n     * Read from the last-urim attribute.\n     *\n     * @type {string}\n     */\n    this.lastUrim = this.getAttribute('last-urim') || '';\n\n    /**\n     * Datetime (in the RFC2822 format) when the last memento was captured.\n     * Read from the last-datetime attribute.\n     *\n     * @type {string}\n     */\n    this.lastDatetime = this.getAttribute('last-datetime') || '';\n\n    /**\n     * URI of the previous memento.\n     * Read from the prev-urim attribute.\n     *\n     * @type {string}\n     */\n    this.prevUrim = this.getAttribute('prev-urim') || '';\n\n    /**\n     * Datetime (in the RFC2822 format) when the previous memento was captured.\n     * Read from the prev-datetime attribute.\n     *\n     * @type {string}\n     */\n    this.prevDatetime = this.getAttribute('prev-datetime') || '';\n\n    /**\n     * URI of the next memento.\n     * Read from the next-urim attribute.\n     *\n     * @type {string}\n     */\n    this.nextUrim = this.getAttribute('next-urim') || '';\n\n    /**\n     * Datetime (in the RFC2822 format) when the next memento was captured.\n     * Read from the next-datetime attribute.\n     *\n     * @type {string}\n     */\n    this.nextDatetime = this.getAttribute('next-datetime') || '';\n\n    /**\n     * Duration of inactivity after which the banner in FAB mode should auto-hide if not in focus.\n     * The default value is set to 2000 milliseconds (2 seconds).\n     *\n     * @type {number}\n     */\n    this.autoHideDelay = 2000;\n\n    /**\n     * A function to provide human readable dispaly datetime strings for the current memento in both relative and absolute terms.\n     * Relative datetime is a non-precise natural language phrase (e.g., \"Captured one day and 3 hours ago\").\n     * Absolute datetime is a precise natural language phrase in user's locace (e.g., \"Captured on 8/13/2018 at 7:23:37 PM\").\n     *\n     * @type {function(): object}\n     */\n    this.displayDatetime = (() => {\n      let datetime = { relative: this.mementoDatetime, absolute: this.mementoDatetime };\n      const mementoDatetimeObj = new Date(this.mementoDatetime);\n      const diff = Date.now() - mementoDatetimeObj;\n      if (isNaN(diff)) {\n        return datetime;\n      }\n      let [mementoDate, mementoTime] = mementoDatetimeObj.toISOString().split(/[T\\.]/);\n      datetime.absolute = `Captured on ${mementoDate} at ${mementoTime} UTC`;\n      if (diff < 0) {\n        datetime.relative = 'Capture from the future!';\n        return datetime;\n      }\n      const datetimeUnits = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'];\n      let datetimeParts = new Date(diff).toISOString().split(/\\D/).map(x => parseInt(x));\n      datetimeParts[0] -= 1970;\n      datetimeParts[1] -= 1;\n      datetimeParts[2] -= 1;\n      let primaryUnit, secondaryUnit, primaryQuotient, secondaryQuotient;\n      for (let i = 0; i < datetimeUnits.length - 1; i++) {\n        if (datetimeParts[i] == 0) {\n          continue;\n        }\n        [primaryUnit, secondaryUnit] = datetimeUnits.slice(i, i + 2);\n        [primaryQuotient, secondaryQuotient] = datetimeParts.slice(i, i + 2);\n        break;\n      }\n      let diffStr = `${primaryQuotient} ${primaryUnit}${primaryQuotient != 1 ? 's' : ''}`;\n      if (secondaryQuotient > 0) {\n        diffStr += ` and ${secondaryQuotient} ${secondaryUnit}${secondaryQuotient != 1 ? 's' : ''}`;\n      }\n      datetime.relative = `Captured ${diffStr} ago`;\n      return datetime;\n    })();\n\n    const template = `\n      <style>\n        a[href=''] {\n          pointer-events: none;\n          opacity: 0.4;\n        }\n        #wrapper {\n          z-index: 99999999;\n          padding: 10px;\n          box-sizing: border-box;\n        }\n        #wrapper.fab {\n          position: fixed;\n          top: calc(100vh - 100px);\n          left: 20px;\n        }\n        #wrapper.expanded {\n          position: fixed;\n          top: 0;\n          left: 0;\n          margin: 0;\n          width: 100%;\n          height: 100%;\n          background: rgba(100, 100, 100, 0.6);\n        }\n        #wrapper.hidden {\n          opacity: 0;\n          transition: opacity 0.5s ease-in;\n        }\n        #wrapper.closed {\n          display: none;\n        }\n        #container {\n          border: 2px solid #451212;\n          background-color: #F2FFE3;\n          border-radius: 10px;\n          color: #1B4869;\n          max-width: 600px;\n          margin: auto;\n          padding: 5px;\n          box-shadow: 0 0 20px;\n          display: grid;\n          grid-template-columns: 10px fit-content(300px) 20px 20px 1fr 20px 20px 20px;\n          grid-template-rows: 20px 20px 1fr;\n          grid-gap: 2px 10px;\n          box-sizing: border-box;\n          min-height: 50px;\n        }\n        .expanded #container {\n          height: calc(100vh - 20px);\n          box-shadow: none;\n        }\n        .fab #collapse, .fab #meta, .expanded #expand {\n          display: none;\n        }\n        form {\n          display: contents;\n        }\n        input {\n          padding: 0 5px;\n          box-sizing: border-box;\n        }\n        .branding {\n          height: 42px;\n          max-width: 300px;\n        }\n        .icon {\n          width: 20px;\n        }\n        #drag {\n          grid-column: 1;\n          grid-row: 1 / 3;\n          border: #1B4869 3px dotted;\n          cursor: move;\n        }\n        .expanded #drag {\n          opacity: 0.4;\n          cursor: default;\n        }\n        #logo {\n          grid-column: 2;\n          grid-row: 1 / 3;\n        }\n        #urir {\n          grid-column: 3 / 8;\n          grid-row: 1;\n        }\n        #first {\n          grid-column: 3;\n          grid-row: 2;\n        }\n        #prev {\n          grid-column: 4;\n          grid-row: 2;\n        }\n        #current {\n          grid-column: 5;\n          grid-row: 2;\n          margin: 0 5px;\n          font-size: 16px;\n          line-height: 22px;\n          color: #323B40;\n          text-align: center;\n          white-space: nowrap;\n          overflow: hidden;\n          text-overflow: ellipsis;\n          cursor: default;\n          user-select: none;\n        }\n        .relative {\n          cursor: help;\n        }\n        .precision .relative, .absolute {\n          display: none;\n        }\n        .precision .absolute {\n          display: initial;\n        }\n        #next {\n          grid-column: 6;\n          grid-row: 2;\n        }\n        #last {\n          grid-column: 7;\n          grid-row: 2;\n        }\n        #close {\n          grid-column: 8;\n          grid-row: 1;\n        }\n        #expand {\n          grid-column: 8;\n          grid-row: 2;\n        }\n        #collapse {\n          grid-column: 8;\n          grid-row: 2;\n        }\n        #meta {\n          grid-column: 1 / 9;\n          grid-row: 3;\n          overflow: auto;\n          padding: 10px;\n          display: grid;\n          grid-template-columns: 1fr 1fr 1fr;\n          grid-template-rows: auto auto auto 130px 1fr;\n        }\n      </style>\n      <div id=\"wrapper\" class=\"fab\" style=\"${localStorage.getItem('bannerPosition') || ''}\">\n        <div id=\"container\">\n          <div id=\"drag\"></div>\n          <a id=\"home\" title=\"Go to home\" href=\"${this.homeHref}\" rel=\"noreferrer\">\n            <img id=\"logo\" class=\"branding\" src=\"${this.logoSrc}\" alt=\"Reconstructive Banner Logo\">\n          </a>\n          <form id=\"lookup\">\n            <input id=\"urir\" class=\"url\" value=\"${this.urir}\">\n          <form>\n          <a id=\"first\" class=\"icon\" title=\"${this.firstDatetime}\" href=\"${this.firstUrim}\">\n            <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M4 28v-24h4v11l10-10v10l10-10v22l-10-10v10l-10-10v11z\"></path></svg>\n          </a>\n          <a id=\"prev\" class=\"icon\" title=\"${this.prevDatetime}\" href=\"${this.prevUrim}\">\n            <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M8 28v-24h4v11l10-10v22l-10-10v11z\"></path></svg>\n          </a>\n          <p id=\"current\" class=\"datetime ${localStorage.getItem('datetimeDisplay') || ''}\" title=\"${this.mementoDatetime}\">\n            <span class=\"relative\">${this.displayDatetime.relative}</span>\n            <span class=\"absolute\">${this.displayDatetime.absolute}</span>\n          </p>\n          <a id=\"next\" class=\"icon\" title=\"${this.nextDatetime}\" href=\"${this.nextUrim}\">\n            <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M24 4v24h-4v-11l-10 10v-22l10 10v-11z\"></path></svg>\n          </a>\n          <a id=\"last\" class=\"icon\" title=\"${this.lastDatetime}\" href=\"${this.lastUrim}\">\n            <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M28 4v24h-4v-11l-10 10v-10l-10 10v-22l10 10v-10l10 10v-11z\"></path></svg>\n          </a>\n          <a id=\"close\" class=\"icon\" href=\"#\">\n            <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M31.708 25.708c-0-0-0-0-0-0l-9.708-9.708 9.708-9.708c0-0 0-0 0-0 0.105-0.105 0.18-0.227 0.229-0.357 0.133-0.356 0.057-0.771-0.229-1.057l-4.586-4.586c-0.286-0.286-0.702-0.361-1.057-0.229-0.13 0.048-0.252 0.124-0.357 0.228 0 0-0 0-0 0l-9.708 9.708-9.708-9.708c-0-0-0-0-0-0-0.105-0.104-0.227-0.18-0.357-0.228-0.356-0.133-0.771-0.057-1.057 0.229l-4.586 4.586c-0.286 0.286-0.361 0.702-0.229 1.057 0.049 0.13 0.124 0.252 0.229 0.357 0 0 0 0 0 0l9.708 9.708-9.708 9.708c-0 0-0 0-0 0-0.104 0.105-0.18 0.227-0.229 0.357-0.133 0.355-0.057 0.771 0.229 1.057l4.586 4.586c0.286 0.286 0.702 0.361 1.057 0.229 0.13-0.049 0.252-0.124 0.357-0.229 0-0 0-0 0-0l9.708-9.708 9.708 9.708c0 0 0 0 0 0 0.105 0.105 0.227 0.18 0.357 0.229 0.356 0.133 0.771 0.057 1.057-0.229l4.586-4.586c0.286-0.286 0.362-0.702 0.229-1.057-0.049-0.13-0.124-0.252-0.229-0.357z\"></path></svg>\n          </a>\n          <a id=\"expand\" class=\"icon\" href=\"#\">\n            <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M32 0h-13l5 5-6 6 3 3 6-6 5 5z\"></path><path d=\"M32 32v-13l-5 5-6-6-3 3 6 6-5 5z\"></path><path d=\"M0 32h13l-5-5 6-6-3-3-6 6-5-5z\"></path><path d=\"M0 0v13l5-5 6 6 3-3-6-6 5-5z\"></path></svg>\n          </a>\n          <a id=\"collapse\" class=\"icon\" href=\"#\">\n            <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M18 14h13l-5-5 6-6-3-3-6 6-5-5z\"></path><path d=\"M18 18v13l5-5 6 6 3-3-6-6 5-5z\"></path><path d=\"M14 18h-13l5 5-6 6 3 3 6-6 5 5z\"></path><path d=\"M14 14v-13l-5 5-6-6-3 3 6 6-5 5z\"></path></svg>\n          </a>\n          <div id=\"meta\">\n            <!-- TODO: Add provenance infomration, metadata, and interactive visualizations here... -->\n          </div>\n        </div>\n      </div>\n    `;\n    this.shadow.innerHTML = template;\n\n    // Banner container and its outer wrapper element references\n    const container = this.shadow.getElementById('container');\n    const wrapper = this.shadow.getElementById('wrapper');\n\n    // Banner auto-hide and reveal logic\n    let bannerFocused = false;\n    container.onmouseover = () => bannerFocused = true;\n    container.onmouseout = () => bannerFocused = false;\n    let focusTimer;\n    const resetTimer = () => {\n      wrapper.classList.remove('hidden');\n      clearTimeout(focusTimer);\n      focusTimer = setTimeout(() => !bannerFocused && wrapper.classList.contains('fab') && wrapper.classList.add('hidden'), this.autoHideDelay);\n    };\n    window.addEventListener('load', resetTimer);\n    window.addEventListener('mousemove', resetTimer);\n    window.addEventListener('mousedown', resetTimer);\n    window.addEventListener('click', resetTimer);\n    window.addEventListener('scroll', resetTimer);\n    window.addEventListener('keypress', resetTimer);\n\n    // Banner expand, collapse, and close logic\n    this.shadow.getElementById('close').onclick = e => {\n      e.preventDefault();\n      wrapper.classList.remove('fab', 'expanded');\n      wrapper.classList.add('closed');\n    };\n    this.shadow.getElementById('expand').onclick = e => {\n      e.preventDefault();\n      wrapper.classList.replace('fab', 'expanded');\n      wrapper.style.removeProperty('top');\n      wrapper.style.removeProperty('left');\n    };\n    this.shadow.getElementById('collapse').onclick = e => {\n      e.preventDefault();\n      wrapper.classList.replace('expanded', 'fab');\n      wrapper.style.cssText = localStorage.getItem('bannerPosition') || '';\n    };\n    wrapper.onclick = e => {\n      if (e.target == wrapper) {\n        wrapper.classList.replace('expanded', 'fab');\n        wrapper.style.cssText = localStorage.getItem('bannerPosition') || '';\n      }\n    };\n\n    // Current memento's datetime display logic (absolute or relative)\n    const datetimeDisplay = this.shadow.getElementById('current');\n    datetimeDisplay.onclick = e => {\n      if (datetimeDisplay.classList.toggle('precision')) {\n        localStorage.setItem('datetimeDisplay', 'precision');\n      } else {\n        localStorage.removeItem('datetimeDisplay');\n      }\n    };\n\n    // Banner drag repositioning logic\n    let draggable = false;\n    let offset = { x: 0, y: 0 };\n    this.shadow.getElementById('drag').onmousedown = e => {\n      if (wrapper.classList.contains('fab')) {\n        draggable = true;\n        offset = {\n          x: wrapper.offsetLeft - e.clientX,\n          y: wrapper.offsetTop - e.clientY\n        };\n      }\n    };\n    window.addEventListener('mouseup', e => {\n      if (draggable && wrapper.classList.contains('fab')) {\n        draggable = false;\n        localStorage.setItem('bannerPosition', `left: ${wrapper.offsetLeft}px; top: ${wrapper.offsetTop}px;`);\n      }\n    });\n    window.addEventListener('mousemove', e => {\n      e.preventDefault();\n      if (draggable && wrapper.classList.contains('fab')) {\n        wrapper.style.left = e.clientX + offset.x + 'px';\n        wrapper.style.top = e.clientY + offset.y + 'px';\n      }\n    });\n\n    // URI-R lookup submission logic\n    this.shadow.getElementById('lookup').onsubmit = e => {\n      e.preventDefault();\n      const urir = this.shadow.getElementById('urir').value;\n      if (urir) {\n        window.location = window.location.href.replace(this.urir, urir);\n      }\n    };\n  }\n}\n\ncustomElements.define('reconstructive-banner', ReconstructiveBanner);\n",
     "static": true,
     "longname": "/src/Reconstructive/reconstructive-banner.js",
     "access": "public",
@@ -681,8 +681,8 @@
     "export": false,
     "importPath": "Reconstructive/Reconstructive/reconstructive-banner.js",
     "importStyle": null,
-    "description": "[ReconstructiveBanner](https://oduwsdl.github.io/Reconstructive/reconstructive-banner.js) implements `<reconstructive-banner>` [Custom Element](https://html.spec.whatwg.org/multipage/custom-elements.html#custom-elements).\nIt is an unobtrusive archival replay banner to make [mementos](http://mementoweb.org/about/) interactive and surface on-demand metadata about the archived resource.\nThe banner houses a customizable branding logo that links to the replay home.\nIt provides a pre-populated text input to navigate the replay to a different URI-R.\nA brief phrase describes the age of the current memento.\nNavigational links to the first, last, previous, and next mementos are also provided when present.\nIn its default floating action bar (FAB) mode it auto-hides after a set duration of inactivity if the banner is not in focus and reappears on any user activity on the page such as scroll, mousemove, or keypress.\nIt provides controls to expand, collapse, or completely close the banner.\nThe expanded mode has much more real estate available to house detailed archival metadata and visualizations.\nUse it in an HTML page as illustrated below:\n\n```html\n<script src=\"reconstructive-banner.js\"></script>\n<reconstructive-banner logo-src=\"\"\n                       home-href=\"/\"\n                       urir=\"https://example.com/\"\n                       memento-datetime=\"Mon, 06 Feb 2017 00:23:37 GMT\"\n                       first-urim=\"https://archive.host/memento/20170206002337/https://example.com/\"\n                       first-datetime=\"Mon, 06 Feb 2017 00:23:37 GMT\"\n                       last-urim=\"https://archive.host/memento/20170206002337/https://example.com/\"\n                       last-datetime=\"Mon, 06 Feb 2017 00:23:37 GMT\"\n                       prev-urim=\"\"\n                       prev-datetime=\"\"\n                       next-urim=\"\"\n                       next-datetime=\"\">\n</reconstructive-banner>\n```",
-    "lineNumber": 35,
+    "description": "[ReconstructiveBanner](https://oduwsdl.github.io/Reconstructive/reconstructive-banner.js) implements `<reconstructive-banner>` [Custom Element](https://html.spec.whatwg.org/multipage/custom-elements.html#custom-elements).\nIt is an unobtrusive archival replay banner to make [mementos](http://mementoweb.org/about/) interactive and surface on-demand metadata about the archived resource.\nThe banner houses a customizable branding logo that links to the replay home.\nIt provides a pre-populated text input to navigate the replay to a different URI-R.\nA brief phrase describes the rough age of the current memento, but can be toggled with the absolute date and time of capture by repeatedly clicking on it.\nUser's preference on absolute or relative datetime display persists across the session.\nNavigational links to the first, last, previous, and next mementos are also provided when present.\nIn its default floating action bar (FAB) mode it auto-hides after a set duration of inactivity if the banner is not in focus and reappears on any user activity on the page such as scroll, mousemove, or keypress.\nThe FAB can be dragged to repostion it on the page, which then persists across the session unless relocated again.\nIt provides controls to expand, collapse, or completely close the banner.\nThe expanded mode has much more real estate available to house detailed archival metadata and visualizations.\nUse it in an HTML page as illustrated below:\n\n```html\n<script src=\"reconstructive-banner.js\"></script>\n<reconstructive-banner logo-src=\"\"\n                       home-href=\"/\"\n                       urir=\"https://example.com/\"\n                       memento-datetime=\"Mon, 06 Feb 2017 00:23:37 GMT\"\n                       first-urim=\"https://archive.host/memento/20170206002337/https://example.com/\"\n                       first-datetime=\"Mon, 06 Feb 2017 00:23:37 GMT\"\n                       last-urim=\"https://archive.host/memento/20170206002337/https://example.com/\"\n                       last-datetime=\"Mon, 06 Feb 2017 00:23:37 GMT\"\n                       prev-urim=\"\"\n                       prev-datetime=\"\"\n                       next-urim=\"\"\n                       next-datetime=\"\">\n</reconstructive-banner>\n```",
+    "lineNumber": 37,
     "unknown": [
       {
         "tagName": "@overview",
@@ -717,7 +717,7 @@
     "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#constructor",
     "access": "public",
     "description": "Create a new ReconstructiveBanner instance and attach a Shadow DOM.",
-    "lineNumber": 39
+    "lineNumber": 41
   },
   {
     "__docId__": 60,
@@ -728,7 +728,7 @@
     "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#shadow",
     "access": "public",
     "description": "ShadoRoot for the isolated Shadow DOM of the banner.",
-    "lineNumber": 47,
+    "lineNumber": 49,
     "type": {
       "nullable": null,
       "types": [
@@ -749,7 +749,7 @@
     "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#connectedCallback",
     "access": "public",
     "description": "Read various attributes of the element and initialize the rendition and behavious of the banner when this custom element is added to the DOM.",
-    "lineNumber": 53,
+    "lineNumber": 55,
     "params": [],
     "return": null
   },
@@ -762,7 +762,7 @@
     "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#LOGO",
     "access": "public",
     "description": "A base64-encoded data URI of the SVG Reconstructive Logo.\nUsed as the default banner logo if a custom logoSrc is not specified.",
-    "lineNumber": 60,
+    "lineNumber": 62,
     "type": {
       "nullable": null,
       "types": [
@@ -781,7 +781,7 @@
     "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#logoSrc",
     "access": "public",
     "description": "Source (URL or path) of the banner logo.\nDefaults to the inline Reconstructive Logo.",
-    "lineNumber": 68,
+    "lineNumber": 70,
     "type": {
       "nullable": null,
       "types": [
@@ -800,7 +800,7 @@
     "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#homeHref",
     "access": "public",
     "description": "Hyperlink (URL or path) of the homepage to be linked from the banner logo.\nRead from the home-href attribute.\nDefaults to the domain root \"/\".",
-    "lineNumber": 77,
+    "lineNumber": 79,
     "type": {
       "nullable": null,
       "types": [
@@ -819,7 +819,7 @@
     "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#urir",
     "access": "public",
     "description": "Original resource URI (URI-R).\nRead from the urir attribute.",
-    "lineNumber": 85,
+    "lineNumber": 87,
     "type": {
       "nullable": null,
       "types": [
@@ -838,7 +838,7 @@
     "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#mementoDatetime",
     "access": "public",
     "description": "Datetime (in the RFC2822 format) when the current memento was captured.\nRead from the memento-datetime attribute.",
-    "lineNumber": 93,
+    "lineNumber": 95,
     "type": {
       "nullable": null,
       "types": [
@@ -857,7 +857,7 @@
     "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#firstUrim",
     "access": "public",
     "description": "URI of the first memento.\nRead from the first-urim attribute.",
-    "lineNumber": 101,
+    "lineNumber": 103,
     "type": {
       "nullable": null,
       "types": [
@@ -876,7 +876,7 @@
     "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#firstDatetime",
     "access": "public",
     "description": "Datetime (in the RFC2822 format) when the first memento was captured.\nRead from the first-datetime attribute.",
-    "lineNumber": 109,
+    "lineNumber": 111,
     "type": {
       "nullable": null,
       "types": [
@@ -895,7 +895,7 @@
     "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#lastUrim",
     "access": "public",
     "description": "URI of the last memento.\nRead from the last-urim attribute.",
-    "lineNumber": 117,
+    "lineNumber": 119,
     "type": {
       "nullable": null,
       "types": [
@@ -914,7 +914,7 @@
     "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#lastDatetime",
     "access": "public",
     "description": "Datetime (in the RFC2822 format) when the last memento was captured.\nRead from the last-datetime attribute.",
-    "lineNumber": 125,
+    "lineNumber": 127,
     "type": {
       "nullable": null,
       "types": [
@@ -933,7 +933,7 @@
     "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#prevUrim",
     "access": "public",
     "description": "URI of the previous memento.\nRead from the prev-urim attribute.",
-    "lineNumber": 133,
+    "lineNumber": 135,
     "type": {
       "nullable": null,
       "types": [
@@ -952,7 +952,7 @@
     "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#prevDatetime",
     "access": "public",
     "description": "Datetime (in the RFC2822 format) when the previous memento was captured.\nRead from the prev-datetime attribute.",
-    "lineNumber": 141,
+    "lineNumber": 143,
     "type": {
       "nullable": null,
       "types": [
@@ -971,7 +971,7 @@
     "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#nextUrim",
     "access": "public",
     "description": "URI of the next memento.\nRead from the next-urim attribute.",
-    "lineNumber": 149,
+    "lineNumber": 151,
     "type": {
       "nullable": null,
       "types": [
@@ -990,7 +990,7 @@
     "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#nextDatetime",
     "access": "public",
     "description": "Datetime (in the RFC2822 format) when the next memento was captured.\nRead from the next-datetime attribute.",
-    "lineNumber": 157,
+    "lineNumber": 159,
     "type": {
       "nullable": null,
       "types": [
@@ -1003,32 +1003,13 @@
   {
     "__docId__": 75,
     "kind": "member",
-    "name": "focused",
-    "memberof": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner",
-    "static": false,
-    "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#focused",
-    "access": "public",
-    "description": "Determine whether the banner in the FAB mode should auto-hide after a set duration of inactivity.\nPrevent from hiding the FAB when the banner is focused (such as the cursor is placed on it).",
-    "lineNumber": 165,
-    "type": {
-      "nullable": null,
-      "types": [
-        "boolean"
-      ],
-      "spread": false,
-      "description": null
-    }
-  },
-  {
-    "__docId__": 76,
-    "kind": "member",
     "name": "autoHideDelay",
     "memberof": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner",
     "static": false,
     "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#autoHideDelay",
     "access": "public",
     "description": "Duration of inactivity after which the banner in FAB mode should auto-hide if not in focus.\nThe default value is set to 2000 milliseconds (2 seconds).",
-    "lineNumber": 173,
+    "lineNumber": 167,
     "type": {
       "nullable": null,
       "types": [
@@ -1039,7 +1020,7 @@
     }
   },
   {
-    "__docId__": 77,
+    "__docId__": 76,
     "kind": "member",
     "name": "displayDatetime",
     "memberof": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner",
@@ -1047,7 +1028,7 @@
     "longname": "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#displayDatetime",
     "access": "public",
     "description": "A function to provide human readable dispaly datetime strings for the current memento in both relative and absolute terms.\nRelative datetime is a non-precise natural language phrase (e.g., \"Captured one day and 3 hours ago\").\nAbsolute datetime is a precise natural language phrase in user's locace (e.g., \"Captured on 8/13/2018 at 7:23:37 PM\").",
-    "lineNumber": 182,
+    "lineNumber": 176,
     "type": {
       "nullable": null,
       "types": [
@@ -1058,10 +1039,10 @@
     }
   },
   {
-    "__docId__": 78,
+    "__docId__": 77,
     "kind": "file",
     "name": "Reconstructive/reconstructive.js",
-    "content": "/**\n * [Reconstructive](https://github.com/oduwsdl/Reconstructive) is a [ServiceWorker](https://www.w3.org/TR/service-workers/) module for client-side reconstruction of composite mementos.\n * It reroutes embedded resource requests to their appropriate archival version without any URL rewriting.\n * It also provides functionality to add custom archival banners or rewrite hyperlinks on the client-side.\n * Use it in a ServiceWorker as illustrated below:\n *\n * ```js\n * importScripts('reconstructive.js');\n * const rc = new Reconstructive();\n * self.addEventListener('fetch', rc.reroute);\n * ```\n *\n * @overview  Reconstructive is a module to be used in a ServiceWorker of an archival replay.\n * @author    Sawood Alam <ibnesayeed@gmail.com>\n * @license   MIT\n * @copyright ODU Web Science / Digital Libraries Research Group 2017\n */\nclass Reconstructive {\n  /**\n   * Creates a new Reconstructive instance with optional configurations.\n   *\n   * @param {{id: string, urimPattern: string, bannerElementLocation: string, bannerLogoLocation: string, showBanner: boolean, debug: boolean}} [config] - Configuration options\n   */\n  constructor(config) {\n    /**\n     * Name of the module.\n     * Treated as a constant.\n     *\n     * @type {string}\n     */\n    this.NAME = 'Reconstructive';\n\n    /**\n     * Version of the module.\n     * Treated as a constant.\n     *\n     * @type {string}\n     */\n    this.VERSION = '0.6.3';\n\n    /**\n     * Identifier of the module, sent to the server as X-ServiceWorker header.\n     * Defaults to the name and version of the module.\n     *\n     * @type {string}\n     */\n    this.id = `${this.NAME}:${this.VERSION}`;\n\n    /**\n     * The format of URI-Ms (e.g., http://example.com/archive/<datetime>/<urir>).\n     *\n     * @type {string}\n     */\n    this.urimPattern = `${self.location.origin}/memento/<datetime>/<urir>`;\n\n    /**\n     * The URL or absolute path of the JS file that defines custom banner element.\n     * Only necessary if showBanner is set to true.\n     *\n     * @type {string}\n     */\n    this.bannerElementLocation = `${self.location.origin}/reconstructive-banner.js`;\n\n    /**\n     * The URL or absolute path of the logo image to appear in the banner.\n     * An empty value will render the default Reconstructive logo as inline SVG.\n     * Only necessary if showBanner is set to true.\n     *\n     * @type {string}\n     */\n    this.bannerLogoLocation = '';\n\n    /**\n     * The URL or absolute path to link from the logo image in the banner.\n     * This should generally be set to the address of the homepage.\n     * Only necessary if showBanner is set to true.\n     *\n     * @type {string}\n     */\n    this.bannerLogoHref = '/';\n\n    /**\n     * Whether or not to show an archival banner.\n     * Defaults to false.\n     *\n     * @type {boolean}\n     */\n    this.showBanner = false;\n\n    /**\n     * Whether or not to show debug messages in the console.\n     * Defaults to false.\n     *\n     * @type {boolean}\n     */\n    this.debug = false;\n\n    // Iterate over the supplied configuration object to overwrite defaults and add new properties\n    if (config instanceof Object) {\n      for (const [k, v] of Object.entries(config)) {\n        /** @ignore **/\n        this[k] = v;\n      }\n    }\n\n    /**\n     * A private object with various RegExp properties (possibly derived from other properties) for internal use.\n     *\n     * @private\n     * @type    {{urimPattern: RegExp, absoluteReference: RegExp, bodyEnd: RegExp}}\n     */\n    this._regexps = {\n      urimPattern: new RegExp(`^${this.urimPattern.replace('<datetime>', '(\\\\d{14})').replace('<urir>', '(.*)')}$`),\n      absoluteReference: new RegExp(`(<(iframe|a).*?\\\\s+(src|href)\\\\s*=\\\\s*[\"']?)(https?:\\/\\/[^'\"\\\\s]+)(.*?>)`, 'ig'),\n      bodyEnd: new RegExp('<\\/(body|html)>', 'i')\n    };\n\n    /**\n     * An object of functions to check whether the request should be excluded from being rerouted.\n     * Add more members to the object to add more exclusions or modify/delete existing ones.\n     * The property name can be anything descriptive of the particular exclusion, which will be shown in debug logs.\n     * Each member function is called with the fetch event as parameters.\n     * If any member returns true, the fetch event is excluded from being rerouted.\n     *\n     * @type {{notGet: function(event: FetchEvent): boolean, bannerElement: function(event: FetchEvent): boolean, bannerLogo: function(event: FetchEvent): boolean, homePage: function(event: FetchEvent): boolean, localResource: function(event: FetchEvent): boolean}}\n     */\n    this.exclusions = {\n      notGet: event => event.request.method !== 'GET',\n      bannerElement: event => this.showBanner && event.request.url.endsWith(this.bannerElementLocation),\n      bannerLogo: event => this.showBanner && this.bannerLogoLocation && event.request.url.endsWith(this.bannerLogoLocation),\n      localResource: event => !(this._regexps.urimPattern.test(event.request.url) || this._regexps.urimPattern.test(event.request.referrer))\n    };\n\n    this.debug && console.log(`${this.NAME}:${this.VERSION} initialized:`, this);\n\n    this.fetchFailure = this.fetchFailure.bind(this);\n  }\n\n  /**\n   * Iterates over all the members of the exclusions object and returns true if any of the members return true, otherwise returns false.\n   * Logs the first matching exclusion for debugging, if any.\n   *\n   * @param  {FetchEvent} event - The fetch event\n   * @return {boolean}          - Should the request be rerouted?\n   */\n  shouldExclude(event) {\n    return Object.entries(this.exclusions).some(([exclusionName, exclusionFunc]) => {\n      if (exclusionFunc(event)) {\n        this.debug && console.log('Exclusion found:', exclusionName, event.request.url);\n        return true;\n      }\n      return false;\n    });\n  }\n\n  /**\n   * Creates a potential URI-M based on the requested URL and the referrer URL for request rerouting.\n   *\n   * @param  {FetchEvent} event - The fetch event\n   * @return {string}           - A potential URI-M\n   */\n  createUrim(event) {\n    // Extract datetime and the URI-R of the referrer.\n    let [datetime, refUrir] = this.extractDatetimeUrir(event.request.referrer);\n    let urir = new URL(event.request.url);\n    // This condition will match when the request was initiated from an absolute path and fail if it was an absolute URL.\n    if (urir.origin === self.location.origin) {\n      // If it was an absolute path then referrer's origin was used.\n      // We need to replace it with the origin of the referrer's URI-R instead.\n      // The RegExp used will capture the origin with the protocol, if any (http, https, or BLANK).\n      let refOrigin = refUrir.match(/^(https?:\\/\\/)?[^\\/]+/)[0];\n      urir = refOrigin + urir.pathname + urir.search;\n    } else {\n      urir = urir.href;\n    }\n    return this.urimPattern.replace('<datetime>', datetime).replace('<urir>', urir);\n  }\n\n  /**\n   * Extracts datetime and URI-R from a URI-M.\n   *\n   * @param  {string}   urim - A URI-M\n   * @return {string[]}      - An array of datetime and URI-R\n   */\n  extractDatetimeUrir(urim) {\n    let [, datetime, urir] = urim.match(this._regexps.urimPattern);\n    // Swap the two extracted values if the datetime pattern appeared after the URI-R.\n    // This is not a common practice, but possible if an archive uses query parameters instead of paths.\n    if (isNaN(datetime)) {\n      return [urir, datetime];\n    }\n    return [datetime, urir];\n  }\n\n  /**\n   * Creates a new request based on the original.\n   * Copies all the headers from the original request.\n   * Adds X-ServiceWorker header with the id of the module.\n   * Sets the redirect mode to manual to ensure proper origin boundaries.\n   *\n   * @param  {FetchEvent} event - The fetch event\n   * @return {Request}          - A new request object\n   */\n  createRequest(event) {\n    let headers = this.cloneHeaders(event.request.headers);\n    headers.set('X-ServiceWorker', this.id);\n    return new Request(event.request.url, {headers: headers, redirect: 'manual'});\n  }\n\n  /**\n   * Clones provided request or response headers.\n   *\n   * @param  {Headers} original - Original request or response headers\n   * @return {Headers}          - A clone of the supplied headers\n   */\n  cloneHeaders(original) {\n    let headers = new Headers();\n    for (const [k, v] of original.entries()) {\n      headers.append(k, v);\n    }\n    return headers;\n  }\n\n  /**\n   * Redirects a non-URI-M request to its potentially URI-M locally.\n   * The potential URI-M is generated using createUrim().\n   * This function only returns a synthetic redirection response.\n   *\n   * @param  {string}            urim - A potential URI-M\n   * @return {Promise<Response>}      - A 302 redirection response to the potential URI-M\n   */\n  localRedirect(urim) {\n    this.debug && console.log('Locally redirecting to:', urim);\n    return Promise.resolve(new Response(`<h1>Locally Redirecting</h1><p>${urim}</p>`, {\n      status: 302,\n      statusText: 'Found',\n      headers: new Headers({\n        'Location': urim,\n        'Access-Control-Allow-Origin': '*',\n        'Content-Type': 'text/html'\n      })\n    }));\n  }\n\n  /**\n   * The callback function on a successful fetch from the server.\n   * Calls the rewrite() function if the response code is 2xx.\n   * Logs the response for debugging.\n   * Resolves to a potentially modified response.\n   *\n   * @param  {Response}          response - Original response object\n   * @param  {FetchEvent}        event    - The fetch event\n   * @return {Promise<Response>}          - Potentially modified response\n   */\n  fetchSuccess(response, event) {\n    this.debug && console.log('Fetched from server:', response);\n    // Perform a potential rewrite only if the response code is 2xx.\n    if (response.ok) {\n      return this.rewrite(response, event);\n    }\n    return Promise.resolve(response);\n  }\n\n  /**\n   * The callback function on network failure of the server fetch.\n   * Logs the failure reason for debugging.\n   * Returns a synthetic 503 Service Unavailable response.\n   *\n   * @param  {Error}    error - The exception raised on fetching from the server\n   * @return {Response}       - A 503 Service Unavailable response\n   */\n  fetchFailure(error) {\n    this.debug && console.log(error);\n    return new Response('<h1>Service Unavailable</h1>', {\n      status: 503,\n      statusText: 'Service Unavailable',\n      headers: new Headers({\n        'Content-Type': 'text/html'\n      })\n    });\n  }\n\n  /**\n   * Rewrites the fetched response when necessary.\n   * Potential uses are to fix certain replay issues, adding an archival banner, or modifying hyperlinks.\n   * When the showBanner config is set to true, it tries to add a banner in navigational HTML pages.\n   * Resolves to a potentially modified response.\n   *\n   * @param  {Response}          response - Original response object\n   * @param  {FetchEvent}        event    - The fetch event\n   * @return {Promise<Response>}          - Potentially modified response\n   */\n  rewrite(response, event) {\n    // TODO: Make necessary changes in the response\n    if (/text\\/html/i.test(response.headers.get('Content-Type'))) {\n      let headers = this.cloneHeaders(response.headers);\n      let init = {\n        status: response.status,\n        statusText: response.statusText,\n        headers: headers\n      };\n      return response.text().then(body => {\n        const [datetime] = this.extractDatetimeUrir(response.url);\n        // Replace all absolute URLs in src and href attributes of <iframe> and <a> elements with corresponding URI-Ms to avoid replay and navigation issues.\n        body = body.replace(this._regexps.absoluteReference, `$1${this.urimPattern.replace('<datetime>', datetime).replace('<urir>', '$4')}$5`);\n        // Inject a banner only on navigational HTML pages when showBanner config is set to true.\n        if (this.showBanner && event.request.mode === 'navigate') {\n          const banner = this.createBanner(response, event);\n          // Try to inject the banner markup before closing </body> tag, fallback to </html>.\n          // If none of the two closing tags are found, append it to the body.\n          if (this._regexps.bodyEnd.test(body)) {\n            body = body.replace(this._regexps.bodyEnd, banner + '</$1>');\n          } else {\n            body += banner;\n          }\n        }\n        return new Response(body, init);\n      });\n    }\n    return Promise.resolve(response);\n  }\n\n  /**\n   * Creates a string representing an HTML block to be injected in the response's HTML body.\n   *\n   * @param  {Response}   response - Original response object\n   * @param  {FetchEvent} event    - The fetch event\n   * @return {string}              - The banner markup\n   */\n  createBanner(response, event) {\n    let mementoDatetime = response.headers.get('Memento-Datetime') || '';\n    const [datetime, urir] = this.extractDatetimeUrir(response.url);\n    if (!mementoDatetime) {\n      mementoDatetime = new Date(`${datetime.slice(0, 4)}-${datetime.slice(4, 6)}-${datetime.slice(6, 8)}T${datetime.slice(8, 10)}:${datetime.slice(10, 12)}:${datetime.slice(12, 14)}Z`).toUTCString();\n    }\n    // TODO: Extract link parser in a method\n    let rels = {};\n    const links = response.headers.get('Link');\n    if (links) {\n      links.replace(/[\\r\\n]+/g, ' ')\n           .replace(/^\\W+|\\W+$/g, '')\n           .split(/\\W+</)\n           .forEach(l => {\n             let segs = l.split(/[>\\s'\"]*;\\W*/);\n             let href = segs.shift();\n             let attributes = {};\n             segs.forEach(s => {\n               let [k, v] = s.split(/\\W*=\\W*/);\n               attributes[k] = v;\n             });\n             attributes['rel'].split(/\\s+/)\n                              .forEach(r => {\n                                rels[r] = {href: href, datetime: attributes['datetime']};\n                              });\n           });\n    }\n    return `\n      <script src=\"${this.bannerElementLocation}\"></script>\n      <reconstructive-banner logo-src=\"${this.bannerLogoLocation}\"\n                             home-href=\"${this.bannerLogoHref}\"\n                             urir=\"${urir}\"\n                             memento-datetime=\"${mementoDatetime}\"\n                             first-urim=\"${rels.first && rels.first.href || ''}\"\n                             first-datetime=\"${rels.first && rels.first.datetime || ''}\"\n                             last-urim=\"${rels.last && rels.last.href || ''}\"\n                             last-datetime=\"${rels.last && rels.last.datetime || ''}\"\n                             prev-urim=\"${rels.prev && rels.prev.href || ''}\"\n                             prev-datetime=\"${rels.prev && rels.prev.datetime || ''}\"\n                             next-urim=\"${rels.next && rels.next.href || ''}\"\n                             next-datetime=\"${rels.next && rels.next.datetime || ''}\">\n      </reconstructive-banner>\n    `;\n  }\n\n  /**\n   * The callback function on the fetch event.\n   * Logs the fetch event for debugging.\n   * Checks for any rerouting exclusions.\n   * If the request URL is a URI-M then creates a new request with certain modifications in the original request and fetches it from the server.\n   * Otherwise, responds with a redirect to the potential URI-M.\n   * Both success and failure responses are dealt with appropriately.\n   *\n   * @param {FetchEvent} event - The fetch event\n   */\n  reroute(event) {\n    this.debug && console.log('Rerouting requested', event);\n    // Let the browser deal with the requests if it matches a rerouting exclusion.\n    if (this.shouldExclude(event)) return;\n    // This condition will match if the request URL is a URI-M.\n    if (this._regexps.urimPattern.test(event.request.url)) {\n      let request = this.createRequest(event);\n      event.respondWith(\n        fetch(request)\n          .then(response => this.fetchSuccess(response, event))\n          .catch(this.fetchFailure)\n      );\n    } else {\n      let urim = this.createUrim(event);\n      event.respondWith(this.localRedirect(urim));\n    }\n  }\n\n}\n",
+    "content": "/**\n * [Reconstructive](https://github.com/oduwsdl/Reconstructive) is a [ServiceWorker](https://www.w3.org/TR/service-workers/) module for client-side reconstruction of composite mementos.\n * It reroutes embedded resource requests to their appropriate archival version without any URL rewriting.\n * It also provides functionality to add custom archival banners or rewrite hyperlinks on the client-side.\n * Use it in a ServiceWorker as illustrated below:\n *\n * ```js\n * importScripts('reconstructive.js');\n * const rc = new Reconstructive();\n * self.addEventListener('fetch', rc.reroute);\n * ```\n *\n * @overview  Reconstructive is a module to be used in a ServiceWorker of an archival replay.\n * @author    Sawood Alam <ibnesayeed@gmail.com>\n * @license   MIT\n * @copyright ODU Web Science / Digital Libraries Research Group 2017\n */\nclass Reconstructive {\n  /**\n   * Creates a new Reconstructive instance with optional configurations.\n   *\n   * @param {{id: string, urimPattern: string, bannerElementLocation: string, bannerLogoLocation: string, showBanner: boolean, debug: boolean}} [config] - Configuration options\n   */\n  constructor(config) {\n    /**\n     * Name of the module.\n     * Treated as a constant.\n     *\n     * @type {string}\n     */\n    this.NAME = 'Reconstructive';\n\n    /**\n     * Version of the module.\n     * Treated as a constant.\n     *\n     * @type {string}\n     */\n    this.VERSION = '0.7.0';\n\n    /**\n     * Identifier of the module, sent to the server as X-ServiceWorker header.\n     * Defaults to the name and version of the module.\n     *\n     * @type {string}\n     */\n    this.id = `${this.NAME}:${this.VERSION}`;\n\n    /**\n     * The format of URI-Ms (e.g., http://example.com/archive/<datetime>/<urir>).\n     *\n     * @type {string}\n     */\n    this.urimPattern = `${self.location.origin}/memento/<datetime>/<urir>`;\n\n    /**\n     * The URL or absolute path of the JS file that defines custom banner element.\n     * Only necessary if showBanner is set to true.\n     *\n     * @type {string}\n     */\n    this.bannerElementLocation = `${self.location.origin}/reconstructive-banner.js`;\n\n    /**\n     * The URL or absolute path of the logo image to appear in the banner.\n     * An empty value will render the default Reconstructive logo as inline SVG.\n     * Only necessary if showBanner is set to true.\n     *\n     * @type {string}\n     */\n    this.bannerLogoLocation = '';\n\n    /**\n     * The URL or absolute path to link from the logo image in the banner.\n     * This should generally be set to the address of the homepage.\n     * Only necessary if showBanner is set to true.\n     *\n     * @type {string}\n     */\n    this.bannerLogoHref = '/';\n\n    /**\n     * Whether or not to show an archival banner.\n     * Defaults to false.\n     *\n     * @type {boolean}\n     */\n    this.showBanner = false;\n\n    /**\n     * Whether or not to show debug messages in the console.\n     * Defaults to false.\n     *\n     * @type {boolean}\n     */\n    this.debug = false;\n\n    // Iterate over the supplied configuration object to overwrite defaults and add new properties\n    if (config instanceof Object) {\n      for (const [k, v] of Object.entries(config)) {\n        /** @ignore **/\n        this[k] = v;\n      }\n    }\n\n    /**\n     * A private object with various RegExp properties (possibly derived from other properties) for internal use.\n     *\n     * @private\n     * @type    {{urimPattern: RegExp, absoluteReference: RegExp, bodyEnd: RegExp}}\n     */\n    this._regexps = {\n      urimPattern: new RegExp(`^${this.urimPattern.replace('<datetime>', '(\\\\d{14})').replace('<urir>', '(.*)')}$`),\n      absoluteReference: new RegExp(`(<(iframe|a).*?\\\\s+(src|href)\\\\s*=\\\\s*[\"']?)(https?:\\/\\/[^'\"\\\\s]+)(.*?>)`, 'ig'),\n      bodyEnd: new RegExp('<\\/(body|html)>', 'i')\n    };\n\n    /**\n     * An object of functions to check whether the request should be excluded from being rerouted.\n     * Add more members to the object to add more exclusions or modify/delete existing ones.\n     * The property name can be anything descriptive of the particular exclusion, which will be shown in debug logs.\n     * Each member function is called with the fetch event as parameters.\n     * If any member returns true, the fetch event is excluded from being rerouted.\n     *\n     * @type {{notGet: function(event: FetchEvent): boolean, bannerElement: function(event: FetchEvent): boolean, bannerLogo: function(event: FetchEvent): boolean, homePage: function(event: FetchEvent): boolean, localResource: function(event: FetchEvent): boolean}}\n     */\n    this.exclusions = {\n      notGet: event => event.request.method !== 'GET',\n      bannerElement: event => this.showBanner && event.request.url.endsWith(this.bannerElementLocation),\n      bannerLogo: event => this.showBanner && this.bannerLogoLocation && event.request.url.endsWith(this.bannerLogoLocation),\n      localResource: event => !(this._regexps.urimPattern.test(event.request.url) || this._regexps.urimPattern.test(event.request.referrer))\n    };\n\n    this.debug && console.log(`${this.NAME}:${this.VERSION} initialized:`, this);\n\n    this.fetchFailure = this.fetchFailure.bind(this);\n  }\n\n  /**\n   * Iterates over all the members of the exclusions object and returns true if any of the members return true, otherwise returns false.\n   * Logs the first matching exclusion for debugging, if any.\n   *\n   * @param  {FetchEvent} event - The fetch event\n   * @return {boolean}          - Should the request be rerouted?\n   */\n  shouldExclude(event) {\n    return Object.entries(this.exclusions).some(([exclusionName, exclusionFunc]) => {\n      if (exclusionFunc(event)) {\n        this.debug && console.log('Exclusion found:', exclusionName, event.request.url);\n        return true;\n      }\n      return false;\n    });\n  }\n\n  /**\n   * Creates a potential URI-M based on the requested URL and the referrer URL for request rerouting.\n   *\n   * @param  {FetchEvent} event - The fetch event\n   * @return {string}           - A potential URI-M\n   */\n  createUrim(event) {\n    // Extract datetime and the URI-R of the referrer.\n    let [datetime, refUrir] = this.extractDatetimeUrir(event.request.referrer);\n    let urir = new URL(event.request.url);\n    // This condition will match when the request was initiated from an absolute path and fail if it was an absolute URL.\n    if (urir.origin === self.location.origin) {\n      // If it was an absolute path then referrer's origin was used.\n      // We need to replace it with the origin of the referrer's URI-R instead.\n      // The RegExp used will capture the origin with the protocol, if any (http, https, or BLANK).\n      let refOrigin = refUrir.match(/^(https?:\\/\\/)?[^\\/]+/)[0];\n      urir = refOrigin + urir.pathname + urir.search;\n    } else {\n      urir = urir.href;\n    }\n    return this.urimPattern.replace('<datetime>', datetime).replace('<urir>', urir);\n  }\n\n  /**\n   * Extracts datetime and URI-R from a URI-M.\n   *\n   * @param  {string}   urim - A URI-M\n   * @return {string[]}      - An array of datetime and URI-R\n   */\n  extractDatetimeUrir(urim) {\n    let [, datetime, urir] = urim.match(this._regexps.urimPattern);\n    // Swap the two extracted values if the datetime pattern appeared after the URI-R.\n    // This is not a common practice, but possible if an archive uses query parameters instead of paths.\n    if (isNaN(datetime)) {\n      return [urir, datetime];\n    }\n    return [datetime, urir];\n  }\n\n  /**\n   * Creates a new request based on the original.\n   * Copies all the headers from the original request.\n   * Adds X-ServiceWorker header with the id of the module.\n   * Sets the redirect mode to manual to ensure proper origin boundaries.\n   *\n   * @param  {FetchEvent} event - The fetch event\n   * @return {Request}          - A new request object\n   */\n  createRequest(event) {\n    let headers = this.cloneHeaders(event.request.headers);\n    headers.set('X-ServiceWorker', this.id);\n    return new Request(event.request.url, { headers: headers, redirect: 'manual' });\n  }\n\n  /**\n   * Clones provided request or response headers.\n   *\n   * @param  {Headers} original - Original request or response headers\n   * @return {Headers}          - A clone of the supplied headers\n   */\n  cloneHeaders(original) {\n    let headers = new Headers();\n    for (const [k, v] of original.entries()) {\n      headers.append(k, v);\n    }\n    return headers;\n  }\n\n  /**\n   * Redirects a non-URI-M request to its potentially URI-M locally.\n   * The potential URI-M is generated using createUrim().\n   * This function only returns a synthetic redirection response.\n   *\n   * @param  {string}            urim - A potential URI-M\n   * @return {Promise<Response>}      - A 302 redirection response to the potential URI-M\n   */\n  localRedirect(urim) {\n    this.debug && console.log('Locally redirecting to:', urim);\n    return Promise.resolve(new Response(`<h1>Locally Redirecting</h1><p>${urim}</p>`, {\n      status: 302,\n      statusText: 'Found',\n      headers: new Headers({\n        'Location': urim,\n        'Access-Control-Allow-Origin': '*',\n        'Content-Type': 'text/html'\n      })\n    }));\n  }\n\n  /**\n   * The callback function on a successful fetch from the server.\n   * Calls the rewrite() function if the response code is 2xx.\n   * Logs the response for debugging.\n   * Resolves to a potentially modified response.\n   *\n   * @param  {Response}          response - Original response object\n   * @param  {FetchEvent}        event    - The fetch event\n   * @return {Promise<Response>}          - Potentially modified response\n   */\n  fetchSuccess(response, event) {\n    this.debug && console.log('Fetched from server:', response);\n    // Perform a potential rewrite only if the response code is 2xx.\n    if (response.ok) {\n      return this.rewrite(response, event);\n    }\n    return Promise.resolve(response);\n  }\n\n  /**\n   * The callback function on network failure of the server fetch.\n   * Logs the failure reason for debugging.\n   * Returns a synthetic 503 Service Unavailable response.\n   *\n   * @param  {Error}    error - The exception raised on fetching from the server\n   * @return {Response}       - A 503 Service Unavailable response\n   */\n  fetchFailure(error) {\n    this.debug && console.log(error);\n    return new Response('<h1>Service Unavailable</h1>', {\n      status: 503,\n      statusText: 'Service Unavailable',\n      headers: new Headers({\n        'Content-Type': 'text/html'\n      })\n    });\n  }\n\n  /**\n   * Rewrites the fetched response when necessary.\n   * Potential uses are to fix certain replay issues, adding an archival banner, or modifying hyperlinks.\n   * When the showBanner config is set to true, it tries to add a banner in navigational HTML pages.\n   * Resolves to a potentially modified response.\n   *\n   * @param  {Response}          response - Original response object\n   * @param  {FetchEvent}        event    - The fetch event\n   * @return {Promise<Response>}          - Potentially modified response\n   */\n  rewrite(response, event) {\n    // TODO: Make necessary changes in the response\n    if (/text\\/html/i.test(response.headers.get('Content-Type'))) {\n      let headers = this.cloneHeaders(response.headers);\n      let init = {\n        status: response.status,\n        statusText: response.statusText,\n        headers: headers\n      };\n      return response.text().then(body => {\n        const [datetime] = this.extractDatetimeUrir(response.url);\n        // Replace all absolute URLs in src and href attributes of <iframe> and <a> elements with corresponding URI-Ms to avoid replay and navigation issues.\n        body = body.replace(this._regexps.absoluteReference, `$1${this.urimPattern.replace('<datetime>', datetime).replace('<urir>', '$4')}$5`);\n        // Inject a banner only on navigational HTML pages when showBanner config is set to true.\n        if (this.showBanner && event.request.mode === 'navigate') {\n          const banner = this.createBanner(response, event);\n          // Try to inject the banner markup before closing </body> tag, fallback to </html>.\n          // If none of the two closing tags are found, append it to the body.\n          if (this._regexps.bodyEnd.test(body)) {\n            body = body.replace(this._regexps.bodyEnd, banner + '</$1>');\n          } else {\n            body += banner;\n          }\n        }\n        return new Response(body, init);\n      });\n    }\n    return Promise.resolve(response);\n  }\n\n  /**\n   * Creates a string representing an HTML block to be injected in the response's HTML body.\n   *\n   * @param  {Response}   response - Original response object\n   * @param  {FetchEvent} event    - The fetch event\n   * @return {string}              - The banner markup\n   */\n  createBanner(response, event) {\n    let mementoDatetime = response.headers.get('Memento-Datetime') || '';\n    const [datetime, urir] = this.extractDatetimeUrir(response.url);\n    if (!mementoDatetime) {\n      mementoDatetime = new Date(`${datetime.slice(0, 4)}-${datetime.slice(4, 6)}-${datetime.slice(6, 8)}T${datetime.slice(8, 10)}:${datetime.slice(10, 12)}:${datetime.slice(12, 14)}Z`).toUTCString();\n    }\n    // TODO: Extract link parser in a method\n    let rels = {};\n    const links = response.headers.get('Link');\n    if (links) {\n      links.replace(/[\\r\\n]+/g, ' ').replace(/^\\W+|\\W+$/g, '').split(/\\W+</).forEach(l => {\n        let segs = l.split(/[>\\s'\"]*;\\W*/);\n        let href = segs.shift();\n        let attributes = {};\n        segs.forEach(s => {\n          let [k, v] = s.split(/\\W*=\\W*/);\n          attributes[k] = v;\n        });\n        attributes['rel'].split(/\\s+/).forEach(r => {\n          rels[r] = { href: href, datetime: attributes['datetime'] };\n        });\n      });\n    }\n    return `\n      <script src=\"${this.bannerElementLocation}\"></script>\n      <reconstructive-banner logo-src=\"${this.bannerLogoLocation}\"\n                             home-href=\"${this.bannerLogoHref}\"\n                             urir=\"${urir}\"\n                             memento-datetime=\"${mementoDatetime}\"\n                             first-urim=\"${rels.first && rels.first.href || ''}\"\n                             first-datetime=\"${rels.first && rels.first.datetime || ''}\"\n                             last-urim=\"${rels.last && rels.last.href || ''}\"\n                             last-datetime=\"${rels.last && rels.last.datetime || ''}\"\n                             prev-urim=\"${rels.prev && rels.prev.href || ''}\"\n                             prev-datetime=\"${rels.prev && rels.prev.datetime || ''}\"\n                             next-urim=\"${rels.next && rels.next.href || ''}\"\n                             next-datetime=\"${rels.next && rels.next.datetime || ''}\">\n      </reconstructive-banner>\n    `;\n  }\n\n  /**\n   * The callback function on the fetch event.\n   * Logs the fetch event for debugging.\n   * Checks for any rerouting exclusions.\n   * If the request URL is a URI-M then creates a new request with certain modifications in the original request and fetches it from the server.\n   * Otherwise, responds with a redirect to the potential URI-M.\n   * Both success and failure responses are dealt with appropriately.\n   *\n   * @param {FetchEvent} event - The fetch event\n   */\n  reroute(event) {\n    this.debug && console.log('Rerouting requested', event);\n    // Let the browser deal with the requests if it matches a rerouting exclusion.\n    if (this.shouldExclude(event)) return;\n    // This condition will match if the request URL is a URI-M.\n    if (this._regexps.urimPattern.test(event.request.url)) {\n      let request = this.createRequest(event);\n      event.respondWith(fetch(request).then(response => this.fetchSuccess(response, event)).catch(this.fetchFailure));\n    } else {\n      let urim = this.createUrim(event);\n      event.respondWith(this.localRedirect(urim));\n    }\n  }\n\n}\n",
     "static": true,
     "longname": "/src/Reconstructive/reconstructive.js",
     "access": "public",
@@ -1069,7 +1050,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 79,
+    "__docId__": 78,
     "kind": "class",
     "name": "Reconstructive",
     "memberof": "Reconstructive/reconstructive.js",
@@ -1102,7 +1083,7 @@
     "interface": false
   },
   {
-    "__docId__": 80,
+    "__docId__": 79,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1127,7 +1108,7 @@
     ]
   },
   {
-    "__docId__": 81,
+    "__docId__": 80,
     "kind": "member",
     "name": "NAME",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1146,7 +1127,7 @@
     }
   },
   {
-    "__docId__": 82,
+    "__docId__": 81,
     "kind": "member",
     "name": "VERSION",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1165,7 +1146,7 @@
     }
   },
   {
-    "__docId__": 83,
+    "__docId__": 82,
     "kind": "member",
     "name": "id",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1184,7 +1165,7 @@
     }
   },
   {
-    "__docId__": 84,
+    "__docId__": 83,
     "kind": "member",
     "name": "urimPattern",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1203,7 +1184,7 @@
     }
   },
   {
-    "__docId__": 85,
+    "__docId__": 84,
     "kind": "member",
     "name": "bannerElementLocation",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1222,7 +1203,7 @@
     }
   },
   {
-    "__docId__": 86,
+    "__docId__": 85,
     "kind": "member",
     "name": "bannerLogoLocation",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1241,7 +1222,7 @@
     }
   },
   {
-    "__docId__": 87,
+    "__docId__": 86,
     "kind": "member",
     "name": "bannerLogoHref",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1260,7 +1241,7 @@
     }
   },
   {
-    "__docId__": 88,
+    "__docId__": 87,
     "kind": "member",
     "name": "showBanner",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1279,7 +1260,7 @@
     }
   },
   {
-    "__docId__": 89,
+    "__docId__": 88,
     "kind": "member",
     "name": "debug",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1298,7 +1279,7 @@
     }
   },
   {
-    "__docId__": 90,
+    "__docId__": 89,
     "kind": "member",
     "name": "[k]",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1315,7 +1296,7 @@
     }
   },
   {
-    "__docId__": 91,
+    "__docId__": 90,
     "kind": "member",
     "name": "_regexps",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1334,7 +1315,7 @@
     }
   },
   {
-    "__docId__": 92,
+    "__docId__": 91,
     "kind": "member",
     "name": "exclusions",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1353,7 +1334,7 @@
     }
   },
   {
-    "__docId__": 95,
+    "__docId__": 94,
     "kind": "method",
     "name": "shouldExclude",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1386,7 +1367,7 @@
     }
   },
   {
-    "__docId__": 97,
+    "__docId__": 96,
     "kind": "method",
     "name": "createUrim",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1419,7 +1400,7 @@
     }
   },
   {
-    "__docId__": 98,
+    "__docId__": 97,
     "kind": "method",
     "name": "extractDatetimeUrir",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1452,7 +1433,7 @@
     }
   },
   {
-    "__docId__": 99,
+    "__docId__": 98,
     "kind": "method",
     "name": "createRequest",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1485,7 +1466,7 @@
     }
   },
   {
-    "__docId__": 100,
+    "__docId__": 99,
     "kind": "method",
     "name": "cloneHeaders",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1518,7 +1499,7 @@
     }
   },
   {
-    "__docId__": 101,
+    "__docId__": 100,
     "kind": "method",
     "name": "localRedirect",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1551,7 +1532,7 @@
     }
   },
   {
-    "__docId__": 103,
+    "__docId__": 102,
     "kind": "method",
     "name": "fetchSuccess",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1594,7 +1575,7 @@
     }
   },
   {
-    "__docId__": 105,
+    "__docId__": 104,
     "kind": "method",
     "name": "fetchFailure",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1627,7 +1608,7 @@
     }
   },
   {
-    "__docId__": 107,
+    "__docId__": 106,
     "kind": "method",
     "name": "rewrite",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1670,7 +1651,7 @@
     }
   },
   {
-    "__docId__": 108,
+    "__docId__": 107,
     "kind": "method",
     "name": "createBanner",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1713,7 +1694,7 @@
     }
   },
   {
-    "__docId__": 109,
+    "__docId__": 108,
     "kind": "method",
     "name": "reroute",
     "memberof": "Reconstructive/reconstructive.js~Reconstructive",
@@ -1723,7 +1704,7 @@
     "longname": "Reconstructive/reconstructive.js~Reconstructive#reroute",
     "access": "public",
     "description": "The callback function on the fetch event.\nLogs the fetch event for debugging.\nChecks for any rerouting exclusions.\nIf the request URL is a URI-M then creates a new request with certain modifications in the original request and fetches it from the server.\nOtherwise, responds with a redirect to the potential URI-M.\nBoth success and failure responses are dealt with appropriately.",
-    "lineNumber": 385,
+    "lineNumber": 381,
     "params": [
       {
         "nullable": null,
@@ -1748,7 +1729,7 @@
   },
   {
     "kind": "packageJSON",
-    "content": "{\n  \"name\": \"Reconstructive\",\n  \"description\": \"Reconstructive is a ServiceWorker Module for Client-side Reconstruction of Composite Mementos\",\n  \"version\": \"0.6.0\",\n  \"repository\": \"https://github.com/oduwsdl/Reconstructive\",\n  \"author\": \"Sawood Alam <ibnesayeed@gmail.com>\",\n  \"contributors\": [\n    \"John Berlin <n0tan3rd@gmail.com>\"\n  ],\n  \"license\": \"MIT\",\n  \"devDependencies\": {\n    \"babel-cli\": \"^6.26.0\",\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-external-ecmascript-plugin\": \"^1.0.0\",\n    \"esdoc-external-webapi-plugin\": \"^1.0.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"serve\": \"^9.4.0\"\n  },\n  \"scripts\": {\n    \"docs\": \"mkdir -p Reconstructive && cp reconstructive.js reconstructive-banner.js Reconstructive && esdoc && rm -rf Reconstructive && cp -r resources docs/\",\n    \"dist\": \"babel --no-comments reconstructive*.js -d dist && babel --no-comments --minified reconstructive.js -o dist/reconstructive.min.js && babel --no-comments --minified reconstructive-banner.js -o dist/reconstructive-banner.min.js\",\n    \"dev\": \"serve .\"\n  }\n}\n",
+    "content": "{\n  \"name\": \"Reconstructive\",\n  \"description\": \"Reconstructive is a ServiceWorker Module for Client-side Reconstruction of Composite Mementos\",\n  \"version\": \"0.6.0\",\n  \"repository\": \"https://github.com/oduwsdl/Reconstructive\",\n  \"author\": \"Sawood Alam <ibnesayeed@gmail.com>\",\n  \"contributors\": [\n    \"John Berlin <n0tan3rd@gmail.com>\"\n  ],\n  \"license\": \"MIT\",\n  \"devDependencies\": {\n    \"babel-cli\": \"^6.26.0\",\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-external-ecmascript-plugin\": \"^1.0.0\",\n    \"esdoc-external-webapi-plugin\": \"^1.0.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"serve\": \"^9.6.0\"\n  },\n  \"scripts\": {\n    \"docs\": \"mkdir -p Reconstructive && cp reconstructive.js reconstructive-banner.js Reconstructive && esdoc && rm -rf Reconstructive && cp -r resources docs/\",\n    \"dist\": \"babel --no-comments reconstructive*.js -d dist && babel --no-comments --minified reconstructive.js -o dist/reconstructive.min.js && babel --no-comments --minified reconstructive-banner.js -o dist/reconstructive-banner.min.js\",\n    \"diff\": \"babel reconstructive.js -o /tmp/reconstructive.js && babel reconstructive-banner.js -o /tmp/reconstructive-banner.js && diff reconstructive.js /tmp/reconstructive.js ; diff reconstructive-banner.js /tmp/reconstructive-banner.js ; rm /tmp/reconstructive*.js\",\n    \"dev\": \"serve .\"\n  }\n}\n",
     "longname": "/src/package.json",
     "name": "package.json",
     "static": true,

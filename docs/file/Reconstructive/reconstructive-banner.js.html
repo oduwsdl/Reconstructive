@@ -41,9 +41,11 @@
  * It is an unobtrusive archival replay banner to make [mementos](http://mementoweb.org/about/) interactive and surface on-demand metadata about the archived resource.
  * The banner houses a customizable branding logo that links to the replay home.
  * It provides a pre-populated text input to navigate the replay to a different URI-R.
- * A brief phrase describes the age of the current memento.
+ * A brief phrase describes the rough age of the current memento, but can be toggled with the absolute date and time of capture by repeatedly clicking on it.
+ * User&apos;s preference on absolute or relative datetime display persists across the session.
  * Navigational links to the first, last, previous, and next mementos are also provided when present.
  * In its default floating action bar (FAB) mode it auto-hides after a set duration of inactivity if the banner is not in focus and reappears on any user activity on the page such as scroll, mousemove, or keypress.
+ * The FAB can be dragged to repostion it on the page, which then persists across the session unless relocated again.
  * It provides controls to expand, collapse, or completely close the banner.
  * The expanded mode has much more real estate available to house detailed archival metadata and visualizations.
  * Use it in an HTML page as illustrated below:
@@ -82,7 +84,7 @@ class ReconstructiveBanner extends HTMLElement {
      *
      * @type {ShadowRoot}
      */
-    this.shadow = this.attachShadow({mode: &apos;closed&apos;});
+    this.shadow = this.attachShadow({ mode: &apos;closed&apos; });
   }
 
   /**
@@ -195,14 +197,6 @@ class ReconstructiveBanner extends HTMLElement {
     this.nextDatetime = this.getAttribute(&apos;next-datetime&apos;) || &apos;&apos;;
 
     /**
-     * Determine whether the banner in the FAB mode should auto-hide after a set duration of inactivity.
-     * Prevent from hiding the FAB when the banner is focused (such as the cursor is placed on it).
-     *
-     * @type {boolean}
-     */
-    this.focused = false;
-
-    /**
      * Duration of inactivity after which the banner in FAB mode should auto-hide if not in focus.
      * The default value is set to 2000 milliseconds (2 seconds).
      *
@@ -218,7 +212,7 @@ class ReconstructiveBanner extends HTMLElement {
      * @type {function(): object}
      */
     this.displayDatetime = (() =&gt; {
-      let datetime = {relative: this.mementoDatetime, absolute: this.mementoDatetime};
+      let datetime = { relative: this.mementoDatetime, absolute: this.mementoDatetime };
       const mementoDatetimeObj = new Date(this.mementoDatetime);
       const diff = Date.now() - mementoDatetimeObj;
       if (isNaN(diff)) {
@@ -265,9 +259,8 @@ class ReconstructiveBanner extends HTMLElement {
         }
         #wrapper.fab {
           position: fixed;
-          bottom: 10px;
-          right: 10px;
-          transition: all 0.5s ease-in;
+          top: calc(100vh - 100px);
+          left: 20px;
         }
         #wrapper.expanded {
           position: fixed;
@@ -277,7 +270,6 @@ class ReconstructiveBanner extends HTMLElement {
           width: 100%;
           height: 100%;
           background: rgba(100, 100, 100, 0.6);
-          transition: all 0.5s ease-out;
         }
         #wrapper.hidden {
           opacity: 0;
@@ -296,17 +288,15 @@ class ReconstructiveBanner extends HTMLElement {
           padding: 5px;
           box-shadow: 0 0 20px;
           display: grid;
-          grid-template-columns: fit-content(300px) 20px 20px 1fr 20px 20px 20px;
+          grid-template-columns: 10px fit-content(300px) 20px 20px 1fr 20px 20px 20px;
           grid-template-rows: 20px 20px 1fr;
           grid-gap: 2px 10px;
           box-sizing: border-box;
           min-height: 50px;
-          transition: all 0.5s ease-in;
         }
         .expanded #container {
           height: calc(100vh - 20px);
           box-shadow: none;
-          transition: all 0.5s ease-out;
         }
         .fab #collapse, .fab #meta, .expanded #expand {
           display: none;
@@ -325,24 +315,34 @@ class ReconstructiveBanner extends HTMLElement {
         .icon {
           width: 20px;
         }
-        #logo {
+        #drag {
           grid-column: 1;
+          grid-row: 1 / 3;
+          border: #1B4869 3px dotted;
+          cursor: move;
+        }
+        .expanded #drag {
+          opacity: 0.4;
+          cursor: default;
+        }
+        #logo {
+          grid-column: 2;
           grid-row: 1 / 3;
         }
         #urir {
-          grid-column: 2 / 7;
+          grid-column: 3 / 8;
           grid-row: 1;
         }
         #first {
-          grid-column: 2;
-          grid-row: 2;
-        }
-        #prev {
           grid-column: 3;
           grid-row: 2;
         }
-        #current {
+        #prev {
           grid-column: 4;
+          grid-row: 2;
+        }
+        #current {
+          grid-column: 5;
           grid-row: 2;
           margin: 0 5px;
           font-size: 16px;
@@ -365,27 +365,27 @@ class ReconstructiveBanner extends HTMLElement {
           display: initial;
         }
         #next {
-          grid-column: 5;
-          grid-row: 2;
-        }
-        #last {
           grid-column: 6;
           grid-row: 2;
         }
-        #close {
+        #last {
           grid-column: 7;
+          grid-row: 2;
+        }
+        #close {
+          grid-column: 8;
           grid-row: 1;
         }
         #expand {
-          grid-column: 7;
+          grid-column: 8;
           grid-row: 2;
         }
         #collapse {
-          grid-column: 7;
+          grid-column: 8;
           grid-row: 2;
         }
         #meta {
-          grid-column: 1 / 8;
+          grid-column: 1 / 9;
           grid-row: 3;
           overflow: auto;
           padding: 10px;
@@ -394,8 +394,9 @@ class ReconstructiveBanner extends HTMLElement {
           grid-template-rows: auto auto auto 130px 1fr;
         }
       &lt;/style&gt;
-      &lt;div id=&quot;wrapper&quot; class=&quot;fab&quot;&gt;
+      &lt;div id=&quot;wrapper&quot; class=&quot;fab&quot; style=&quot;${localStorage.getItem(&apos;bannerPosition&apos;) || &apos;&apos;}&quot;&gt;
         &lt;div id=&quot;container&quot;&gt;
+          &lt;div id=&quot;drag&quot;&gt;&lt;/div&gt;
           &lt;a id=&quot;home&quot; title=&quot;Go to home&quot; href=&quot;${this.homeHref}&quot; rel=&quot;noreferrer&quot;&gt;
             &lt;img id=&quot;logo&quot; class=&quot;branding&quot; src=&quot;${this.logoSrc}&quot; alt=&quot;Reconstructive Banner Logo&quot;&gt;
           &lt;/a&gt;
@@ -408,7 +409,7 @@ class ReconstructiveBanner extends HTMLElement {
           &lt;a id=&quot;prev&quot; class=&quot;icon&quot; title=&quot;${this.prevDatetime}&quot; href=&quot;${this.prevUrim}&quot;&gt;
             &lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 32 32&quot;&gt;&lt;path d=&quot;M8 28v-24h4v11l10-10v22l-10-10v11z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;
           &lt;/a&gt;
-          &lt;p id=&quot;current&quot; class=&quot;datetime&quot; title=&quot;${this.mementoDatetime}&quot;&gt;
+          &lt;p id=&quot;current&quot; class=&quot;datetime ${localStorage.getItem(&apos;datetimeDisplay&apos;) || &apos;&apos;}&quot; title=&quot;${this.mementoDatetime}&quot;&gt;
             &lt;span class=&quot;relative&quot;&gt;${this.displayDatetime.relative}&lt;/span&gt;
             &lt;span class=&quot;absolute&quot;&gt;${this.displayDatetime.absolute}&lt;/span&gt;
           &lt;/p&gt;
@@ -435,16 +436,19 @@ class ReconstructiveBanner extends HTMLElement {
     `;
     this.shadow.innerHTML = template;
 
+    // Banner container and its outer wrapper element references
     const container = this.shadow.getElementById(&apos;container&apos;);
     const wrapper = this.shadow.getElementById(&apos;wrapper&apos;);
 
-    container.onmouseover = () =&gt; this.focused = true;
-    container.onmouseout = () =&gt; this.focused = false;
+    // Banner auto-hide and reveal logic
+    let bannerFocused = false;
+    container.onmouseover = () =&gt; bannerFocused = true;
+    container.onmouseout = () =&gt; bannerFocused = false;
     let focusTimer;
     const resetTimer = () =&gt; {
       wrapper.classList.remove(&apos;hidden&apos;);
       clearTimeout(focusTimer);
-      focusTimer = setTimeout(() =&gt; !this.focused &amp;&amp; wrapper.classList.contains(&apos;fab&apos;) &amp;&amp; wrapper.classList.add(&apos;hidden&apos;), this.autoHideDelay);
+      focusTimer = setTimeout(() =&gt; !bannerFocused &amp;&amp; wrapper.classList.contains(&apos;fab&apos;) &amp;&amp; wrapper.classList.add(&apos;hidden&apos;), this.autoHideDelay);
     };
     window.addEventListener(&apos;load&apos;, resetTimer);
     window.addEventListener(&apos;mousemove&apos;, resetTimer);
@@ -453,30 +457,67 @@ class ReconstructiveBanner extends HTMLElement {
     window.addEventListener(&apos;scroll&apos;, resetTimer);
     window.addEventListener(&apos;keypress&apos;, resetTimer);
 
+    // Banner expand, collapse, and close logic
     this.shadow.getElementById(&apos;close&apos;).onclick = e =&gt; {
       e.preventDefault();
       wrapper.classList.remove(&apos;fab&apos;, &apos;expanded&apos;);
       wrapper.classList.add(&apos;closed&apos;);
     };
-    this.shadow.getElementById(&apos;collapse&apos;).onclick = e =&gt; {
-      e.preventDefault();
-      wrapper.classList.replace(&apos;expanded&apos;, &apos;fab&apos;);
-    };
     this.shadow.getElementById(&apos;expand&apos;).onclick = e =&gt; {
       e.preventDefault();
       wrapper.classList.replace(&apos;fab&apos;, &apos;expanded&apos;);
+      wrapper.style.removeProperty(&apos;top&apos;);
+      wrapper.style.removeProperty(&apos;left&apos;);
+    };
+    this.shadow.getElementById(&apos;collapse&apos;).onclick = e =&gt; {
+      e.preventDefault();
+      wrapper.classList.replace(&apos;expanded&apos;, &apos;fab&apos;);
+      wrapper.style.cssText = localStorage.getItem(&apos;bannerPosition&apos;) || &apos;&apos;;
     };
     wrapper.onclick = e =&gt; {
       if (e.target == wrapper) {
         wrapper.classList.replace(&apos;expanded&apos;, &apos;fab&apos;);
+        wrapper.style.cssText = localStorage.getItem(&apos;bannerPosition&apos;) || &apos;&apos;;
       }
     };
 
+    // Current memento&apos;s datetime display logic (absolute or relative)
     const datetimeDisplay = this.shadow.getElementById(&apos;current&apos;);
     datetimeDisplay.onclick = e =&gt; {
-      datetimeDisplay.classList.toggle(&apos;precision&apos;);
+      if (datetimeDisplay.classList.toggle(&apos;precision&apos;)) {
+        localStorage.setItem(&apos;datetimeDisplay&apos;, &apos;precision&apos;);
+      } else {
+        localStorage.removeItem(&apos;datetimeDisplay&apos;);
+      }
     };
 
+    // Banner drag repositioning logic
+    let draggable = false;
+    let offset = { x: 0, y: 0 };
+    this.shadow.getElementById(&apos;drag&apos;).onmousedown = e =&gt; {
+      if (wrapper.classList.contains(&apos;fab&apos;)) {
+        draggable = true;
+        offset = {
+          x: wrapper.offsetLeft - e.clientX,
+          y: wrapper.offsetTop - e.clientY
+        };
+      }
+    };
+    window.addEventListener(&apos;mouseup&apos;, e =&gt; {
+      if (draggable &amp;&amp; wrapper.classList.contains(&apos;fab&apos;)) {
+        draggable = false;
+        localStorage.setItem(&apos;bannerPosition&apos;, `left: ${wrapper.offsetLeft}px; top: ${wrapper.offsetTop}px;`);
+      }
+    });
+    window.addEventListener(&apos;mousemove&apos;, e =&gt; {
+      e.preventDefault();
+      if (draggable &amp;&amp; wrapper.classList.contains(&apos;fab&apos;)) {
+        wrapper.style.left = e.clientX + offset.x + &apos;px&apos;;
+        wrapper.style.top = e.clientY + offset.y + &apos;px&apos;;
+      }
+    });
+
+    // URI-R lookup submission logic
     this.shadow.getElementById(&apos;lookup&apos;).onsubmit = e =&gt; {
       e.preventDefault();
       const urir = this.shadow.getElementById(&apos;urir&apos;).value;

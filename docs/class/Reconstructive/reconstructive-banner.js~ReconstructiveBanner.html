@@ -42,7 +42,7 @@
   
   
   
-  <span data-ice="source">| <span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber35">source</a></span></span>
+  <span data-ice="source">| <span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber37">source</a></span></span>
 </div>
 
 <div class="self-detail detail">
@@ -66,9 +66,11 @@
 It is an unobtrusive archival replay banner to make <a href="http://mementoweb.org/about/">mementos</a> interactive and surface on-demand metadata about the archived resource.
 The banner houses a customizable branding logo that links to the replay home.
 It provides a pre-populated text input to navigate the replay to a different URI-R.
-A brief phrase describes the age of the current memento.
+A brief phrase describes the rough age of the current memento, but can be toggled with the absolute date and time of capture by repeatedly clicking on it.
+User&apos;s preference on absolute or relative datetime display persists across the session.
 Navigational links to the first, last, previous, and next mementos are also provided when present.
 In its default floating action bar (FAB) mode it auto-hides after a set duration of inactivity if the banner is not in focus and reappears on any user activity on the page such as scroll, mousemove, or keypress.
+The FAB can be dragged to repostion it on the page, which then persists across the session unless relocated again.
 It provides controls to expand, collapse, or completely close the banner.
 The expanded mode has much more real estate available to house detailed archival metadata and visualizations.
 Use it in an HTML page as illustrated below:</p>
@@ -278,35 +280,6 @@ Use it in an HTML page as illustrated below:</p>
         
         
         <div data-ice="description"><p>URI of the first memento.</p>
-</div>
-      </div>
-    </td>
-    <td>
-      
-      
-    </td>
-  </tr>
-<tr data-ice="target">
-    <td>
-      <span class="access" data-ice="access">public</span>
-      
-      
-      
-      <span class="override" data-ice="override"></span>
-    </td>
-    <td>
-      <div>
-        <p>
-          
-          
-          
-          <span class="code" data-ice="name"><span><a href="class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-focused">focused</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></span>
-        </p>
-      </div>
-      <div>
-        
-        
-        <div data-ice="description"><p>Determine whether the banner in the FAB mode should auto-hide after a set duration of inactivity.</p>
 </div>
       </div>
     </td>
@@ -692,7 +665,7 @@ Use it in an HTML page as illustrated below:</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber39">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber41">source</a></span></span>
     </span>
   </h3>
 
@@ -739,7 +712,7 @@ Use it in an HTML page as illustrated below:</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber60">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber62">source</a></span></span>
     </span>
   </h3>
 
@@ -784,7 +757,7 @@ Used as the default banner logo if a custom logoSrc is not specified.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber173">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber167">source</a></span></span>
     </span>
   </h3>
 
@@ -829,7 +802,7 @@ The default value is set to 2000 milliseconds (2 seconds).</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber182">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber176">source</a></span></span>
     </span>
   </h3>
 
@@ -875,7 +848,7 @@ Absolute datetime is a precise natural language phrase in user&apos;s locace (e.
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber109">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber111">source</a></span></span>
     </span>
   </h3>
 
@@ -920,7 +893,7 @@ Read from the first-datetime attribute.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber101">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber103">source</a></span></span>
     </span>
   </h3>
 
@@ -929,51 +902,6 @@ Read from the first-datetime attribute.</p>
   
   <div data-ice="description"><p>URI of the first memento.
 Read from the first-urim attribute.</p>
-</div>
-
-  
-
-  <div data-ice="properties">
-</div>
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-  
-</div>
-<div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-member-focused">
-    <span class="access" data-ice="access">public</span>
-    
-    
-    
-    
-    
-    <span class="code" data-ice="name">focused</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></span>
-    <span class="right-info">
-      
-      
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber165">source</a></span></span>
-    </span>
-  </h3>
-
-  
-  
-  
-  <div data-ice="description"><p>Determine whether the banner in the FAB mode should auto-hide after a set duration of inactivity.
-Prevent from hiding the FAB when the banner is focused (such as the cursor is placed on it).</p>
 </div>
 
   
@@ -1010,7 +938,7 @@ Prevent from hiding the FAB when the banner is focused (such as the cursor is pl
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber77">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber79">source</a></span></span>
     </span>
   </h3>
 
@@ -1056,7 +984,7 @@ Defaults to the domain root &quot;/&quot;.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber125">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber127">source</a></span></span>
     </span>
   </h3>
 
@@ -1101,7 +1029,7 @@ Read from the last-datetime attribute.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber117">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber119">source</a></span></span>
     </span>
   </h3>
 
@@ -1146,7 +1074,7 @@ Read from the last-urim attribute.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber68">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber70">source</a></span></span>
     </span>
   </h3>
 
@@ -1191,7 +1119,7 @@ Defaults to the inline Reconstructive Logo.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber93">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber95">source</a></span></span>
     </span>
   </h3>
 
@@ -1236,7 +1164,7 @@ Read from the memento-datetime attribute.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber157">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber159">source</a></span></span>
     </span>
   </h3>
 
@@ -1281,7 +1209,7 @@ Read from the next-datetime attribute.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber149">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber151">source</a></span></span>
     </span>
   </h3>
 
@@ -1326,7 +1254,7 @@ Read from the next-urim attribute.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber141">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber143">source</a></span></span>
     </span>
   </h3>
 
@@ -1371,7 +1299,7 @@ Read from the prev-datetime attribute.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber133">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber135">source</a></span></span>
     </span>
   </h3>
 
@@ -1416,7 +1344,7 @@ Read from the prev-urim attribute.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber47">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber49">source</a></span></span>
     </span>
   </h3>
 
@@ -1460,7 +1388,7 @@ Read from the prev-urim attribute.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber85">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber87">source</a></span></span>
     </span>
   </h3>
 
@@ -1508,7 +1436,7 @@ Read from the urir attribute.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber53">source</a></span></span>
+      <span data-ice="source"><span><a href="file/Reconstructive/reconstructive-banner.js.html#lineNumber55">source</a></span></span>
     </span>
   </h3>
 

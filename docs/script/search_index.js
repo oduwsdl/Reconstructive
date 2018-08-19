@@ -390,12 +390,6 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
-    "reconstructive/reconstructive-banner.js~reconstructivebanner#focused",
-    "class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-focused",
-    "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#focused",
-    "member"
-  ],
-  [
     "reconstructive/reconstructive-banner.js~reconstructivebanner#homehref",
     "class/Reconstructive/reconstructive-banner.js~ReconstructiveBanner.html#instance-member-homeHref",
     "Reconstructive/reconstructive-banner.js~ReconstructiveBanner#homeHref",

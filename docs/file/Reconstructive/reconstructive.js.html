@@ -74,7 +74,7 @@ class Reconstructive {
      *
      * @type {string}
      */
-    this.VERSION = &apos;0.6.3&apos;;
+    this.VERSION = &apos;0.7.0&apos;;
 
     /**
      * Identifier of the module, sent to the server as X-ServiceWorker header.
@@ -242,7 +242,7 @@ class Reconstructive {
   createRequest(event) {
     let headers = this.cloneHeaders(event.request.headers);
     headers.set(&apos;X-ServiceWorker&apos;, this.id);
-    return new Request(event.request.url, {headers: headers, redirect: &apos;manual&apos;});
+    return new Request(event.request.url, { headers: headers, redirect: &apos;manual&apos; });
   }
 
   /**
@@ -375,22 +375,18 @@ class Reconstructive {
     let rels = {};
     const links = response.headers.get(&apos;Link&apos;);
     if (links) {
-      links.replace(/[\r\n]+/g, &apos; &apos;)
-           .replace(/^\W+|\W+$/g, &apos;&apos;)
-           .split(/\W+&lt;/)
-           .forEach(l =&gt; {
-             let segs = l.split(/[&gt;\s&apos;&quot;]*;\W*/);
-             let href = segs.shift();
-             let attributes = {};
-             segs.forEach(s =&gt; {
-               let [k, v] = s.split(/\W*=\W*/);
-               attributes[k] = v;
-             });
-             attributes[&apos;rel&apos;].split(/\s+/)
-                              .forEach(r =&gt; {
-                                rels[r] = {href: href, datetime: attributes[&apos;datetime&apos;]};
-                              });
-           });
+      links.replace(/[\r\n]+/g, &apos; &apos;).replace(/^\W+|\W+$/g, &apos;&apos;).split(/\W+&lt;/).forEach(l =&gt; {
+        let segs = l.split(/[&gt;\s&apos;&quot;]*;\W*/);
+        let href = segs.shift();
+        let attributes = {};
+        segs.forEach(s =&gt; {
+          let [k, v] = s.split(/\W*=\W*/);
+          attributes[k] = v;
+        });
+        attributes[&apos;rel&apos;].split(/\s+/).forEach(r =&gt; {
+          rels[r] = { href: href, datetime: attributes[&apos;datetime&apos;] };
+        });
+      });
     }
     return `
       &lt;script src=&quot;${this.bannerElementLocation}&quot;&gt;&lt;/script&gt;
@@ -427,11 +423,7 @@ class Reconstructive {
     // This condition will match if the request URL is a URI-M.
     if (this._regexps.urimPattern.test(event.request.url)) {
       let request = this.createRequest(event);
-      event.respondWith(
-        fetch(request)
-          .then(response =&gt; this.fetchSuccess(response, event))
-          .catch(this.fetchFailure)
-      );
+      event.respondWith(fetch(request).then(response =&gt; this.fetchSuccess(response, event)).catch(this.fetchFailure));
     } else {
       let urim = this.createUrim(event);
       event.respondWith(this.localRedirect(urim));
