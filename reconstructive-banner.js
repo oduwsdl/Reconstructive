@@ -452,14 +452,16 @@ class ReconstructiveBanner extends HTMLElement {
     let draggable = false;
     let offset = {x: 0, y: 0}
     this.shadow.getElementById('drag').onmousedown = e => {
-      draggable = true;
-      offset = {
-        x: wrapper.offsetLeft - e.clientX,
-        y: wrapper.offsetTop - e.clientY
-      };
+      if (wrapper.classList.contains('fab')) {
+        draggable = true;
+        offset = {
+          x: wrapper.offsetLeft - e.clientX,
+          y: wrapper.offsetTop - e.clientY
+        };
+      }
     };
     window.addEventListener('mouseup', e => {
-      if (draggable) {
+      if (draggable && wrapper.classList.contains('fab')) {
         draggable = false;
         localStorage.setItem('bannerPosition', `left: ${wrapper.offsetLeft}px; top: ${wrapper.offsetTop}px;`);
       }
