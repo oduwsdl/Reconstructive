@@ -158,14 +158,6 @@ class ReconstructiveBanner extends HTMLElement {
     this.nextDatetime = this.getAttribute('next-datetime') || '';
 
     /**
-     * Determine whether the banner in the FAB mode should auto-hide after a set duration of inactivity.
-     * Prevent from hiding the FAB when the banner is focused (such as the cursor is placed on it).
-     *
-     * @type {boolean}
-     */
-    this.focused = false;
-
-    /**
      * Duration of inactivity after which the banner in FAB mode should auto-hide if not in focus.
      * The default value is set to 2000 milliseconds (2 seconds).
      *
@@ -408,13 +400,14 @@ class ReconstructiveBanner extends HTMLElement {
     const container = this.shadow.getElementById('container');
     const wrapper = this.shadow.getElementById('wrapper');
 
-    container.onmouseover = () => this.focused = true;
-    container.onmouseout = () => this.focused = false;
+    let bannerFocused = false;
+    container.onmouseover = () => bannerFocused = true;
+    container.onmouseout = () => bannerFocused = false;
     let focusTimer;
     const resetTimer = () => {
       wrapper.classList.remove('hidden');
       clearTimeout(focusTimer);
-      focusTimer = setTimeout(() => !this.focused && wrapper.classList.contains('fab') && wrapper.classList.add('hidden'), this.autoHideDelay);
+      focusTimer = setTimeout(() => !bannerFocused && wrapper.classList.contains('fab') && wrapper.classList.add('hidden'), this.autoHideDelay);
     };
     window.addEventListener('load', resetTimer);
     window.addEventListener('mousemove', resetTimer);
