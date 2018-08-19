@@ -3,7 +3,8 @@
  * It is an unobtrusive archival replay banner to make [mementos](http://mementoweb.org/about/) interactive and surface on-demand metadata about the archived resource.
  * The banner houses a customizable branding logo that links to the replay home.
  * It provides a pre-populated text input to navigate the replay to a different URI-R.
- * A brief phrase describes the rough age of the current memento and when clicked, it shows the absolute date and time of capture.
+ * A brief phrase describes the rough age of the current memento, but can be toggled with the absolute date and time of capture by repeatedly clicking on it.
+ * User's preference on absolute or relative datetime display persists across the session.
  * Navigational links to the first, last, previous, and next mementos are also provided when present.
  * In its default floating action bar (FAB) mode it auto-hides after a set duration of inactivity if the banner is not in focus and reappears on any user activity on the page such as scroll, mousemove, or keypress.
  * The FAB can be dragged to repostion it on the page, which then persists across the session unless relocated again.
@@ -370,7 +371,7 @@ class ReconstructiveBanner extends HTMLElement {
           <a id="prev" class="icon" title="${this.prevDatetime}" href="${this.prevUrim}">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M8 28v-24h4v11l10-10v22l-10-10v11z"></path></svg>
           </a>
-          <p id="current" class="datetime" title="${this.mementoDatetime}">
+          <p id="current" class="datetime ${localStorage.getItem('datetimeDisplay') || ''}" title="${this.mementoDatetime}">
             <span class="relative">${this.displayDatetime.relative}</span>
             <span class="absolute">${this.displayDatetime.absolute}</span>
           </p>
@@ -441,7 +442,11 @@ class ReconstructiveBanner extends HTMLElement {
 
     const datetimeDisplay = this.shadow.getElementById('current');
     datetimeDisplay.onclick = e => {
-      datetimeDisplay.classList.toggle('precision');
+      if (datetimeDisplay.classList.toggle('precision')) {
+        localStorage.setItem('datetimeDisplay', 'precision');
+      } else {
+        localStorage.removeItem('datetimeDisplay');
+      }
     };
 
     let draggable = false;
