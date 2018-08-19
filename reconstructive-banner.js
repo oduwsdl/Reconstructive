@@ -398,9 +398,11 @@ class ReconstructiveBanner extends HTMLElement {
     `;
     this.shadow.innerHTML = template;
 
+    // Banner container and its outer wrapper element references
     const container = this.shadow.getElementById('container');
     const wrapper = this.shadow.getElementById('wrapper');
 
+    // Banner auto-hide and reveal logic
     let bannerFocused = false;
     container.onmouseover = () => bannerFocused = true;
     container.onmouseout = () => bannerFocused = false;
@@ -417,6 +419,7 @@ class ReconstructiveBanner extends HTMLElement {
     window.addEventListener('scroll', resetTimer);
     window.addEventListener('keypress', resetTimer);
 
+    // Banner expand, collapse, and close logic
     this.shadow.getElementById('close').onclick = e => {
       e.preventDefault();
       wrapper.classList.remove('fab', 'expanded');
@@ -440,6 +443,7 @@ class ReconstructiveBanner extends HTMLElement {
       }
     };
 
+    // Current memento's datetime display logic (absolute or relative)
     const datetimeDisplay = this.shadow.getElementById('current');
     datetimeDisplay.onclick = e => {
       if (datetimeDisplay.classList.toggle('precision')) {
@@ -449,6 +453,7 @@ class ReconstructiveBanner extends HTMLElement {
       }
     };
 
+    // Banner drag repositioning logic
     let draggable = false;
     let offset = {x: 0, y: 0}
     this.shadow.getElementById('drag').onmousedown = e => {
@@ -474,6 +479,7 @@ class ReconstructiveBanner extends HTMLElement {
       }
     });
 
+    // URI-R lookup submission logic
     this.shadow.getElementById('lookup').onsubmit = e => {
       e.preventDefault();
       const urir = this.shadow.getElementById('urir').value;

@@ -36,7 +36,7 @@ class Reconstructive {
      *
      * @type {string}
      */
-    this.VERSION = '0.6.3';
+    this.VERSION = '0.7.0';
 
     /**
      * Identifier of the module, sent to the server as X-ServiceWorker header.
