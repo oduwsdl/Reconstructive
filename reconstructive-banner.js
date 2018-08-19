@@ -3,9 +3,10 @@
  * It is an unobtrusive archival replay banner to make [mementos](http://mementoweb.org/about/) interactive and surface on-demand metadata about the archived resource.
  * The banner houses a customizable branding logo that links to the replay home.
  * It provides a pre-populated text input to navigate the replay to a different URI-R.
- * A brief phrase describes the age of the current memento.
+ * A brief phrase describes the rough age of the current memento and when clicked, it shows the absolute date and time of capture.
  * Navigational links to the first, last, previous, and next mementos are also provided when present.
  * In its default floating action bar (FAB) mode it auto-hides after a set duration of inactivity if the banner is not in focus and reappears on any user activity on the page such as scroll, mousemove, or keypress.
+ * The FAB can be dragged to repostion it on the page, which then persists across the session unless relocated again.
  * It provides controls to expand, collapse, or completely close the banner.
  * The expanded mode has much more real estate available to house detailed archival metadata and visualizations.
  * Use it in an HTML page as illustrated below:
@@ -227,9 +228,8 @@ class ReconstructiveBanner extends HTMLElement {
         }
         #wrapper.fab {
           position: fixed;
-          bottom: 10px;
-          right: 10px;
-          transition: all 0.5s ease-in;
+          top: calc(100vh - 100px);
+          left: 20px;
         }
         #wrapper.expanded {
           position: fixed;
@@ -239,7 +239,6 @@ class ReconstructiveBanner extends HTMLElement {
           width: 100%;
           height: 100%;
           background: rgba(100, 100, 100, 0.6);
-          transition: all 0.5s ease-out;
         }
         #wrapper.hidden {
           opacity: 0;
@@ -258,17 +257,15 @@ class ReconstructiveBanner extends HTMLElement {
           padding: 5px;
           box-shadow: 0 0 20px;
           display: grid;
-          grid-template-columns: fit-content(300px) 20px 20px 1fr 20px 20px 20px;
+          grid-template-columns: 10px fit-content(300px) 20px 20px 1fr 20px 20px 20px;
           grid-template-rows: 20px 20px 1fr;
           grid-gap: 2px 10px;
           box-sizing: border-box;
           min-height: 50px;
-          transition: all 0.5s ease-in;
         }
         .expanded #container {
           height: calc(100vh - 20px);
           box-shadow: none;
-          transition: all 0.5s ease-out;
         }
         .fab #collapse, .fab #meta, .expanded #expand {
           display: none;
@@ -287,24 +284,34 @@ class ReconstructiveBanner extends HTMLElement {
         .icon {
           width: 20px;
         }
-        #logo {
+        #drag {
           grid-column: 1;
+          grid-row: 1 / 3;
+          border: #1B4869 3px dotted;
+          cursor: move;
+        }
+        .expanded #drag {
+          opacity: 0.4;
+          cursor: default;
+        }
+        #logo {
+          grid-column: 2;
           grid-row: 1 / 3;
         }
         #urir {
-          grid-column: 2 / 7;
+          grid-column: 3 / 8;
           grid-row: 1;
         }
         #first {
-          grid-column: 2;
-          grid-row: 2;
-        }
-        #prev {
           grid-column: 3;
           grid-row: 2;
         }
-        #current {
+        #prev {
           grid-column: 4;
+          grid-row: 2;
+        }
+        #current {
+          grid-column: 5;
           grid-row: 2;
           margin: 0 5px;
           font-size: 16px;
@@ -327,27 +334,27 @@ class ReconstructiveBanner extends HTMLElement {
           display: initial;
         }
         #next {
-          grid-column: 5;
-          grid-row: 2;
-        }
-        #last {
           grid-column: 6;
           grid-row: 2;
         }
-        #close {
+        #last {
           grid-column: 7;
+          grid-row: 2;
+        }
+        #close {
+          grid-column: 8;
           grid-row: 1;
         }
         #expand {
-          grid-column: 7;
+          grid-column: 8;
           grid-row: 2;
         }
         #collapse {
-          grid-column: 7;
+          grid-column: 8;
           grid-row: 2;
         }
         #meta {
-          grid-column: 1 / 8;
+          grid-column: 1 / 9;
           grid-row: 3;
           overflow: auto;
           padding: 10px;
@@ -356,8 +363,9 @@ class ReconstructiveBanner extends HTMLElement {
           grid-template-rows: auto auto auto 130px 1fr;
         }
       </style>
-      <div id="wrapper" class="fab">
+      <div id="wrapper" class="fab" style="${localStorage.getItem('bannerPosition') || ''}">
         <div id="container">
+          <div id="drag"></div>
           <a id="home" title="Go to home" href="${this.homeHref}" rel="noreferrer">
             <img id="logo" class="branding" src="${this.logoSrc}" alt="Reconstructive Banner Logo">
           </a>
@@ -420,17 +428,21 @@ class ReconstructiveBanner extends HTMLElement {
       wrapper.classList.remove('fab', 'expanded');
       wrapper.classList.add('closed');
     };
-    this.shadow.getElementById('collapse').onclick = e => {
-      e.preventDefault();
-      wrapper.classList.replace('expanded', 'fab');
-    };
     this.shadow.getElementById('expand').onclick = e => {
       e.preventDefault();
       wrapper.classList.replace('fab', 'expanded');
+      wrapper.style.removeProperty('top');
+      wrapper.style.removeProperty('left');
+    };
+    this.shadow.getElementById('collapse').onclick = e => {
+      e.preventDefault();
+      wrapper.classList.replace('expanded', 'fab');
+      wrapper.style.cssText = localStorage.getItem('bannerPosition') || '';
     };
     wrapper.onclick = e => {
       if (e.target == wrapper) {
         wrapper.classList.replace('expanded', 'fab');
+        wrapper.style.cssText = localStorage.getItem('bannerPosition') || '';
       }
     };
 
@@ -438,6 +450,29 @@ class ReconstructiveBanner extends HTMLElement {
     datetimeDisplay.onclick = e => {
       datetimeDisplay.classList.toggle('precision');
     };
+
+    let draggable = false;
+    let offset = {x: 0, y: 0}
+    this.shadow.getElementById('drag').onmousedown = e => {
+      draggable = true;
+      offset = {
+        x: wrapper.offsetLeft - e.clientX,
+        y: wrapper.offsetTop - e.clientY
+      };
+    };
+    window.addEventListener('mouseup', e => {
+      if (draggable) {
+        draggable = false;
+        localStorage.setItem('bannerPosition', `left: ${wrapper.offsetLeft}px; top: ${wrapper.offsetTop}px;`);
+      }
+    });
+    window.addEventListener('mousemove', e => {
+      e.preventDefault();
+      if (draggable && wrapper.classList.contains('fab')) {
+        wrapper.style.left = (e.clientX + offset.x) + 'px';
+        wrapper.style.top = (e.clientY + offset.y) + 'px';
+      }
+    });
 
     this.shadow.getElementById('lookup').onsubmit = e => {
       e.preventDefault();
