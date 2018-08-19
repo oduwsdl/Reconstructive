@@ -512,8 +512,8 @@ class ReconstructiveBanner extends HTMLElement {
     window.addEventListener(&apos;mousemove&apos;, e =&gt; {
       e.preventDefault();
       if (draggable &amp;&amp; wrapper.classList.contains(&apos;fab&apos;)) {
-        wrapper.style.left = e.clientX + offset.x + &apos;px&apos;;
-        wrapper.style.top = e.clientY + offset.y + &apos;px&apos;;
+        wrapper.style.left = Math.max(Math.min(e.clientX + offset.x, window.innerWidth - 45), 10) + &apos;px&apos;;
+        wrapper.style.top = Math.max(Math.min(e.clientY + offset.y, window.innerHeight - 85), 10) + &apos;px&apos;;
       }
     });
 
