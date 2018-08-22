@@ -393,3 +393,8 @@ class Reconstructive {
   }
 
 }
+
+// Export Reconstructive as a module for testing
+if (typeof module != 'undefined' && typeof module.exports != 'undefined') {
+  module.exports = Reconstructive;
+}

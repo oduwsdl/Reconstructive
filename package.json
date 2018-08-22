@@ -14,11 +14,13 @@
     "esdoc-external-ecmascript-plugin": "^1.0.0",
     "esdoc-external-webapi-plugin": "^1.0.0",
     "esdoc-standard-plugin": "^1.0.0",
+    "jest": "^23.5.0",
     "serve": "^9.6.0"
   },
   "scripts": {
     "docs": "mkdir -p Reconstructive && cp reconstructive.js reconstructive-banner.js Reconstructive && esdoc && rm -rf Reconstructive && cp -r resources docs/",
-    "dist": "babel --no-comments reconstructive*.js -d dist && babel --no-comments --minified reconstructive.js -o dist/reconstructive.min.js && babel --no-comments --minified reconstructive-banner.js -o dist/reconstructive-banner.min.js",
+    "test": "jest",
+    "dist": "babel --no-comments reconstructive.js reconstructive-banner.js -d dist && babel --no-comments --minified reconstructive.js -o dist/reconstructive.min.js && babel --no-comments --minified reconstructive-banner.js -o dist/reconstructive-banner.min.js",
     "diff": "babel reconstructive.js -o /tmp/reconstructive.js && babel reconstructive-banner.js -o /tmp/reconstructive-banner.js && diff reconstructive.js /tmp/reconstructive.js ; diff reconstructive-banner.js /tmp/reconstructive-banner.js ; rm /tmp/reconstructive*.js",
     "dev": "serve ."
   }
