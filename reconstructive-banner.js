@@ -360,7 +360,7 @@ class ReconstructiveBanner extends HTMLElement {
         <div id="container">
           <div id="drag"></div>
           <a id="home" title="Go to home" href="${this.homeHref}" rel="noreferrer">
-            <img id="logo" class="branding" src="${this.logoSrc}" alt="Reconstructive Banner Logo">
+            <img id="logo" class="branding" src="${this.logoSrc}" alt="Banner Logo">
           </a>
           <form id="lookup">
             <input id="urir" class="url" value="${this.urir}">
