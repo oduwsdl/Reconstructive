@@ -1,8 +1,9 @@
 {
   "name": "Reconstructive",
   "description": "Reconstructive is a ServiceWorker Module for Client-side Reconstruction of Composite Mementos",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "repository": "https://github.com/oduwsdl/Reconstructive",
+  "homepage": "https://oduwsdl.github.io/Reconstructive/",
   "author": "Sawood Alam <ibnesayeed@gmail.com>",
   "contributors": [
     "John Berlin <n0tan3rd@gmail.com>"
@@ -14,8 +15,8 @@
     "esdoc-external-ecmascript-plugin": "^1.0.0",
     "esdoc-external-webapi-plugin": "^1.0.0",
     "esdoc-standard-plugin": "^1.0.0",
-    "jest": "^23.5.0",
-    "serve": "^9.6.0"
+    "jest": "^23.6.0",
+    "serve": "^10.0.1"
   },
   "scripts": {
     "docs": "mkdir -p Reconstructive && cp reconstructive.js reconstructive-banner.js Reconstructive && esdoc && rm -rf Reconstructive && cp -r resources docs/",
