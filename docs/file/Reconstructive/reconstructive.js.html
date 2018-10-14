@@ -74,7 +74,7 @@ class Reconstructive {
      *
      * @type {string}
      */
-    this.VERSION = &apos;0.7.0&apos;;
+    this.VERSION = &apos;0.7.1&apos;;
 
     /**
      * Identifier of the module, sent to the server as X-ServiceWorker header.
@@ -149,7 +149,7 @@ class Reconstructive {
      */
     this._regexps = {
       urimPattern: new RegExp(`^${this.urimPattern.replace(&apos;&lt;datetime&gt;&apos;, &apos;(\\d{14})&apos;).replace(&apos;&lt;urir&gt;&apos;, &apos;(.*)&apos;)}$`),
-      absoluteReference: new RegExp(`(&lt;(iframe|a).*?\\s+(src|href)\\s*=\\s*[&quot;&apos;]?)(https?:\/\/[^&apos;&quot;\\s]+)(.*?&gt;)`, &apos;ig&apos;),
+      absoluteReference: new RegExp(`(&lt;(iframe|a|meta).*?\\s+(src|href|content\\s*=\\s*[&quot;&apos;]?\\s*\\d+\\s*;\\s*url)\\s*=\\s*[&quot;&apos;]?)(https?:\/\/[^&apos;&quot;\\s]+)(.*?&gt;)`, &apos;ig&apos;),
       bodyEnd: new RegExp(&apos;&lt;\/(body|html)&gt;&apos;, &apos;i&apos;)
     };
 

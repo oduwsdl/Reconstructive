@@ -1,7 +1,7 @@
 {
   "name": "Reconstructive",
   "description": "Reconstructive is a ServiceWorker Module for Client-side Reconstruction of Composite Mementos",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "repository": "https://github.com/oduwsdl/Reconstructive",
   "homepage": "https://oduwsdl.github.io/Reconstructive/",
   "author": "Sawood Alam <ibnesayeed@gmail.com>",
