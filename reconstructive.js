@@ -111,7 +111,7 @@ class Reconstructive {
      */
     this._regexps = {
       urimPattern: new RegExp(`^${this.urimPattern.replace('<datetime>', '(\\d{14})').replace('<urir>', '(.*)')}$`),
-      absoluteReference: new RegExp(`(<(iframe|a).*?\\s+(src|href)\\s*=\\s*["']?)(https?:\/\/[^'"\\s]+)(.*?>)`, 'ig'),
+      absoluteReference: new RegExp(`(<(iframe|a|meta).*?\\s+(src|href|content\\s*=\\s*["']?\\d+\\s*;\\s*url)\\s*=\\s*["']?)(https?:\/\/[^'"\\s]+)(.*?>)`, 'ig'),
       bodyEnd: new RegExp('<\/(body|html)>', 'i')
     };
 
