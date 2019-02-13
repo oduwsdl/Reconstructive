@@ -161,3 +161,31 @@ When necessary, the response is rewritten on the client-side to fix some quirks 
 The following flowchart diagram shows what happens in every request/response cycle of a fetch event in Reconstructive.
 
 ![Reconstructive Flowchart](resources/reconstructive-flowchart.png)
+
+## Citing Project
+
+This project was formally published in JCDL 2017 ([Read the PDF](https://www.cs.odu.edu/~mln/pubs/jcdl-2017/jcdl-2017-alam-service-worker.pdf)). Please cite it as below:
+
+> Sawood Alam, Mat Kelly, Michele C. Weigle, and Michael L. Nelson. __Client-side Reconstruction of Composite Mementos Using ServiceWorker__. In _Proceedings of the 17th ACM/IEEE-CS on Joint Conference on Digital Libraries, JCDL 2017_, pp. 237-240, Toronto, Ontario, Canada, June 2017.
+
+```latex
+@inproceedings{jcdl-2017-alam-reconstructive,
+  author    = {Sawood Alam and
+               Mat Kelly and
+               Michele Weigle and
+               Michael L. Nelson},
+  title     = {{Client-side Reconstruction of Composite Mementos Using ServiceWorker}},
+  booktitle = {Proceedings of the 17th ACM/IEEE-CS Joint Conference on Digital Libraries},
+  series    = {JCDL '17},
+  year      = {2017},
+  month     = {jun},
+  location  = {Toronto, Ontario, Canada},
+  pages     = {237--240},
+  numpages  = {4},
+  url       = {https://doi.org/10.1109/JCDL.2017.7991579},
+  doi       = {10.1109/JCDL.2017.7991579},
+  isbn      = {978-1-5386-3861-3},
+  publisher = {ACM},
+  address   = {New York, NY, USA}
+}
+```
