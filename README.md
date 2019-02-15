@@ -164,7 +164,7 @@ The following flowchart diagram shows what happens in every request/response cyc
 
 ## Citing Project
 
-This project was formally published in JCDL 2017 ([Read the PDF](https://www.cs.odu.edu/~mln/pubs/jcdl-2017/jcdl-2017-alam-service-worker.pdf)). Please cite it as below:
+A publication related to this project appeared in the proceedings of JCDL 2017 ([Read the PDF](https://www.cs.odu.edu/~mln/pubs/jcdl-2017/jcdl-2017-alam-service-worker.pdf)). Please cite it as below:
 
 > Sawood Alam, Mat Kelly, Michele C. Weigle, and Michael L. Nelson. __Client-side Reconstruction of Composite Mementos Using ServiceWorker__. In _Proceedings of the 17th ACM/IEEE-CS on Joint Conference on Digital Libraries, JCDL 2017_, pp. 237-240, Toronto, Ontario, Canada, June 2017.
 
