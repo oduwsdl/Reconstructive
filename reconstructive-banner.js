@@ -42,7 +42,7 @@ class ReconstructiveBanner extends HTMLElement {
     super();
 
     /**
-     * ShadoRoot for the isolated Shadow DOM of the banner.
+     * ShadowRoot for the isolated Shadow DOM of the banner.
      *
      * @type {ShadowRoot}
      */
